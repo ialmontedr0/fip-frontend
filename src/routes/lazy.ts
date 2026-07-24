@@ -24,3 +24,14 @@ export const WalletLiquidityPage = lazy(() => import('@/features/wallets/pages/W
 export const CategoryListPage = lazy(() => import('@/features/categories/pages/CategoryListPage'))
 export const CategoryCreatePage = lazy(() => import('@/features/categories/pages/CategoryCreatePage'))
 export const CategoryDetailPage = lazy(() => import('@/features/categories/pages/CategoryDetailPage'))
+
+// Transactions
+export const TransactionListPage = lazy(() => import('@/features/transactions/pages/TransactionListPage'))
+export const TransactionCreatePage = lazy(() => import('@/features/transactions/pages/TransactionCreatePage'))
+export const TransactionDetailPage = lazy(() => import('@/features/transactions/pages/TransactionDetailPage'))
+export const TransactionEditPage = lazy(() => import('@/features/transactions/pages/TransactionEditPage'))
+
+// Recurring
+export const RecurringListPage = lazy(() => import('@/features/transactions/pages/RecurringListPage'))
+export const RecurringCreatePage = lazy(() => import('@/features/transactions/pages/RecurringCreatePage'))
+export const RecurringDetailPage = lazy(() => import('@/features/transactions/pages/RecurringDetailPage'))

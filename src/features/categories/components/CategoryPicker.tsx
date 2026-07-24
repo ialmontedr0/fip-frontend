@@ -8,7 +8,7 @@ import { CATEGORY_TYPE_CONFIG } from '../constants'
 
 interface Props {
   value: string
-  onChange: (categoryId: string) => void
+  onChange: (categoryId: string, subcategoryId?: string) => void
   filterType?: 'expense' | 'income' | 'transfer' | 'adjustment'
   placeholder?: string
   className?: string
@@ -23,6 +23,7 @@ interface FlatItem {
   is_system: boolean
   category_type: string
   depth: number
+  parentId?: string
 }
 
 function flattenItems(categories: CategoryListItem[]): FlatItem[] {
@@ -36,6 +37,7 @@ function flattenItems(categories: CategoryListItem[]): FlatItem[] {
       result.push({
         id: sub.id, name: sub.name, icon: sub.icon, color: sub.color,
         is_system: false, category_type: cat.category_type, depth: 1,
+        parentId: cat.id,
       })
     }
   }
@@ -89,7 +91,7 @@ export default function CategoryPicker({ value, onChange, filterType, placeholde
         {allowClear && selected && (
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); onChange(''); }}
+            onClick={(e) => { e.stopPropagation(); onChange('', ''); }}
             className="ml-auto rounded p-0.5 text-gray-300 hover:text-gray-500 dark:hover:text-gray-300"
           >
             <span className="text-xs">&times;</span>
@@ -131,7 +133,14 @@ export default function CategoryPicker({ value, onChange, filterType, placeholde
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => { onChange(item.id); setIsOpen(false) }}
+                    onClick={() => {
+                      if (item.depth === 0) {
+                        onChange(item.id)
+                      } else {
+                        onChange(item.parentId!, item.id)
+                      }
+                      setIsOpen(false)
+                    }}
                     className={cn(
                       'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-all',
                       value === item.id

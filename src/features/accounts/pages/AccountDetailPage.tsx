@@ -8,7 +8,12 @@ import DeleteAccountModal from '../components/DeleteAccountModal'
 import { Button, Skeleton, ErrorMessage } from '@/components/ui'
 import { formatCurrency } from '@/lib/utils'
 import { cn } from '@/lib/utils'
-import { ArrowLeft, Edit2, Trash2, Building, Hash, Calendar, CheckSquare, Square, FileText, Wallet } from 'lucide-react'
+import {
+  ArrowLeft, Edit2, Trash2, Building, Hash, Calendar,
+  CheckSquare, Square, FileText, Wallet, ArrowRight,
+} from 'lucide-react'
+import { useTransactionInfinite } from '@/features/transactions/hooks/useTransactions'
+import TransactionCard from '@/features/transactions/components/TransactionCard'
 
 export default function AccountDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -16,6 +21,11 @@ export default function AccountDetailPage() {
   const { data: account, isLoading, isError, error } = useAccount(id)
   const updateAccount = useUpdateAccount()
   const deleteAccount = useDeleteAccount()
+
+  const {
+    data: txData,
+    isLoading: txLoading,
+  } = useTransactionInfinite({ account_id: id, page_size: 5 })
 
   const [isEditing, setIsEditing] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -103,6 +113,7 @@ export default function AccountDetailPage() {
   }
 
   const isPositive = parseFloat(account.balance) >= 0
+  const transactions = txData?.pages.flatMap((p) => p.transactions) ?? []
 
   return (
     <div className="relative max-w-2xl mx-auto space-y-6 pb-8">
@@ -244,6 +255,69 @@ export default function AccountDetailPage() {
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Notas</p>
                 <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{account.notes}</p>
               </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Recent Transactions */}
+      <div className={cn(
+        'relative overflow-hidden rounded-2xl border border-gray-100/80 bg-white/80 p-6 backdrop-blur-xl shadow-sm',
+        'dark:border-gray-800/80 dark:bg-gray-900/80',
+        'animate-fade-in',
+      )} style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-400 via-primary-400 to-emerald-400" />
+
+        <div className="relative">
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+              Ultimos Movimientos
+            </h3>
+            <button
+              onClick={() => navigate(`/transactions?account_id=${id}`)}
+              className="flex items-center gap-1 text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
+            >
+              Ver todos
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          {txLoading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-20 rounded-xl bg-gray-100/50 dark:bg-gray-800/50 animate-pulse" />
+              ))}
+            </div>
+          ) : transactions.length === 0 ? (
+            <div className="py-8 text-center">
+              <Wallet className="h-8 w-8 mx-auto text-gray-300 dark:text-gray-600 mb-2" />
+              <p className="text-sm text-gray-400 dark:text-gray-500">No hay movimientos registrados</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/transactions/new')}
+                className="mt-3 rounded-xl"
+              >
+                Crear Primera Transaccion
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {transactions.map((tx, i) => (
+                <div
+                  key={tx.id}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${i * 60}ms` }}
+                >
+                  <TransactionCard transaction={tx} />
+                </div>
+              ))}
+              <button
+                onClick={() => navigate(`/transactions?account_id=${id}`)}
+                className="w-full py-2.5 text-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 rounded-xl transition-all"
+              >
+                Ver todas las transacciones
+              </button>
             </div>
           )}
         </div>

@@ -11,6 +11,8 @@ import {
   AccountListPage, AccountCreatePage, AccountDetailPage,
   WalletListPage, WalletCreatePage, WalletDetailPage, WalletLiquidityPage,
   CategoryListPage, CategoryCreatePage, CategoryDetailPage,
+  TransactionListPage, TransactionCreatePage, TransactionDetailPage, TransactionEditPage,
+  RecurringListPage, RecurringCreatePage, RecurringDetailPage,
 } from './lazy'
 
 export const router = createBrowserRouter([
@@ -148,7 +150,7 @@ export const router = createBrowserRouter([
             path: '/transactions',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Transacciones" />
+                <TransactionListPage />
               </SuspenseWrapper>
             ),
           },
@@ -156,7 +158,7 @@ export const router = createBrowserRouter([
             path: '/transactions/new',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Nueva Transaccion" />
+                <TransactionCreatePage />
               </SuspenseWrapper>
             ),
           },
@@ -164,7 +166,40 @@ export const router = createBrowserRouter([
             path: '/transactions/:id',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Detalle Transaccion" />
+                <TransactionDetailPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/transactions/:id/edit',
+            element: (
+              <SuspenseWrapper>
+                <TransactionEditPage />
+              </SuspenseWrapper>
+            ),
+          },
+          // Recurring
+          {
+            path: '/transactions/recurring',
+            element: (
+              <SuspenseWrapper>
+                <RecurringListPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/transactions/recurring/new',
+            element: (
+              <SuspenseWrapper>
+                <RecurringCreatePage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/transactions/recurring/:id',
+            element: (
+              <SuspenseWrapper>
+                <RecurringDetailPage />
               </SuspenseWrapper>
             ),
           },
