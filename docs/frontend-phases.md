@@ -72,33 +72,10 @@
 - Charts interactivos
 - Layout responsivo
 
-Ya implementada la fase 1, vamos a continuar con el desarrollo completo, profesional, avanzado, funcional, completo, sin omisiones, moderno del frontend de la aplicacion fip (financial-intelligence-platform), avancemos con el desarrollo de la siguiente fase completa y avanzada del proyecto por favor:
-
-Fase 2: Dashboard & Layout Global
-
-### Objetivos
-- Sidebar navegacion completa con iconos
-- Header con busqueda global, notificaciones, avatar
-- Dashboard page: resumen financiero (balance total, income, expenses, net worth)
-- Componentes de chart base (AreaChart, BarChart, PieChart, LineChart)
-- KPI cards reutilizables
-- Date range picker global
-- Loading skeletons para cada widget
-- Error boundaries por seccion
-- Responsive design (mobile sidebar como drawer)
-
-### Entregables
-- Dashboard funcional con datos reales del API
-- Charts interactivos
-- Layout responsivo
-
-Proporcioname todas las instrucciones, informacion, codigo, comandos, datos, detalles y todo lo necesario para esta siguente fase, no hagas ninguna implementacion ni ningun cambio tu, dame las instrucciones, codigo, detalles y todo lo relativo mas estrategias, ejemplos, etc a mi que yo lo hago por favor. Nota: recuerda siempre leer el docs/frontend-phases.md, el docs/frontend-definitions.md y el docs/frontend-AGENTS.md para que te retroalimentes cuando necesites informacion de cualquier cosa. Y escribir cualquier informacion en el archivo correspondiente a la fase en desarrollo actual por ejemplo frontend-phases/frontend-phase2-guide.md. No omitas nada, piensa en todo y selecciona las mejores opciones, arquitecturas, tecnologias, todo que me sea gratis xfa :). 
+Estado de la fase: Completa
 ---
 
 ## Fase 3: Accounts & Wallets
-
-**Duracion:** 3-4 dias
-**Dependencias:** Fase 2
 
 ### Objetivos
 - AccountListPage: tabla/tarjetas con tipo, balance, institucion, icono, color
@@ -118,12 +95,11 @@ Proporcioname todas las instrucciones, informacion, codigo, comandos, datos, det
 - Visualizacion de balance por moneda
 - Analisis de liquidez
 
+Estado de la fase: Completada
 ---
 
 ## Fase 4: Categories
 
-**Duracion:** 2-3 dias
-**Dependencias:** Fase 3
 
 ### Objetivos
 - CategoryListPage: arbol expandible con subcategorias
@@ -139,8 +115,9 @@ Proporcioname todas las instrucciones, informacion, codigo, comandos, datos, det
 ### Entregables
 - Gestion completa de categorias
 - Componente CategoryPicker reutilizable
-- Integracion AI categorization test
+- Integracion AI categorization test 
 
+Estado de la fase: Completada
 ---
 
 ## Fase 5: Transactions
@@ -171,6 +148,39 @@ Proporcioname todas las instrucciones, informacion, codigo, comandos, datos, det
 - Attachments y OCR
 - Tags y audit log
 
+Ya implementada la fase 4, vamos a continuar con el desarrollo completo, profesional, avanzado, funcional, completo, sin omisiones, moderno del frontend de la aplicacion fip (financial-intelligence-platform), avancemos con el desarrollo de la siguiente fase completa y avanzada del proyecto por favor:
+
+Fase 5: Transactions
+
+**Duracion:** 5-7 dias
+**Dependencias:** Fase 3, Fase 4
+
+### Objetivos
+- TransactionListPage: tabla virtualizada, filtros (tipo, fecha, categoria, cuenta, busqueda)
+- TransactionCreatePage: formulario completo con selector de cuenta, categoria, tags, fecha
+- TransactionDetailPage: drawer/modal con metadata completa + AI info
+- TransactionEditPage: edicion inline o modal
+- Soft-delete con confirmacion
+- TransferWizard: origen -> destino -> monto -> confirmar
+- Tag management: add/remove con autocomplete
+- Attachment management: upload drag & drop, preview, delete
+- RecurringTransactions CRUD: selector de frecuencia (daily/weekly/biweekly/monthly/quarterly/yearly)
+- Recurring list page
+- OCR upload: drag & drop image, preview extracted data, confirm/correct
+- TransactionSummaryWidget: income/expense/net del periodo
+- Transaction audit log viewer
+- Paginacion con infinite scroll
+
+### Entregables
+- CRUD completo de transacciones
+- Transferencias entre cuentas
+- Transacciones recurrentes
+- Attachments y OCR
+- Tags y audit log
+
+Proporcioname todas las instrucciones, informacion, codigo, comandos, datos, detalles y todo lo necesario para esta siguente fase, no hagas ninguna implementacion ni ningun cambio tu, dame las instrucciones, codigo, detalles y todo lo relativo mas estrategias, ejemplos, etc a mi que yo lo hago por favor. Nota: recuerda siempre leer el docs/frontend-phases.md, el docs/frontend-definitions.md y el docs/frontend-AGENTS.md para que te retroalimentes cuando necesites informacion de cualquier cosa. Y escribir cualquier informacion en el archivo correspondiente a la fase en desarrollo actual por ejemplo frontend-phases/frontend-phase5-guide.md. No omitas nada, piensa en todo y selecciona las mejores opciones, arquitecturas, tecnologias, todo que me sea gratis xfa :). Analiza los endpoints relativos a esta fase en el backend y asi sabes como usarlos en el frontend.
+
+Estado de la fase: 
 ---
 
 ## Fase 6: Incomes

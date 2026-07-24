@@ -8,6 +8,9 @@ import {
   LoginPage, RegisterPage, MFAChallengePage,
   RequestResetPage, ResetPasswordPage, VerifyEmailPage,
   DashboardPage, SettingsPage,
+  AccountListPage, AccountCreatePage, AccountDetailPage,
+  WalletListPage, WalletCreatePage, WalletDetailPage, WalletLiquidityPage,
+  CategoryListPage, CategoryCreatePage, CategoryDetailPage,
 } from './lazy'
 
 export const router = createBrowserRouter([
@@ -87,7 +90,7 @@ export const router = createBrowserRouter([
             path: '/accounts',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Cuentas" />
+                <AccountListPage />
               </SuspenseWrapper>
             ),
           },
@@ -95,7 +98,7 @@ export const router = createBrowserRouter([
             path: '/accounts/new',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Nueva Cuenta" />
+                <AccountCreatePage />
               </SuspenseWrapper>
             ),
           },
@@ -103,7 +106,7 @@ export const router = createBrowserRouter([
             path: '/accounts/:id',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Detalle Cuenta" />
+                <AccountDetailPage />
               </SuspenseWrapper>
             ),
           },
@@ -112,7 +115,7 @@ export const router = createBrowserRouter([
             path: '/wallets',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Wallets" />
+                <WalletListPage />
               </SuspenseWrapper>
             ),
           },
@@ -120,7 +123,7 @@ export const router = createBrowserRouter([
             path: '/wallets/new',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Nuevo Wallet" />
+                <WalletCreatePage />
               </SuspenseWrapper>
             ),
           },
@@ -128,7 +131,15 @@ export const router = createBrowserRouter([
             path: '/wallets/:id',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Detalle Wallet" />
+                <WalletDetailPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/wallets/:id/liquidity',
+            element: (
+              <SuspenseWrapper>
+                <WalletLiquidityPage />
               </SuspenseWrapper>
             ),
           },
@@ -162,7 +173,23 @@ export const router = createBrowserRouter([
             path: '/categories',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Categorias" />
+                <CategoryListPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/categories/new',
+            element: (
+              <SuspenseWrapper>
+                <CategoryCreatePage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/categories/:id',
+            element: (
+              <SuspenseWrapper>
+                <CategoryDetailPage />
               </SuspenseWrapper>
             ),
           },
