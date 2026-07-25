@@ -17,6 +17,11 @@ import {
   SourceListPage, SourceCreatePage, SourceEditPage,
   ScheduleListPage, ScheduleCreatePage,
   RecurringDetectionPage, IrregularDetectionPage,
+  ExpenseListPage, ExpenseCreatePage, ExpenseDetailPage, ExpenseEditPage,
+  ExpenseDashboardPage, TemplateListPage, ServiceListPage, SubscriptionListPage,
+  CreditCardListPage, BillListPage, SplitExpensePage, DuplicateListPage, RecurringCandidatePage,
+  BudgetListPage, BudgetCreatePage, BudgetEditPage, BudgetDetailPage,
+  BudgetSummaryPage, BudgetAlertsPage,
 } from './lazy'
 
 export const router = createBrowserRouter([
@@ -284,19 +289,55 @@ export const router = createBrowserRouter([
           // Expenses
           {
             path: '/expenses',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Gastos" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><ExpenseListPage /></SuspenseWrapper>),
           },
           {
             path: '/expenses/new',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Nuevo Gasto" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><ExpenseCreatePage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/:id',
+            element: (<SuspenseWrapper><ExpenseDetailPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/:id/edit',
+            element: (<SuspenseWrapper><ExpenseEditPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/summary',
+            element: (<SuspenseWrapper><ExpenseDashboardPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/templates',
+            element: (<SuspenseWrapper><TemplateListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/services',
+            element: (<SuspenseWrapper><ServiceListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/subscriptions',
+            element: (<SuspenseWrapper><SubscriptionListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/cards',
+            element: (<SuspenseWrapper><CreditCardListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/cards/:cardId/bills',
+            element: (<SuspenseWrapper><BillListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/split',
+            element: (<SuspenseWrapper><SplitExpensePage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/duplicates',
+            element: (<SuspenseWrapper><DuplicateListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/expenses/recurring',
+            element: (<SuspenseWrapper><RecurringCandidatePage /></SuspenseWrapper>),
           },
           // Goals
           {
@@ -326,27 +367,27 @@ export const router = createBrowserRouter([
           // Budgets
           {
             path: '/budgets',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Presupuestos" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><BudgetListPage /></SuspenseWrapper>),
           },
           {
             path: '/budgets/new',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Nuevo Presupuesto" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><BudgetCreatePage /></SuspenseWrapper>),
           },
           {
             path: '/budgets/:id',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Detalle Presupuesto" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><BudgetDetailPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/budgets/:id/edit',
+            element: (<SuspenseWrapper><BudgetEditPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/budgets/summary',
+            element: (<SuspenseWrapper><BudgetSummaryPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/budgets/alerts',
+            element: (<SuspenseWrapper><BudgetAlertsPage /></SuspenseWrapper>),
           },
           // Cards
           {

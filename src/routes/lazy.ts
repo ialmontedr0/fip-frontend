@@ -49,3 +49,26 @@ export const ScheduleListPage = lazy(() => import('@/features/incomes/pages/Sche
 export const ScheduleCreatePage = lazy(() => import('@/features/incomes/pages/ScheduleCreatePage'))
 export const RecurringDetectionPage = lazy(() => import('@/features/incomes/pages/RecurringDetectionPage'))
 export const IrregularDetectionPage = lazy(() => import('@/features/incomes/pages/IrregularDetectionPage'))
+
+// Expenses
+export const ExpenseListPage = lazy(() => import('@/features/expenses/pages/ExpenseListPage'))
+export const ExpenseCreatePage = lazy(() => import('@/features/expenses/pages/ExpenseCreatePage'))
+export const ExpenseDetailPage = lazy(() => import('@/features/expenses/pages/ExpenseDetailPage'))
+export const ExpenseEditPage = lazy(() => import('@/features/expenses/pages/ExpenseEditPage'))
+export const ExpenseDashboardPage = lazy(() => import('@/features/expenses/pages/ExpenseDashboardPage'))
+export const TemplateListPage = lazy(() => import('@/features/expenses/pages/TemplateListPage'))
+export const ServiceListPage = lazy(() => import('@/features/expenses/pages/ServiceListPage'))
+export const SubscriptionListPage = lazy(() => import('@/features/expenses/pages/SubscriptionListPage'))
+export const CreditCardListPage = lazy(() => import('@/features/expenses/pages/CreditCardListPage'))
+export const BillListPage = lazy(() => import('@/features/expenses/pages/BillListPage'))
+export const SplitExpensePage = lazy(() => import('@/features/expenses/pages/SplitExpensePage'))
+export const DuplicateListPage = lazy(() => import('@/features/expenses/pages/DuplicateListPage'))
+export const RecurringCandidatePage = lazy(() => import('@/features/expenses/pages/RecurringCandidatePage'))
+
+// Budgets
+export const BudgetListPage = lazy(() => import('@/features/budgets/pages/BudgetListPage'))
+export const BudgetCreatePage = lazy(() => import('@/features/budgets/pages/BudgetCreatePage'))
+export const BudgetEditPage = lazy(() => import('@/features/budgets/pages/BudgetEditPage'))
+export const BudgetDetailPage = lazy(() => import('@/features/budgets/pages/BudgetDetailPage'))
+export const BudgetSummaryPage = lazy(() => import('@/features/budgets/pages/BudgetSummaryPage'))
+export const BudgetAlertsPage = lazy(() => import('@/features/budgets/pages/BudgetAlertsPage'))

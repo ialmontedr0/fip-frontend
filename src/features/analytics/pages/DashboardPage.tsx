@@ -4,6 +4,7 @@ import CashFlowChart from '../components/CashFlowChart'
 import NetWorthWidget from '../components/NetWorthWidget'
 import TopCategoriesWidget from '../components/TopCategoriesWidget'
 import SpendingTrendChart from '../components/SpendingTrendChart'
+import BudgetStatusWidget from '../components/BudgetStatusWidget'
 import UpcomingPaymentsWidget from '../components/UpcomingPaymentsWidget'
 import GoalsProgressWidget from '../components/GoalsProgressWidget'
 import ErrorBoundary from '@/components/layout/ErrorBoundary'
@@ -83,6 +84,21 @@ function DashboardPage() {
               />
             </ErrorBoundary>
           </div>
+        </div>
+      </div>
+
+      {/* Presupuestos */}
+      <div>
+        <div className="mb-4 flex items-center gap-3">
+          <div className="h-1 w-6 rounded-full bg-gradient-to-r from-violet-500 to-purple-400" />
+          <h2 className="text-xs font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">
+            Presupuestos
+          </h2>
+        </div>
+        <div style={{ animation: 'fadeIn 0.5s ease-out 0.55s both' }}>
+          <ErrorBoundary>
+            <BudgetStatusWidget />
+          </ErrorBoundary>
         </div>
       </div>
 

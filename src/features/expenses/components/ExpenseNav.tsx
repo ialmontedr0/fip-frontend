@@ -3,17 +3,19 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import {
-  List, BarChart3, Building2, CalendarDays, Repeat, AlertTriangle,
+  List, BarChart3, FileText, Zap, Repeat, CreditCard, Copy, RefreshCw,
   ChevronDown,
 } from 'lucide-react'
 
-const NAV_ITEMS = [
-  { href: '/incomes', label: 'Lista', icon: List },
-  { href: '/incomes/summary', label: 'Resumen', icon: BarChart3 },
-  { href: '/incomes/sources', label: 'Fuentes', icon: Building2 },
-  { href: '/incomes/schedule', label: 'Programacion', icon: CalendarDays },
-  { href: '/incomes/recurring', label: 'Recurrentes', icon: Repeat },
-  { href: '/incomes/irregular', label: 'Irregulares', icon: AlertTriangle },
+const TABS = [
+  { path: '/expenses', label: 'Lista', icon: List },
+  { path: '/expenses/summary', label: 'Resumen', icon: BarChart3 },
+  { path: '/expenses/templates', label: 'Plantillas', icon: FileText },
+  { path: '/expenses/services', label: 'Servicios', icon: Zap },
+  { path: '/expenses/subscriptions', label: 'Suscripciones', icon: Repeat },
+  { path: '/expenses/cards', label: 'Tarjetas', icon: CreditCard },
+  { path: '/expenses/duplicates', label: 'Duplicados', icon: Copy },
+  { path: '/expenses/recurring', label: 'Recurrentes', icon: RefreshCw },
 ]
 
 function ActivePill({ style }: { style: React.CSSProperties }) {
@@ -32,12 +34,12 @@ function DesktopNav() {
   const [pillStyle, setPillStyle] = useState<React.CSSProperties>({ opacity: 0 })
   const [mounted, setMounted] = useState(false)
 
-  const getMatch = (href: string) => {
-    if (href === '/incomes') return location.pathname === '/incomes'
-    return location.pathname.startsWith(href)
+  const isActive = (path: string) => {
+    if (path === '/expenses') return location.pathname === '/expenses'
+    return location.pathname.startsWith(path)
   }
 
-  const activeIndex = NAV_ITEMS.findIndex((item) => getMatch(item.href))
+  const activeIndex = TABS.findIndex((t) => isActive(t.path))
 
   useEffect(() => {
     if (!containerRef.current || activeIndex === -1) return
@@ -60,35 +62,36 @@ function DesktopNav() {
   }, [activeIndex, location.pathname])
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
-      <div ref={containerRef} className="relative flex p-1.5 gap-1">
-        <ActivePill style={pillStyle} />
-        {NAV_ITEMS.map((item, i) => {
-          const Icon = item.icon
-          const active = i === activeIndex
-          return (
-            <button
-              key={item.href}
-              data-nav-item
-              onClick={() => navigate(item.href)}
-              className={cn(
-                'relative z-10 flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-medium transition-all duration-200 select-none',
-                'hover:bg-white/50 dark:hover:bg-gray-700/50',
-                active
-                  ? 'text-gray-900 dark:text-gray-100'
-                  : 'text-gray-500 dark:text-gray-400',
-                mounted && !active && 'hover:scale-[1.02]',
-              )}
-            >
-              <Icon className={cn(
-                'h-4 w-4 transition-transform duration-200',
-                active && 'scale-110 text-primary-600 dark:text-primary-400',
-              )} />
-              <span className="hidden sm:inline">{item.label}</span>
-            </button>
-          )
-        })}
-      </div>
+    <div
+      ref={containerRef}
+      className="relative flex rounded-2xl bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 p-1.5 gap-1 overflow-visible"
+    >
+      <ActivePill style={pillStyle} />
+      {TABS.map((tab, i) => {
+        const Icon = tab.icon
+        const active = i === activeIndex
+        return (
+          <button
+            key={tab.path}
+            data-nav-item
+            onClick={() => navigate(tab.path)}
+            className={cn(
+              'relative z-10 flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-medium transition-all duration-200 select-none',
+              'hover:bg-white/50 dark:hover:bg-gray-700/50',
+              active
+                ? 'text-gray-900 dark:text-gray-100'
+                : 'text-gray-500 dark:text-gray-400',
+              mounted && !active && 'hover:scale-[1.02]',
+            )}
+          >
+            <Icon className={cn(
+              'h-4 w-4 transition-transform duration-200',
+              active && 'scale-110 text-primary-600 dark:text-primary-400',
+            )} />
+            <span className="hidden sm:inline">{tab.label}</span>
+          </button>
+        )
+      })}
     </div>
   )
 }
@@ -99,13 +102,13 @@ function MobileSelect() {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
-  const getMatch = (href: string) => {
-    if (href === '/incomes') return location.pathname === '/incomes'
-    return location.pathname.startsWith(href)
+  const isActive = (path: string) => {
+    if (path === '/expenses') return location.pathname === '/expenses'
+    return location.pathname.startsWith(path)
   }
 
-  const activeItem = NAV_ITEMS.find((item) => getMatch(item.href)) || NAV_ITEMS[0]
-  const Icon = activeItem.icon
+  const activeTab = TABS.find((t) => isActive(t.path)) || TABS[0]
+  const Icon = activeTab.icon
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -125,7 +128,7 @@ function MobileSelect() {
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-500/10">
             <Icon className="h-3.5 w-3.5 text-primary-600 dark:text-primary-400" />
           </div>
-          <span>{activeItem.label}</span>
+          <span>{activeTab.label}</span>
         </div>
         <ChevronDown className={cn('h-4 w-4 text-gray-400 transition-transform duration-200', open && 'rotate-180')} />
       </button>
@@ -134,13 +137,13 @@ function MobileSelect() {
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
           <div className="absolute left-0 right-0 top-full mt-1.5 z-40 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl backdrop-blur-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-            {NAV_ITEMS.map((item) => {
-              const active = getMatch(item.href)
-              const ItemIcon = item.icon
+            {TABS.map((tab) => {
+              const active = isActive(tab.path)
+              const TabIcon = tab.icon
               return (
                 <button
-                  key={item.href}
-                  onClick={() => { navigate(item.href); setOpen(false) }}
+                  key={tab.path}
+                  onClick={() => { navigate(tab.path); setOpen(false) }}
                   className={cn(
                     'flex w-full items-center gap-3 px-4 py-3 text-sm font-medium transition-colors',
                     active
@@ -152,9 +155,9 @@ function MobileSelect() {
                     'flex h-6 w-6 items-center justify-center rounded-lg',
                     active ? 'bg-primary-100 dark:bg-primary-500/20' : 'bg-gray-100 dark:bg-gray-700/50',
                   )}>
-                    <ItemIcon className="h-3.5 w-3.5" />
+                    <TabIcon className="h-3.5 w-3.5" />
                   </div>
-                  <span>{item.label}</span>
+                  <span>{tab.label}</span>
                   {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary-500" />}
                 </button>
               )
@@ -166,7 +169,7 @@ function MobileSelect() {
   )
 }
 
-export default function IncomeNav() {
+export default function ExpenseNav() {
   const isDesktop = useMediaQuery('(min-width: 1024px)')
 
   return (

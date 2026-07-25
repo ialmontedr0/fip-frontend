@@ -172,38 +172,11 @@ Estado de la fase: Completada
 - Programacion y proyeccion
 - Analytics de ingresos
 
-Ya implementada la fase 5, vamos a continuar con el desarrollo completo, profesional, avanzado, funcional, completo, sin omisiones, moderno del frontend de la aplicacion fip (financial-intelligence-platform), avancemos con el desarrollo de la siguiente fase completa y avanzada del proyecto por favor:
-
-Fase 6: Incomes
-
-### Objetivos
-- IncomeListPage: lista con indicadores de tipo (salary/freelance/etc.), estabilidad
-- IncomeCreatePage: formulario con source selector, stability selector, tax fields
-- IncomeSource CRUD (employers, clients, etc.)
-- IncomeScheduling: fechas esperadas, metodos de proyeccion, marcar como recibido
-- IncomeSummaryDashboard: total, promedio, por tipo
-- IncomeTrendsChart: linea mensual
-- IncomeForecastVisualization: proyeccion 6 meses
-- RecurringIncomeDetectionResults
-- IrregularIncomeIdentification
-- BatchStatusUpdates
-- Stability badges color-coded
-
-### Entregables
-- Gestion completa de ingresos
-- Fuentes de ingresos
-- Programacion y proyeccion
-- Analytics de ingresos
-
-Proporcioname todas las instrucciones, informacion, codigo, comandos, datos, detalles y todo lo necesario para esta siguente fase, no hagas ninguna implementacion ni ningun cambio tu, dame las instrucciones, codigo, detalles y todo lo relativo mas estrategias, ejemplos, etc a mi que yo lo hago por favor. Nota: recuerda siempre leer el docs/frontend-phases.md, el docs/frontend-definitions.md y el docs/frontend-AGENTS.md para que te retroalimentes cuando necesites informacion de cualquier cosa. Y escribir cualquier informacion en el archivo correspondiente a la fase en desarrollo actual por ejemplo frontend-phases/frontend-phase6-guide.md. No omitas nada, piensa en todo y selecciona las mejores opciones, arquitecturas, tecnologias, diseno moderno, profesional, avanzado y todo que me sea gratis xfa :). Analiza los endpoints relativos a esta fase en el backend y asi sabes como usarlos en el frontend.
-
-Estado de la fase: 
+Estado de la fase: Completada
 ---
 
 ## Fase 7: Expenses
 
-**Duracion:** 5-7 dias
-**Dependencias:** Fase 5
 
 ### Objetivos
 - ExpenseListPage: lista con prioridades, colores de categoria
@@ -226,12 +199,34 @@ Estado de la fase:
 - Tarjetas de credito y facturas
 - Dashboard de gastos
 
+Ya implementada la fase 7, vamos a continuar con el desarrollo completo, profesional, avanzado, funcional, completo, sin omisiones, moderno del frontend de la aplicacion fip (financial-intelligence-platform), avancemos con el desarrollo de la siguiente fase completa y avanzada del proyecto por favor:
+
+Fase 8: Budgets
+
+
+### Objetivos
+- BudgetListPage: barras de gasto con colores de estado (under=green, near=yellow, over=red)
+- BudgetCreatePage: selector de tipo (total/category/account), periodo, category/account picker
+- BudgetDetailPage: spent vs remaining, daily burn rate, projected overspend
+- BudgetSummaryDashboard: utilization %, over/near counts
+- AlertManagement: view alerts, mark read/dismissed
+- Auto-adjust toggle + execution
+- Rollover toggle
+- Alert threshold slider
+- Strategy selector
+
+### Entregables
+- Gestion completa de presupuestos
+- Alertas de presupuesto
+- Auto-ajuste y rollover
+
+Proporcioname todas las instrucciones, informacion, codigo, comandos, datos, detalles y todo lo necesario para esta siguente fase, no hagas ninguna implementacion ni ningun cambio tu, dame las instrucciones, codigo, detalles y todo lo relativo mas estrategias, ejemplos, etc a mi que yo lo hago por favor. Nota: recuerda siempre leer el docs/frontend-phases.md, el docs/frontend-definitions.md y el docs/frontend-AGENTS.md para que te retroalimentes cuando necesites informacion de cualquier cosa. Y escribir cualquier informacion en el archivo correspondiente a la fase en desarrollo actual por ejemplo frontend-phases/frontend-phase8-guide.md. No omitas nada, piensa en todo y selecciona las mejores opciones, arquitecturas, tecnologias, diseno moderno, profesional, avanzado y todo que me sea gratis xfa :). Analiza los endpoints relativos a esta fase en el backend todos los casos de uso y asi sabes como usarlos en el frontend.
+
+Estado de la fase: Completada
 ---
 
 ## Fase 8: Budgets
 
-**Duracion:** 3-4 dias
-**Dependencias:** Fase 5, Fase 6, Fase 7
 
 ### Objetivos
 - BudgetListPage: barras de gasto con colores de estado (under=green, near=yellow, over=red)
