@@ -13,6 +13,10 @@ import {
   CategoryListPage, CategoryCreatePage, CategoryDetailPage,
   TransactionListPage, TransactionCreatePage, TransactionDetailPage, TransactionEditPage,
   RecurringListPage, RecurringCreatePage, RecurringDetailPage,
+  IncomeListPage, IncomeCreatePage, IncomeDetailPage, IncomeEditPage, IncomeSummaryPage,
+  SourceListPage, SourceCreatePage, SourceEditPage,
+  ScheduleListPage, ScheduleCreatePage,
+  RecurringDetectionPage, IrregularDetectionPage,
 } from './lazy'
 
 export const router = createBrowserRouter([
@@ -231,19 +235,51 @@ export const router = createBrowserRouter([
           // Incomes
           {
             path: '/incomes',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Ingresos" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><IncomeListPage /></SuspenseWrapper>),
           },
           {
             path: '/incomes/new',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Nuevo Ingreso" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><IncomeCreatePage /></SuspenseWrapper>),
+          },
+          {
+            path: '/incomes/:id',
+            element: (<SuspenseWrapper><IncomeDetailPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/incomes/:id/edit',
+            element: (<SuspenseWrapper><IncomeEditPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/incomes/summary',
+            element: (<SuspenseWrapper><IncomeSummaryPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/incomes/sources',
+            element: (<SuspenseWrapper><SourceListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/incomes/sources/new',
+            element: (<SuspenseWrapper><SourceCreatePage /></SuspenseWrapper>),
+          },
+          {
+            path: '/incomes/sources/:id/edit',
+            element: (<SuspenseWrapper><SourceEditPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/incomes/schedule',
+            element: (<SuspenseWrapper><ScheduleListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/incomes/schedule/new',
+            element: (<SuspenseWrapper><ScheduleCreatePage /></SuspenseWrapper>),
+          },
+          {
+            path: '/incomes/recurring',
+            element: (<SuspenseWrapper><RecurringDetectionPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/incomes/irregular',
+            element: (<SuspenseWrapper><IrregularDetectionPage /></SuspenseWrapper>),
           },
           // Expenses
           {

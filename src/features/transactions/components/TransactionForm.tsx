@@ -29,6 +29,7 @@ const transactionSchema = z.object({
   status: z.string().default('completed'),
   notes: z.string().max(1000).optional().or(z.literal('')),
   tags: z.array(z.string()).optional(),
+  adjustment_operation: z.enum(['add', 'subtract']).optional(),
 })
 
 interface Props {
@@ -201,6 +202,7 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
       status: defaultValues.status,
       notes: defaultValues.notes || '',
       tags: defaultValues.tags || [],
+      adjustment_operation: (defaultValues as any).adjustment_operation || 'subtract',
     } : {
       transaction_type: 'expense',
       account_id: '',
@@ -213,10 +215,12 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
       status: 'completed',
       notes: '',
       tags: [],
+      adjustment_operation: 'subtract',
     },
   })
 
   const transactionType = watch('transaction_type')
+  const adjustmentOp = watch('adjustment_operation')
   const tags = watch('tags') || []
 
   const handleFormSubmit = (data: Record<string, unknown>) => {
@@ -227,6 +231,11 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
       category_id: data.category_id || null,
       subcategory_id: data.subcategory_id || null,
       notes: data.notes || null,
+    }
+    if (transactionType === 'adjustment') {
+      payload.adjustment_operation = data.adjustment_operation || 'subtract'
+    } else {
+      delete payload.adjustment_operation
     }
     if (isEdit) {
       delete payload.tags
@@ -279,6 +288,39 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
           <p className="mt-1.5 text-xs text-red-500">{errors.transaction_type.message}</p>
         )}
       </div>
+
+      {transactionType === 'adjustment' && (
+        <div className="animate-fade-in">
+          <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            Tipo de Ajuste
+          </label>
+          <div className="flex gap-2">
+            {[
+              { value: 'subtract', label: 'Restar del balance', icon: TrendingDown, color: 'text-red-500' },
+              { value: 'add', label: 'Sumar al balance', icon: TrendingUp, color: 'text-emerald-500' },
+            ].map((opt) => {
+              const isSelected = (adjustmentOp || 'subtract') === opt.value
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setValue('adjustment_operation', opt.value as 'add' | 'subtract')}
+                  className={cn(
+                    'flex items-center gap-2 rounded-xl border-2 px-4 py-2.5 text-sm font-medium transition-all flex-1 justify-center',
+                    isSelected
+                      ? 'border-current bg-current/5 shadow-sm scale-[1.02]'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 hover:bg-white/50 dark:hover:border-gray-600',
+                    opt.color,
+                  )}
+                >
+                  <opt.icon className="h-4 w-4" />
+                  {opt.label}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Cuenta */}
       <div>

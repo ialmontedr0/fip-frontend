@@ -35,3 +35,17 @@ export const TransactionEditPage = lazy(() => import('@/features/transactions/pa
 export const RecurringListPage = lazy(() => import('@/features/transactions/pages/RecurringListPage'))
 export const RecurringCreatePage = lazy(() => import('@/features/transactions/pages/RecurringCreatePage'))
 export const RecurringDetailPage = lazy(() => import('@/features/transactions/pages/RecurringDetailPage'))
+
+// Incomes
+export const IncomeListPage = lazy(() => import('@/features/incomes/pages/IncomeListPage'))
+export const IncomeCreatePage = lazy(() => import('@/features/incomes/pages/IncomeCreatePage'))
+export const IncomeDetailPage = lazy(() => import('@/features/incomes/pages/IncomeDetailPage'))
+export const IncomeEditPage = lazy(() => import('@/features/incomes/pages/IncomeEditPage'))
+export const IncomeSummaryPage = lazy(() => import('@/features/incomes/pages/IncomeSummaryPage'))
+export const SourceListPage = lazy(() => import('@/features/incomes/pages/SourceListPage'))
+export const SourceCreatePage = lazy(() => import('@/features/incomes/pages/SourceCreatePage'))
+export const SourceEditPage = lazy(() => import('@/features/incomes/pages/SourceEditPage'))
+export const ScheduleListPage = lazy(() => import('@/features/incomes/pages/ScheduleListPage'))
+export const ScheduleCreatePage = lazy(() => import('@/features/incomes/pages/ScheduleCreatePage'))
+export const RecurringDetectionPage = lazy(() => import('@/features/incomes/pages/RecurringDetectionPage'))
+export const IrregularDetectionPage = lazy(() => import('@/features/incomes/pages/IrregularDetectionPage'))

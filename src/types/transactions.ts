@@ -45,6 +45,7 @@ export interface CreateTransactionRequest {
   notes?: string | null
   source?: string
   tags?: string[] | null
+  adjustment_operation?: 'add' | 'subtract'
 }
 
 export interface UpdateTransactionRequest {

@@ -41,5 +41,12 @@ function applyTheme(theme: Theme) {
 }
 
 // Inicializar tema al cargar
-const savedTheme = (localStorage.getItem('fip-theme') as Theme) || 'light'
-applyTheme(savedTheme)
+try {
+  const raw = localStorage.getItem('fip-theme')
+  if (raw) {
+    const parsed = JSON.parse(raw)
+    applyTheme(parsed?.state?.theme === 'dark' ? 'dark' : 'light')
+  }
+} catch {
+  applyTheme('light')
+}

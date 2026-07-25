@@ -5,8 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatCurrency(amount: number | string, currency: string = 'DOP'): string {
+export function formatCurrency(amount: number | string | null | undefined, currency: string = 'DOP'): string {
+  if (amount === null || amount === undefined) return '$0.00'
   const num = typeof amount === 'string' ? parseFloat(amount) : amount
+  if (isNaN(num)) return '$0.00'
   return new Intl.NumberFormat('es-DO', {
     style: 'currency',
     currency,
