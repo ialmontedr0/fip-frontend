@@ -103,3 +103,24 @@ export const GoalSummaryPage = lazy(() => import('@/features/goals/pages/GoalSum
 export const GoalSimulationPage = lazy(() => import('@/features/goals/pages/GoalSimulationPage'))
 export const GoalSimulationListPage = lazy(() => import('@/features/goals/pages/GoalSimulationListPage'))
 export const GoalSimulationDetailPage = lazy(() => import('@/features/goals/pages/GoalSimulationDetailPage'))
+
+// AI
+export const AIDashboardPage = lazy(() => import('@/features/ai/pages/AIDashboardPage'))
+export const AIClassifyPage = lazy(() => import('@/features/ai/pages/AIClassifyPage'))
+export const AIPredictPage = lazy(() => import('@/features/ai/pages/AIPredictPage'))
+export const AIAnomaliesPage = lazy(() => import('@/features/ai/pages/AIAnomaliesPage'))
+export const AIRecommendationsPage = lazy(() => import('@/features/ai/pages/AIRecommendationsPage'))
+export const AIHabitsPage = lazy(() => import('@/features/ai/pages/AIHabitsPage'))
+export const AIRisksPage = lazy(() => import('@/features/ai/pages/AIRisksPage'))
+export const AISavingsPage = lazy(() => import('@/features/ai/pages/AISavingsPage'))
+export const AISavingsSimulatorPage = lazy(() => import('@/features/ai/pages/AISavingsSimulatorPage'))
+export const AIModelsPage = lazy(() => import('@/features/ai/pages/AIModelsPage'))
+
+// Automations
+export const AutomationListPage = lazy(() => import('@/features/automations/pages/AutomationListPage'))
+export const AutomationCreatePage = lazy(() => import('@/features/automations/pages/AutomationCreatePage'))
+export const AutomationDetailPage = lazy(() => import('@/features/automations/pages/AutomationDetailPage'))
+
+// Notifications
+export const NotificationsPage = lazy(() => import('@/features/notifications/pages/NotificationsPage'))
+export const NotificationPreferencesPage = lazy(() => import('@/features/notifications/pages/NotificationPreferencesPage'))

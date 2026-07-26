@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/stores/ui-store'
@@ -22,10 +23,21 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   X,
+  Tags as TagsIcon,
+  TrendingUp as TrendingUpIcon,
+  AlertTriangle,
+  Lightbulb,
+  Activity,
+  Shield as ShieldIcon,
+  Cpu,
 } from 'lucide-react'
 
-const navigation = [
+type NavItem = { name: string; href: string; icon: React.ComponentType<{ className?: string }> }
+type NavSection = { section: string; items: (NavItem | { name: string; icon: React.ComponentType<{ className?: string }>; children: NavItem[] })[] }
+
+const navigation: NavSection[] = [
   {
     section: 'Principal',
     items: [{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }],
@@ -59,7 +71,20 @@ const navigation = [
     section: 'Inteligencia',
     items: [
       { name: 'Analitica', href: '/analytics', icon: BarChart3 },
-      { name: 'IA', href: '/ai', icon: Brain },
+      {
+        name: 'IA', icon: Brain,
+        children: [
+          { name: 'Dashboard', href: '/ai/dashboard', icon: LayoutDashboard },
+          { name: 'Clasificar', href: '/ai/classify', icon: TagsIcon },
+          { name: 'Predecir', href: '/ai/predict', icon: TrendingUpIcon },
+          { name: 'Anomalias', href: '/ai/anomalies', icon: AlertTriangle },
+          { name: 'Recomendaciones', href: '/ai/recommendations', icon: Lightbulb },
+          { name: 'Habitos', href: '/ai/habits', icon: Activity },
+          { name: 'Riesgos', href: '/ai/risks', icon: ShieldIcon },
+          { name: 'Ahorros', href: '/ai/savings', icon: PiggyBank },
+          { name: 'Modelos', href: '/ai/models', icon: Cpu },
+        ],
+      },
       { name: 'Automatizaciones', href: '/automations', icon: Bot },
     ],
   },
@@ -74,6 +99,56 @@ const navigation = [
     ],
   },
 ]
+
+function NavSubmenu({ item, sidebarOpen, mobile, onClose }: { item: { name: string; icon: React.ComponentType<{ className?: string }>; children: NavItem[] }; sidebarOpen: boolean; mobile?: boolean; onClose?: () => void }) {
+  const [open, setOpen] = useState(true)
+  const Icon = item.icon
+
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={() => sidebarOpen && setOpen(!open)}
+        className={cn(
+          'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+          'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800',
+          !sidebarOpen && 'justify-center',
+        )}
+      >
+        <Icon className="h-5 w-5 flex-shrink-0" />
+        {sidebarOpen && (
+          <>
+            <span className="flex-1 text-left">{item.name}</span>
+            <ChevronDown className={cn('h-4 w-4 transition-transform', open && 'rotate-180')} />
+          </>
+        )}
+      </button>
+      {sidebarOpen && open && (
+        <ul className="ml-3 mt-1 space-y-0.5 border-l-2 border-purple-200 dark:border-purple-800 pl-3">
+          {item.children.map((child) => (
+            <li key={child.name}>
+              <NavLink
+                to={child.href}
+                onClick={mobile ? onClose : undefined}
+                className={({ isActive }) =>
+                  cn(
+                    'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
+                      : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800',
+                  )
+                }
+              >
+                <child.icon className="h-4 w-4 flex-shrink-0" />
+                <span>{child.name}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
+  )
+}
 
 interface SidebarProps {
   mobile?: boolean
@@ -126,26 +201,31 @@ function Sidebar({ mobile, onClose }: SidebarProps) {
               </p>
             )}
             <ul className="space-y-1">
-              {section.items.map((item) => (
-                <li key={item.name}>
-                  <NavLink
-                    to={item.href}
-                    onClick={mobile ? onClose : undefined}
-                    className={({ isActive }) =>
-                      cn(
-                        'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                        isActive
-                          ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
-                          : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800',
-                        !sidebarOpen && 'justify-center',
-                      )
-                    }
-                  >
-                    <item.icon className="h-5 w-5 flex-shrink-0" />
-                    {sidebarOpen && <span>{item.name}</span>}
-                  </NavLink>
-                </li>
-              ))}
+              {section.items.map((item) => {
+                if ('children' in item) {
+                  return <NavSubmenu key={item.name} item={item} sidebarOpen={sidebarOpen} mobile={mobile} onClose={onClose} />
+                }
+                return (
+                  <li key={item.name}>
+                    <NavLink
+                      to={item.href}
+                      onClick={mobile ? onClose : undefined}
+                      className={({ isActive }) =>
+                        cn(
+                          'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                          isActive
+                            ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
+                            : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800',
+                          !sidebarOpen && 'justify-center',
+                        )
+                      }
+                    >
+                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      {sidebarOpen && <span>{item.name}</span>}
+                    </NavLink>
+                  </li>
+                )
+              })}
             </ul>
           </div>
         ))}

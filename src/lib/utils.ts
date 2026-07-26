@@ -36,6 +36,23 @@ export function formatDate(
   })
 }
 
+export function formatRelativeTime(dateStr: string | Date | null | undefined): string {
+  if (!dateStr) return '-'
+  const d = typeof dateStr === 'string' ? new Date(dateStr) : dateStr
+  const diff = Date.now() - d.getTime()
+  const minutes = Math.floor(diff / 60000)
+  const hours = Math.floor(diff / 3600000)
+  const days = Math.floor(diff / 86400000)
+
+  if (minutes < 1) return 'Ahora'
+  if (minutes < 60) return `hace ${minutes} min`
+  if (hours < 24) return `hace ${hours}h`
+  if (days < 7) return `hace ${days}d`
+  return d.toLocaleDateString('es-DO', {
+    day: 'numeric', month: 'short',
+  })
+}
+
 export function debounce<T extends (...args: unknown[]) => unknown>(
   fn: T,
   delay: number,

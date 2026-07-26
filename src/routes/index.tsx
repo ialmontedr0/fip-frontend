@@ -30,6 +30,11 @@ import {
   LoanListPage, LoanCreatePage, LoanDetailPage,
   LoanEditPage, LoanAmortizationPage, LoanPaymentPage,
   LoanPaymentHistoryPage, LoanSimulatorPage,
+  AIDashboardPage, AIClassifyPage, AIPredictPage,
+  AIAnomaliesPage, AIRecommendationsPage, AIHabitsPage,
+  AIRisksPage, AISavingsPage, AISavingsSimulatorPage, AIModelsPage,
+  AutomationListPage, AutomationCreatePage, AutomationDetailPage,
+  NotificationsPage, NotificationPreferencesPage,
 } from './lazy'
 
 export const router = createBrowserRouter([
@@ -483,35 +488,75 @@ export const router = createBrowserRouter([
           // AI
           {
             path: '/ai',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="IA" />
-              </SuspenseWrapper>
-            ),
+            element: <Navigate to="/ai/dashboard" replace />,
+          },
+          {
+            path: '/ai/dashboard',
+            element: (<SuspenseWrapper><AIDashboardPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/ai/classify',
+            element: (<SuspenseWrapper><AIClassifyPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/ai/predict',
+            element: (<SuspenseWrapper><AIPredictPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/ai/anomalies',
+            element: (<SuspenseWrapper><AIAnomaliesPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/ai/recommendations',
+            element: (<SuspenseWrapper><AIRecommendationsPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/ai/habits',
+            element: (<SuspenseWrapper><AIHabitsPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/ai/risks',
+            element: (<SuspenseWrapper><AIRisksPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/ai/savings',
+            element: (<SuspenseWrapper><AISavingsPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/ai/savings/simulate',
+            element: (<SuspenseWrapper><AISavingsSimulatorPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/ai/models',
+            element: (<SuspenseWrapper><AIModelsPage /></SuspenseWrapper>),
           },
           // Automations
           {
             path: '/automations',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Automatizaciones" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><AutomationListPage /></SuspenseWrapper>),
           },
           {
             path: '/automations/new',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Nueva Automatizacion" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><AutomationCreatePage /></SuspenseWrapper>),
+          },
+          {
+            path: '/automations/:id',
+            element: (<SuspenseWrapper><AutomationDetailPage /></SuspenseWrapper>),
           },
           // Notifications
           {
             path: '/notifications',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Notificaciones" />
+                <NotificationsPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/settings/notifications',
+            element: (
+              <SuspenseWrapper>
+                <NotificationPreferencesPage />
               </SuspenseWrapper>
             ),
           },

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import Dropdown from '@/components/ui/Dropdown'
+import NotificationDrawer from '@/features/notifications/components/NotificationDrawer'
 import { useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
 
@@ -41,6 +42,7 @@ function Header() {
 
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [notifDrawerOpen, setNotifDrawerOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -139,7 +141,7 @@ function Header() {
 
         {/* Notifications */}
         <button
-          onClick={() => navigate('/notifications')}
+          onClick={() => setNotifDrawerOpen(true)}
           className="relative rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           aria-label="Notificaciones"
         >
@@ -154,6 +156,11 @@ function Header() {
             </Badge>
           )}
         </button>
+
+        <NotificationDrawer
+          open={notifDrawerOpen}
+          onClose={() => setNotifDrawerOpen(false)}
+        />
 
         {/* User dropdown */}
         <Dropdown
