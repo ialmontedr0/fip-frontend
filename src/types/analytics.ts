@@ -130,10 +130,54 @@ export interface GoalProgress {
 }
 
 // ================================================================================
+// Cash flow by account
+// ================================================================================
+
+export interface CashFlowByAccountResponse {
+  start: string
+  end: string
+  accounts: CashFlowByAccountItem[]
+}
+
+export interface CashFlowByAccountItem {
+  account: string
+  account_type: string
+  income: number
+  expenses: number
+  net_flow: number
+}
+
+// ================================================================================
+// Spending heatmap
+// ================================================================================
+
+export interface SpendingHeatmapResponse {
+  granularity: string
+  start: string
+  end: string
+  data: SpendingHeatmapItem[]
+  max_value: number
+  days: string[]
+  months: string[]
+}
+
+export interface SpendingHeatmapItem {
+  day_of_week: number
+  day_name: string
+  month: number
+  month_name: string
+  total: number
+}
+
+// ================================================================================
 // Query params
 // ================================================================================
 
 export interface DateRangeParams {
   start_date?: string
   end_date?: string
+}
+
+export interface CategoryBreakdownParams extends DateRangeParams {
+  transaction_type?: string
 }

@@ -1,0 +1,41 @@
+import { cn } from '@/lib/utils'
+
+interface AutoContributeToggleProps {
+  value: boolean
+  onChange: (value: boolean) => void
+  disabled?: boolean
+}
+
+export default function AutoContributeToggle({ value, onChange, disabled = false }: AutoContributeToggleProps) {
+  return (
+    <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50">
+      <div className="space-y-0.5">
+        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          Auto-Contribuir
+        </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Contribuir automaticamente desde ingresos
+        </p>
+      </div>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => onChange(!value)}
+        className={cn(
+          'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none',
+          value ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-gray-600',
+          disabled && 'opacity-50 cursor-not-allowed',
+        )}
+        role="switch"
+        aria-checked={value}
+      >
+        <span
+          className={cn(
+            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+            value ? 'translate-x-5' : 'translate-x-0',
+          )}
+        />
+      </button>
+    </div>
+  )
+}

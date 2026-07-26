@@ -46,6 +46,8 @@ export interface CreateTransactionRequest {
   source?: string
   tags?: string[] | null
   adjustment_operation?: 'add' | 'subtract'
+  credit_card_id?: string | null
+  debit_card_id?: string | null
 }
 
 export interface UpdateTransactionRequest {

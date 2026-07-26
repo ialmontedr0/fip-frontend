@@ -8,7 +8,7 @@ export default function AccountCreatePage() {
   const createAccount = useCreateAccount()
 
   const handleSubmit = async (data: AccountFormData) => {
-    await createAccount.mutateAsync({
+    const result = await createAccount.mutateAsync({
       name: data.name,
       account_type: data.account_type,
       currency_code: data.currency_code,
@@ -21,7 +21,7 @@ export default function AccountCreatePage() {
       include_in_net_worth: data.include_in_net_worth,
       include_in_totals: data.include_in_totals,
     })
-    navigate('/accounts')
+    navigate(`/accounts/${result.data.id}`)
   }
 
   return (

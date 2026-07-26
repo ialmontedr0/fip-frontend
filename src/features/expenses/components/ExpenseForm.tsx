@@ -3,14 +3,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Loader2, DollarSign, Calendar, FileText, AlertTriangle, Tag } from 'lucide-react'
 import { Button, Input } from '@/components/ui'
-import AccountPicker from '@/features/accounts/components/AccountPicker'
+import FundingSourcePicker from '@/features/accounts/components/FundingSourcePicker'
 import CategoryPicker from '@/features/categories/components/CategoryPicker'
 import { cn } from '@/lib/utils'
 import { PRIORITY_OPTIONS } from '../constants'
 import type { CreateExpenseRequest, ExpenseResponse } from '@/types/expenses'
 
 const schema = z.object({
-  account_id: z.string().min(1, 'Cuenta es requerida'),
+  account_id: z.string().optional().nullable(),
   amount: z.string().min(1, 'Monto es requerido').refine((v) => !isNaN(Number(v)) && Number(v) > 0, 'Monto debe ser mayor que 0'),
   currency_code: z.string().optional(),
   description: z.string().min(1, 'Descripcion es requerida').max(500),
@@ -25,6 +25,7 @@ const schema = z.object({
   service_id: z.string().optional().nullable(),
   subscription_id: z.string().optional().nullable(),
   credit_card_id: z.string().optional().nullable(),
+  debit_card_id: z.string().optional().nullable(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -41,6 +42,7 @@ export default function ExpenseForm({ mode, defaultValues, onSubmit, isSubmittin
     resolver: zodResolver(schema),
     defaultValues: defaultValues ? {
       account_id: defaultValues.account_id,
+      credit_card_id: defaultValues.credit_card_id,
       amount: defaultValues.amount,
       currency_code: defaultValues.currency_code,
       description: defaultValues.description,
@@ -62,6 +64,9 @@ export default function ExpenseForm({ mode, defaultValues, onSubmit, isSubmittin
   const submit = async (data: FormData) => {
     await onSubmit({
       ...data,
+      account_id: data.account_id || null,
+      credit_card_id: data.credit_card_id || null,
+      debit_card_id: data.debit_card_id || null,
       amount: data.amount,
       notes: data.notes || null,
       category_id: data.category_id || null,
@@ -126,13 +131,20 @@ export default function ExpenseForm({ mode, defaultValues, onSubmit, isSubmittin
 
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-            Cuenta <span className="text-red-400">*</span>
+            Origen del Gasto <span className="text-red-400">*</span>
           </label>
-          <AccountPicker
-            value={watch('account_id')}
-            onChange={(id) => setValue('account_id', id, { shouldValidate: true })}
+          <FundingSourcePicker
+            value={{
+              account_id: watch('account_id') || undefined,
+              credit_card_id: watch('credit_card_id') || undefined,
+              debit_card_id: watch('debit_card_id') || undefined,
+            }}
+            onChange={(source) => {
+              setValue('account_id', source.account_id || null)
+              setValue('credit_card_id', source.credit_card_id || null)
+              setValue('debit_card_id', source.debit_card_id || null)
+            }}
           />
-          {errors.account_id && <p className="text-xs text-red-500">{errors.account_id.message}</p>}
         </div>
 
         <div className="space-y-1.5">

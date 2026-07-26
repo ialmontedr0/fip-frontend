@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useTransactionInfinite } from '@/features/transactions/hooks/useTransactions'
 import TransactionCard from '@/features/transactions/components/TransactionCard'
+import DebitCardSection from '@/features/debitCards/components/DebitCardSection'
 
 export default function AccountDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -259,6 +260,13 @@ export default function AccountDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Debit Cards */}
+      {account?.account_type === 'bank' || account?.account_type === 'checking' ? (
+        <div className="animate-fade-in" style={{ animationDelay: '0.25s', animationFillMode: 'both' }}>
+          <DebitCardSection accountId={account.id} />
+        </div>
+      ) : null}
 
       {/* Recent Transactions */}
       <div className={cn(

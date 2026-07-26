@@ -24,6 +24,7 @@ export interface CreateExpenseRequest {
   service_id?: string | null
   subscription_id?: string | null
   credit_card_id?: string | null
+  debit_card_id?: string | null
 }
 
 export interface ExpenseResponse {

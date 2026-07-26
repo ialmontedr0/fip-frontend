@@ -7,7 +7,7 @@ import { PlaceholderPage, SuspenseWrapper } from '@/components/layout/RouteHelpe
 import {
   LoginPage, RegisterPage, MFAChallengePage,
   RequestResetPage, ResetPasswordPage, VerifyEmailPage,
-  DashboardPage, SettingsPage,
+  DashboardPage, AnalyticsPage, SettingsPage,
   AccountListPage, AccountCreatePage, AccountDetailPage,
   WalletListPage, WalletCreatePage, WalletDetailPage, WalletLiquidityPage,
   CategoryListPage, CategoryCreatePage, CategoryDetailPage,
@@ -22,6 +22,14 @@ import {
   CreditCardListPage, BillListPage, SplitExpensePage, DuplicateListPage, RecurringCandidatePage,
   BudgetListPage, BudgetCreatePage, BudgetEditPage, BudgetDetailPage,
   BudgetSummaryPage, BudgetAlertsPage,
+  GoalListPage, GoalCreatePage, GoalDetailPage, GoalEditPage,
+  GoalSummaryPage, GoalSimulationPage, GoalSimulationListPage,
+  GoalSimulationDetailPage,
+  CardListPage, CardCreatePage, CardEditPage, CardDetailPage,
+  CardBillListPage, CardBillPayPage, CardSpendingLimitsPage, CardAlertsPage,
+  LoanListPage, LoanCreatePage, LoanDetailPage,
+  LoanEditPage, LoanAmortizationPage, LoanPaymentPage,
+  LoanPaymentHistoryPage, LoanSimulatorPage,
 } from './lazy'
 
 export const router = createBrowserRouter([
@@ -342,27 +350,35 @@ export const router = createBrowserRouter([
           // Goals
           {
             path: '/goals',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Metas" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><GoalListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/goals/summary',
+            element: (<SuspenseWrapper><GoalSummaryPage /></SuspenseWrapper>),
           },
           {
             path: '/goals/new',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Nueva Meta" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><GoalCreatePage /></SuspenseWrapper>),
           },
           {
             path: '/goals/:id',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Detalle Meta" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><GoalDetailPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/goals/:id/edit',
+            element: (<SuspenseWrapper><GoalEditPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/goals/:id/simulate',
+            element: (<SuspenseWrapper><GoalSimulationPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/goals/:id/simulations',
+            element: (<SuspenseWrapper><GoalSimulationListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/goals/:id/simulations/:simId',
+            element: (<SuspenseWrapper><GoalSimulationDetailPage /></SuspenseWrapper>),
           },
           // Budgets
           {
@@ -392,51 +408,75 @@ export const router = createBrowserRouter([
           // Cards
           {
             path: '/cards',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Tarjetas" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><CardListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/cards/new',
+            element: (<SuspenseWrapper><CardCreatePage /></SuspenseWrapper>),
           },
           {
             path: '/cards/:id',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Detalle Tarjeta" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><CardDetailPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/cards/:id/edit',
+            element: (<SuspenseWrapper><CardEditPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/cards/:id/bills',
+            element: (<SuspenseWrapper><CardBillListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/cards/:id/bills/:billId/pay',
+            element: (<SuspenseWrapper><CardBillPayPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/cards/:id/limits',
+            element: (<SuspenseWrapper><CardSpendingLimitsPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/cards/alerts',
+            element: (<SuspenseWrapper><CardAlertsPage /></SuspenseWrapper>),
           },
           // Loans
           {
             path: '/loans',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Prestamos" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><LoanListPage /></SuspenseWrapper>),
           },
           {
             path: '/loans/new',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Nuevo Prestamo" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><LoanCreatePage /></SuspenseWrapper>),
+          },
+          {
+            path: '/loans/simulator',
+            element: (<SuspenseWrapper><LoanSimulatorPage /></SuspenseWrapper>),
           },
           {
             path: '/loans/:id',
-            element: (
-              <SuspenseWrapper>
-                <PlaceholderPage title="Detalle Prestamo" />
-              </SuspenseWrapper>
-            ),
+            element: (<SuspenseWrapper><LoanDetailPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/loans/:id/edit',
+            element: (<SuspenseWrapper><LoanEditPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/loans/:id/amortization',
+            element: (<SuspenseWrapper><LoanAmortizationPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/loans/:id/pay',
+            element: (<SuspenseWrapper><LoanPaymentPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/loans/:id/payments',
+            element: (<SuspenseWrapper><LoanPaymentHistoryPage /></SuspenseWrapper>),
           },
           // Analytics
           {
             path: '/analytics',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Analitica" />
+                <AnalyticsPage />
               </SuspenseWrapper>
             ),
           },

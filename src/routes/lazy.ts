@@ -7,6 +7,7 @@ export const RequestResetPage = lazy(() => import('@/features/auth/pages/Request
 export const ResetPasswordPage = lazy(() => import('@/features/auth/pages/ResetPasswordPage'))
 export const VerifyEmailPage = lazy(() => import('@/features/auth/pages/VerifyEmailPage'))
 export const DashboardPage = lazy(() => import('@/features/analytics/pages/DashboardPage'))
+export const AnalyticsPage = lazy(() => import('@/features/analytics/pages/AnalyticsPage'))
 export const SettingsPage = lazy(() => import('@/features/settings/pages/SettingsPage'))
 
 // Accounts
@@ -72,3 +73,33 @@ export const BudgetEditPage = lazy(() => import('@/features/budgets/pages/Budget
 export const BudgetDetailPage = lazy(() => import('@/features/budgets/pages/BudgetDetailPage'))
 export const BudgetSummaryPage = lazy(() => import('@/features/budgets/pages/BudgetSummaryPage'))
 export const BudgetAlertsPage = lazy(() => import('@/features/budgets/pages/BudgetAlertsPage'))
+
+// Cards
+export const CardListPage = lazy(() => import('@/features/cards/pages/CardListPage'))
+export const CardCreatePage = lazy(() => import('@/features/cards/pages/CardCreatePage'))
+export const CardEditPage = lazy(() => import('@/features/cards/pages/CardEditPage'))
+export const CardDetailPage = lazy(() => import('@/features/cards/pages/CardDetailPage'))
+export const CardBillListPage = lazy(() => import('@/features/cards/pages/CardBillListPage'))
+export const CardBillPayPage = lazy(() => import('@/features/cards/pages/CardBillPayPage'))
+export const CardSpendingLimitsPage = lazy(() => import('@/features/cards/pages/CardSpendingLimitsPage'))
+export const CardAlertsPage = lazy(() => import('@/features/cards/pages/CardAlertsPage'))
+
+// Loans
+export const LoanListPage = lazy(() => import('@/features/loans/pages/LoanListPage'))
+export const LoanCreatePage = lazy(() => import('@/features/loans/pages/LoanCreatePage'))
+export const LoanEditPage = lazy(() => import('@/features/loans/pages/LoanEditPage'))
+export const LoanDetailPage = lazy(() => import('@/features/loans/pages/LoanDetailPage'))
+export const LoanAmortizationPage = lazy(() => import('@/features/loans/pages/LoanAmortizationPage'))
+export const LoanPaymentPage = lazy(() => import('@/features/loans/pages/LoanPaymentPage'))
+export const LoanPaymentHistoryPage = lazy(() => import('@/features/loans/pages/LoanPaymentHistoryPage'))
+export const LoanSimulatorPage = lazy(() => import('@/features/loans/pages/LoanSimulatorPage'))
+
+// Goals
+export const GoalListPage = lazy(() => import('@/features/goals/pages/GoalListPage'))
+export const GoalCreatePage = lazy(() => import('@/features/goals/pages/GoalCreatePage'))
+export const GoalEditPage = lazy(() => import('@/features/goals/pages/GoalEditPage'))
+export const GoalDetailPage = lazy(() => import('@/features/goals/pages/GoalDetailPage'))
+export const GoalSummaryPage = lazy(() => import('@/features/goals/pages/GoalSummaryPage'))
+export const GoalSimulationPage = lazy(() => import('@/features/goals/pages/GoalSimulationPage'))
+export const GoalSimulationListPage = lazy(() => import('@/features/goals/pages/GoalSimulationListPage'))
+export const GoalSimulationDetailPage = lazy(() => import('@/features/goals/pages/GoalSimulationDetailPage'))

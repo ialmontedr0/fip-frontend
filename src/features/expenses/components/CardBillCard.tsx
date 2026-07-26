@@ -7,10 +7,11 @@ import type { CardBillResponse } from '@/types/expenses'
 interface Props {
   bill: CardBillResponse
   onPay: (bill: CardBillResponse) => void
+  currencyCode?: string
   className?: string
 }
 
-export default function CardBillCard({ bill, onPay, className }: Props) {
+export default function CardBillCard({ bill, onPay, currencyCode, className }: Props) {
   const statusConfig = PAYMENT_STATUS_CONFIG[bill.payment_status] || PAYMENT_STATUS_CONFIG.pending
   const isOverdue = bill.payment_status === 'pending' && bill.due_date && new Date(bill.due_date) < new Date()
 
@@ -56,12 +57,12 @@ export default function CardBillCard({ bill, onPay, className }: Props) {
       <div className="flex items-center justify-between mb-3">
         <div>
           <span className="text-[10px] text-gray-400 uppercase tracking-wider">Total a Pagar</span>
-          <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{formatCurrency(bill.total_amount, 'DOP')}</p>
+          <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{formatCurrency(bill.total_amount, currencyCode)}</p>
         </div>
         {bill.minimum_payment && (
           <div className="text-right">
             <span className="text-[10px] text-gray-400 uppercase tracking-wider">Pago Minimo</span>
-            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatCurrency(bill.minimum_payment, 'DOP')}</p>
+            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatCurrency(bill.minimum_payment, currencyCode)}</p>
           </div>
         )}
       </div>
