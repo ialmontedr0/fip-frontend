@@ -7,8 +7,15 @@ import SpendingHeatmap from '../components/SpendingHeatmap'
 import CashFlowByAccountChart from '../components/CashFlowByAccountChart'
 import NetWorthChart from '../components/NetWorthChart'
 import ExportButton from '../components/ExportButton'
-import ErrorBoundary from '@/components/layout/ErrorBoundary'
-import { useCashFlow, useTopCategories, useSpendingTrend, useCashFlowByAccount, useSpendingHeatmap, useNetWorth } from '../hooks/useAnalytics'
+import { ErrorBoundary } from '@/components/layout/ErrorBoundary'
+import {
+  useCashFlow,
+  useTopCategories,
+  useSpendingTrend,
+  useCashFlowByAccount,
+  useSpendingHeatmap,
+  useNetWorth,
+} from '../hooks/useAnalytics'
 import { cn } from '@/lib/utils'
 import { BarChart3, TrendingUp, LayoutGrid } from 'lucide-react'
 
@@ -37,9 +44,21 @@ function AnalyticsPage() {
   const params = { start_date: startDate, end_date: endDate }
 
   const { data: cashFlow, isLoading: cfLoading, isError: cfError } = useCashFlow(params)
-  const { data: topCategories, isLoading: tcLoading, isError: tcError } = useTopCategories({ ...params, transaction_type: 'expense', limit: 8 })
-  const { data: spendingTrend, isLoading: stLoading, isError: stError } = useSpendingTrend({ ...params, period: 'monthly' })
-  const { data: cashFlowByAccount, isLoading: cfaLoading, isError: cfaError } = useCashFlowByAccount(params)
+  const {
+    data: topCategories,
+    isLoading: tcLoading,
+    isError: tcError,
+  } = useTopCategories({ ...params, transaction_type: 'expense', limit: 8 })
+  const {
+    data: spendingTrend,
+    isLoading: stLoading,
+    isError: stError,
+  } = useSpendingTrend({ ...params, period: 'monthly' })
+  const {
+    data: cashFlowByAccount,
+    isLoading: cfaLoading,
+    isError: cfaError,
+  } = useCashFlowByAccount(params)
   const { data: heatmap, isLoading: hmLoading, isError: hmError } = useSpendingHeatmap(params)
   const { data: netWorth, isLoading: nwLoading, isError: nwError } = useNetWorth()
 
@@ -132,13 +151,20 @@ function AnalyticsPage() {
 
       <div ref={gridRef} className="space-y-10">
         {/* Section 1: Cash Flow & Net Worth */}
-        <section id="cashflow" ref={(el: HTMLDivElement | null) => { sectionRefs.current.cashflow = el }}>
+        <section
+          id="cashflow"
+          ref={(el: HTMLDivElement | null) => {
+            sectionRefs.current.cashflow = el
+          }}
+        >
           <div className="mb-5 flex items-center gap-3">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-green-400 to-blue-500 shadow-sm">
               <TrendingUp className="h-3.5 w-3.5 text-white" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">Flujo de Caja & Patrimonio</h2>
+              <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                Flujo de Caja & Patrimonio
+              </h2>
               <p className="text-xs text-gray-400 dark:text-gray-500">
                 Ingresos, gastos y composicion patrimonial
               </p>
@@ -159,13 +185,20 @@ function AnalyticsPage() {
         </section>
 
         {/* Section 2: Spending & Categories */}
-        <section id="spending" ref={(el: HTMLDivElement | null) => { sectionRefs.current.spending = el }}>
+        <section
+          id="spending"
+          ref={(el: HTMLDivElement | null) => {
+            sectionRefs.current.spending = el
+          }}
+        >
           <div className="mb-5 flex items-center gap-3">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-rose-400 to-orange-500 shadow-sm">
               <BarChart3 className="h-3.5 w-3.5 text-white" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">Gastos & Categorias</h2>
+              <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                Gastos & Categorias
+              </h2>
               <p className="text-xs text-gray-400 dark:text-gray-500">
                 Tendencia de gastos y distribucion por categoria
               </p>
@@ -174,25 +207,40 @@ function AnalyticsPage() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div className="transition-all duration-500 hover:translate-y-[-2px]">
               <ErrorBoundary>
-                <SpendingTrendChart spendingTrend={spendingTrend} loading={stLoading} error={stError} />
+                <SpendingTrendChart
+                  spendingTrend={spendingTrend}
+                  loading={stLoading}
+                  error={stError}
+                />
               </ErrorBoundary>
             </div>
             <div className="transition-all duration-500 hover:translate-y-[-2px]">
               <ErrorBoundary>
-                <TopCategoriesWidget topCategories={topCategories} loading={tcLoading} error={tcError} />
+                <TopCategoriesWidget
+                  topCategories={topCategories}
+                  loading={tcLoading}
+                  error={tcError}
+                />
               </ErrorBoundary>
             </div>
           </div>
         </section>
 
         {/* Section 3: Advanced Visualizations */}
-        <section id="advanced" ref={(el: HTMLDivElement | null) => { sectionRefs.current.advanced = el }}>
+        <section
+          id="advanced"
+          ref={(el: HTMLDivElement | null) => {
+            sectionRefs.current.advanced = el
+          }}
+        >
           <div className="mb-5 flex items-center gap-3">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-pink-500 shadow-sm">
               <LayoutGrid className="h-3.5 w-3.5 text-white" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">Visualizaciones Avanzadas</h2>
+              <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                Visualizaciones Avanzadas
+              </h2>
               <p className="text-xs text-gray-400 dark:text-gray-500">
                 Mapa de calor de gastos y flujo detallado por cuenta
               </p>
@@ -206,7 +254,11 @@ function AnalyticsPage() {
             </div>
             <div className="transition-all duration-500 hover:translate-y-[-2px]">
               <ErrorBoundary>
-                <CashFlowByAccountChart data={cashFlowByAccount} loading={cfaLoading} error={cfaError} />
+                <CashFlowByAccountChart
+                  data={cashFlowByAccount}
+                  loading={cfaLoading}
+                  error={cfaError}
+                />
               </ErrorBoundary>
             </div>
           </div>

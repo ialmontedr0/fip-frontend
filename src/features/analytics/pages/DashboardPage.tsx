@@ -7,7 +7,7 @@ import SpendingTrendChart from '../components/SpendingTrendChart'
 import BudgetStatusWidget from '../components/BudgetStatusWidget'
 import UpcomingPaymentsWidget from '../components/UpcomingPaymentsWidget'
 import GoalsProgressWidget from '../components/GoalsProgressWidget'
-import ErrorBoundary from '@/components/layout/ErrorBoundary'
+import { ErrorBoundary } from '@/components/layout/ErrorBoundary'
 
 function DashboardPage() {
   const { data, isLoading, isError } = useDashboard()
@@ -56,17 +56,26 @@ function DashboardPage() {
           className="grid grid-cols-1 gap-6 lg:grid-cols-2"
           style={{ animation: 'fadeIn 0.5s ease-out 0.2s both' }}
         >
-          <div className="animate-fade-in" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
+          <div
+            className="animate-fade-in"
+            style={{ animationDelay: '0.2s', animationFillMode: 'both' }}
+          >
             <ErrorBoundary>
               <CashFlowChart cashFlow={data?.cash_flow} loading={isLoading} error={isError} />
             </ErrorBoundary>
           </div>
-          <div className="animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
+          <div
+            className="animate-fade-in"
+            style={{ animationDelay: '0.3s', animationFillMode: 'both' }}
+          >
             <ErrorBoundary>
               <NetWorthWidget netWorth={data?.net_worth} loading={isLoading} error={isError} />
             </ErrorBoundary>
           </div>
-          <div className="animate-fade-in" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
+          <div
+            className="animate-fade-in"
+            style={{ animationDelay: '0.4s', animationFillMode: 'both' }}
+          >
             <ErrorBoundary>
               <TopCategoriesWidget
                 topCategories={data?.top_categories}
@@ -75,7 +84,10 @@ function DashboardPage() {
               />
             </ErrorBoundary>
           </div>
-          <div className="animate-fade-in" style={{ animationDelay: '0.5s', animationFillMode: 'both' }}>
+          <div
+            className="animate-fade-in"
+            style={{ animationDelay: '0.5s', animationFillMode: 'both' }}
+          >
             <ErrorBoundary>
               <SpendingTrendChart
                 spendingTrend={data?.spending_trend}
@@ -114,7 +126,10 @@ function DashboardPage() {
           className="grid grid-cols-1 gap-6 lg:grid-cols-2"
           style={{ animation: 'fadeIn 0.5s ease-out 0.6s both' }}
         >
-          <div className="animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'both' }}>
+          <div
+            className="animate-fade-in"
+            style={{ animationDelay: '0.6s', animationFillMode: 'both' }}
+          >
             <ErrorBoundary>
               <UpcomingPaymentsWidget
                 payments={data?.upcoming_payments}
@@ -123,7 +138,10 @@ function DashboardPage() {
               />
             </ErrorBoundary>
           </div>
-          <div className="animate-fade-in" style={{ animationDelay: '0.7s', animationFillMode: 'both' }}>
+          <div
+            className="animate-fade-in"
+            style={{ animationDelay: '0.7s', animationFillMode: 'both' }}
+          >
             <ErrorBoundary>
               <GoalsProgressWidget goals={data?.goals} loading={isLoading} error={isError} />
             </ErrorBoundary>
