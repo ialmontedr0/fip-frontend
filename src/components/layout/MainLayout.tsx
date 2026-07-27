@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import Sidebar from './Sidebar'
 import Header from './Header'
 import PageTransition from '@/components/ui/PageTransition'
-import ErrorBoundary from './ErrorBoundary'
+import { ErrorBoundary } from './ErrorBoundary'
 import { useUIStore } from '@/stores/ui-store'
 
 function MainLayout() {

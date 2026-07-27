@@ -1,22 +1,84 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+import { visualizer } from 'rollup-plugin-visualizer'
+import VitePluginSitemap from 'vite-plugin-sitemap'
+import { sentryVitePlugin } from '@sentry/vite-plugin'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Opcional: analisis de bundle
+    visualizer({ open: true, filename: 'dist/stats.html', gzipSize: true, brotliSize: true }),
+    VitePluginSitemap({
+      hostname: 'https://app.midominio.com',
+      dynamicRoutes: [
+        '/login',
+        '/register',
+        '/dashboard',
+        '/accounts',
+        '/transactions',
+        '/categories',
+        '/incomes',
+        '/expenses',
+        '/budgets',
+        '/goals',
+        '/cards',
+        '/loans',
+        '/analytics',
+        '/ai',
+        '/automations',
+        '/notifications',
+        '/settings',
+      ],
+      exclude: ['/admin'],
+    }),
+    sentryVitePlugin({
+      org: 'mi-org-en-sentry',
+      project: 'fip-frontend',
+      authToken: process.env.SENTRY_AUTH_TOKEN, // en Vercel env vars
+      telemetry: false,
+    }),
+  ],
+
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+    alias: { '@': path.resolve(__dirname, './src') },
   },
+
   server: {
     port: 5173,
     proxy: {
-      "/api": {
-        target: "http://localhost:8080",
+      '/api': {
+        target: 'http://localhost:8080',
         changeOrigin: true,
       },
     },
   },
-});
+
+  build: {
+    outDir: 'dist',
+    sourcemap: true, // pon true si usas Sentry source maps
+
+    // Vite 8 usa Rolldown (Rust) por defecto, config via rolldownOptions
+    // Code splitting manual (Rolldown usa funcion, no objeto)
+    // Nota: Rolldown ya hace code splitting optimo por defecto
+    // Si necesitas chunks manuales, usa la sintaxis de funcion:
+    // rolldownOptions: {
+    //   output: {
+    //     manualChunks(id: string) {
+    //       if (id.includes('node_modules/react')) return 'vendor'
+    //       if (id.includes('node_modules/framer-motion')) return 'vendor-ui'
+    //       if (id.includes('node_modules/@tanstack')) return 'vendor-state'
+    //       if (id.includes('node_modules/axios')) return 'vendor-utils'
+    //     },
+    //   },
+    // },
+
+    chunkSizeWarningLimit: 300,
+    target: 'es2020',
+    minify: 'oxc', // oxc es el default en Vite 8 (Rust-based, muy rapido)
+    cssMinify: 'lightningcss',
+    assetsInlineLimit: 4096,
+    cssCodeSplit: true,
+  },
+})
