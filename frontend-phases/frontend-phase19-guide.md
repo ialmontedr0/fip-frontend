@@ -740,73 +740,169 @@ docker run -p 3000:80 fip-frontend
 
 ## 7. PWA (Progressive Web App) - Opcional
 
-### Instalacion
+PWA permite que los usuarios instalen FIP como una app nativa en su telefono/computadora, con acceso offline parcial y carga instantanea.
+
+### 7.1 Instalar dependencia
 
 ```bash
 pnpm add vite-plugin-pwa
 ```
 
-### Configuracion en vite.config.ts
+### 7.2 Generar los iconos PWA
+
+Necesitas 2 iconos adicionales en `public/`:
+
+| Archivo | Tamanio | Donde obtenerlo |
+|---------|---------|-----------------|
+| `public/pwa-192x192.png` | 192x192px | Usa https://realfavicongenerator.net o disena en Figma/Canva |
+| `public/pwa-512x512.png` | 512x512px | Misma fuente, con `purpose: any maskable` |
+
+Recomendacion: usa el mismo logo de FIP (un icono de escudo/finanzas en fondo violeta `#7c3aed`).
+
+### 7.3 Modificar vite.config.ts
+
+Agrega el plugin `VitePWA` al array de `plugins`:
 
 ```ts
 import { VitePWA } from 'vite-plugin-pwa'
 
-// En plugins:
-VitePWA({
-  registerType: 'autoUpdate',
-  includeAssets: ['favicon.svg', 'favicon-32x32.png', 'favicon-16x16.png', 'apple-touch-icon.png'],
-  manifest: {
-    name: 'FIP - Financial Intelligence Platform',
-    short_name: 'FIP',
-    description: 'Gestion financiera personal inteligente',
-    theme_color: '#7c3aed',
-    background_color: '#ffffff',
-    display: 'standalone',
-    orientation: 'portrait-primary',
-    scope: '/',
-    start_url: '/',
-    icons: [
-      { src: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { src: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-      {
-        src: '/pwa-192x192.png',
-        sizes: '192x192',
-        type: 'image/png',
-      },
-      {
-        src: '/pwa-512x512.png',
-        sizes: '512x512',
-        type: 'image/png',
-        purpose: 'any maskable',
-      },
-    ],
-  },
-  workbox: {
-    globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-    runtimeCaching: [
-      {
-        urlPattern: /^https:\/\/api\.tudominio\.com\/api\/v1\/.*/i,
-        handler: 'NetworkFirst',
-        options: {
-          cacheName: 'api-cache',
-          expiration: {
-            maxEntries: 100,
-            maxAgeSeconds: 60 * 60, // 1 hora
+export default defineConfig({
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',           // Actualiza el SW automaticamente cuando hay cambios
+      includeAssets: [                       // Assets que se precachean siempre
+        'favicon.svg',
+        'favicon-32x32.png',
+        'favicon-16x16.png',
+        'apple-touch-icon.png',
+      ],
+      manifest: {
+        name: 'FIP - Financial Intelligence Platform',   // Nombre completo
+        short_name: 'FIP',                                // Nombre corto (icono)
+        description: 'Gestion financiera personal inteligente',
+        theme_color: '#7c3aed',                           // Color de la barra de navegacion
+        background_color: '#ffffff',                      // Color de splash screen
+        display: 'standalone',                            // standalone = se ve como app nativa
+        orientation: 'portrait-primary',                  // Forzar orientacion vertical
+        scope: '/',                                       // Alcance del service worker
+        start_url: '/',                                   // Pagina de inicio al abrir la app
+        icons: [
+          { src: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+          { src: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+          { src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+          {
+            src: '/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
           },
-          networkTimeoutSeconds: 10,
-        },
+          {
+            src: '/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable',   // Permite que el SO recorte el icono con mascara
+          },
+        ],
       },
-    ],
-  },
+      workbox: {
+        // Que archivos precachear al instalar la PWA
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Estrategia de cache para llamadas API
+        runtimeCaching: [
+          {
+            // Cachea respuestas de la API con estrategia NetworkFirst
+            urlPattern: /^https:\/\/api\.tudominio\.com\/api\/v1\/.*/i,
+            handler: 'NetworkFirst',     // Intenta red primero, si falla usa cache
+            options: {
+              cacheName: 'api-cache',
+              expiration: {
+                maxEntries: 100,         // Max 100 respuestas en cache
+                maxAgeSeconds: 60 * 60,  // Expiran en 1 hora
+              },
+              networkTimeoutSeconds: 10, // Timeout de red de 10s antes de usar cache
+            },
+          },
+        ],
+      },
+    }),
+  ],
 })
 ```
+
+### 7.4 Verificar que funciona
+
+1. Ejecuta `pnpm build`
+2. Despues del build, verifica que se generaron:
+   - `dist/sw.js` (service worker)
+   - `dist/workbox-*.js` (libreria Workbox)
+   - `dist/manifest.webmanifest` (manifest de la app)
+3. Sirve los archivos con `pnpm preview`
+4. Abre Chrome DevTools > Application > Manifest
+   - Verifica que aparece el manifest con todos los datos
+5. En Application > Service Workers
+   - Verifica que el SW esta registrado y activo
+6. Haz clic en el icono de instalacion en la barra de direcciones (lado derecho)
+   - Debe aparecer "Install FIP"
+
+### 7.5 Que hace cada pieza
+
+| Concepto | Que hace |
+|----------|----------|
+| `registerType: 'autoUpdate'` | Cuando subes una nueva version, la app se actualiza automaticamente sin molestar al usuario |
+| `display: 'standalone'` | La app se abre sin la barra de direcciones del navegador, como una app nativa |
+| `start_url: '/'` | Al abrir la app instalada, va al dashboard |
+| `globPatterns` | Define que archivos se descargan al instalar la app (todo el build) |
+| `runtimeCaching` | Define como cachear llamadas API cuando no hay internet |
+| `NetworkFirst` | Prioriza red, pero si no hay conexion usa los datos en cache |
+| `theme_color` | Controla el color de la barra de herramientas del navegador en mobile |
+| `maskable` | Permite que el icono se adapte a mascaras circulares/cuadradas del SO |
+
+### 7.6 Probar en produccion (despues del deploy)
+
+1. Abre `https://app.tudominio.com` en Chrome mobile
+2. Espera unos segundos a que se registre el service worker
+3. Deberia aparecer un banner "Install FIP" o un icono en la barra de direcciones
+4. Toca "Install" y la app se anade a la pantalla de inicio
+5. Abre la app desde la pantalla de inicio — debe abrirse sin la UI del navegador
+6. Prueba offline: desconecta internet y recarga — debe mostrar el shell de la app
 
 ---
 
 ## 8. CDN para Assets Estaticos
 
-Cuando deployas en Vercel, los assets ya se sirven desde su CDN global (Vercel Edge Network). Pero si quieres usar Cloudflare:
+Cuando deployas en Vercel, los assets (JS, CSS, imagenes) ya se sirven desde su CDN global automaticamente. No necesitas configurar nada extra. Pero si usas Cloudflare como DNS, puedes optimizar aun mas.
+
+### 8.1 Vercel + Cloudflare Proxy (Recomendado)
+
+Paso a paso en Cloudflare Dashboard:
+
+1. Ve a tu dominio en Cloudflare > DNS > Records
+2. Agrega un registro **CNAME**:
+   - **Name**: `app`
+   - **Target**: `cname.vercel-dns.com`
+   - **Proxy status**: Orange cloud (activado)
+3. Ve a **SSL/TLS** > Overview:
+   - Cambia a **Full (strict)**
+4. Ve a **SSL/TLS** > Edge Certificates:
+   - **Always Use HTTPS**: ON
+   - **Automatic HTTPS Rewrites**: ON
+5. Ve a **Speed** > Optimization:
+   - **Auto Minify**: HTML, CSS, JS (todo ON)
+   - **Brotli**: ON
+   - **Rocket Loader**: OFF (rompe React)
+   - **Polish**: ON (comprime imagenes)
+
+Resultado: CDN de Cloudflare cachea y sirve tu frontend desde 330+ ubicaciones globales.
+
+### 8.2 Assets desde R2 (mas avanzado, no necesario)
+
+Si prefieres servir assets desde Cloudflare R2 en vez de Vercel:
+
+1. Crea un bucket R2 en Cloudflare
+2. Conecta un dominio custom al bucket (R2 > tu bucket > Settings > Public URL > Connect custom domain)
+3. Configura R2 como origen en Cloudflare Cache
+
+No implementes esto a menos que tengas razones especificas (alto trafico global). Vercel CDN es suficiente.
 
 ### Opcion 1: Vercel + Cloudflare Proxy (Recomendado)
 
@@ -856,7 +952,22 @@ Luego en GitHub Actions, despues del build:
 
 ## 9. CI/CD con GitHub Actions
 
-Crear `.github/workflows/deploy-frontend.yml`:
+### 9.1 Donde crear el archivo
+
+Crea la carpeta y archivo en la raiz del repositorio:
+
+```
+fip/
+  .github/
+    workflows/
+      deploy-frontend.yml   <-- aqui
+```
+
+Ruta completa: `C:\Users\Tony\Documents\fip\.github\workflows\deploy-frontend.yml`
+
+**IMPORTANTE**: Esta fuera de `fip-frontend/`, esta en la raiz del repositorio `fip/`.
+
+### 9.2 Contenido del archivo
 
 ```yaml
 name: Deploy Frontend
@@ -950,7 +1061,45 @@ jobs:
           working-directory: ./fip-frontend
 ```
 
-Tambien un workflow para el backend en Railway:
+### 9.3 Como generar cada GitHub Secret
+
+Antes de pushear el archivo YAML, necesitas crear estos **secrets** en GitHub.
+
+Donde: GitHub.com > tu repo > Settings > Secrets and variables > Actions > Secrets > "New repository secret"
+
+| Secret | De donde se obtiene |
+|--------|---------------------|
+| `VERCEL_TOKEN` | Ve a vercel.com > Account > Settings > Tokens > Create token (nombre: `github-actions`, scope: full) |
+| `VERCEL_ORG_ID` | Ve a vercel.com > Project > Settings > General > Project ID (anota el **Team ID** de la URL: `vercel.com/[team-id]/...`) |
+| `VERCEL_PROJECT_ID` | Ve a vercel.com > Project > Settings > General > Project ID |
+| `VITE_SENTRY_DSN` | Ve a sentry.io > Project > Settings > Client Keys (DSN) |
+| `SENTRY_AUTH_TOKEN` | Ve a sentry.io > Settings > Auth Tokens > Create New Token (scopes: `project:releases`, `project:write`) |
+| `RAILWAY_TOKEN` | Ve a railway.app > Account > Tokens > New Token |
+
+**Variables** (no secrets, van en Variables section):
+
+| Variable | Valor |
+|----------|-------|
+| `VITE_API_URL` | `https://fip-backend.up.railway.app/api/v1` (o tu dominio API) |
+| `VITE_APP_NAME` | `FIP` |
+| `VITE_APP_URL` | `https://app.tudominio.com` (o `https://fip-frontend.vercel.app` si aun no tienes dominio) |
+
+### 9.4 Como probar CI/CD
+
+1. Crea el archivo `.github/workflows/deploy-frontend.yml`
+2. Crea los 6 secrets en GitHub
+3. Crea las 3 variables en GitHub
+4. Haz commit y push a `main`:
+   ```bash
+   git add .github/workflows/deploy-frontend.yml
+   git commit -m "ci: add frontend deploy workflow"
+   git push origin main
+   ```
+5. Ve a GitHub.com > tu repo > Actions
+6. Debes ver el workflow corriendo: "Deploy Frontend"
+7. Si todo sale bien, la primera vez deploya a Vercel automaticamente
+
+### 9.5 Workflow para Backend (Railway, opcional)
 
 ```yaml
 name: Deploy Backend
@@ -980,51 +1129,123 @@ jobs:
 
 ## 10. Dominio y DNS (Cloudflare)
 
-### Estructura DNS final:
+### 10.1 Requisitos previos
+
+1. Tener un dominio (ej: `tudominio.com`) registrado en cualquier proveedor (Namecheap, GoDaddy, etc.)
+2. Tener cuenta gratuita en Cloudflare
+3. Tener el frontend deployado en Vercel (aunque sea en la URL `*.vercel.app`)
+
+### 10.2 Paso a paso para conectar dominio a Cloudflare
+
+**Paso 1**: Agregar dominio a Cloudflare
+1. Ve a cloudflare.com > Add a Site
+2. Ingresa `tudominio.com`
+3. Selecciona plan **Free**
+4. Cloudflare escanea los registros DNS existentes
+
+**Paso 2**: Configurar nameservers
+1. Cloudflare te mostrara 2 nameservers (ej: `ns1.cloudflare.com`, `ns2.cloudflare.com`)
+2. Ve a tu proveedor de dominio (donde compraste el dominio)
+3. Cambia los nameservers a los de Cloudflare
+4. Espera 5-30 minutos a que se propaguen
+
+**Paso 3**: Agregar registros DNS en Cloudflare
+Ve a Cloudflare > tu dominio > DNS > Records y agrega:
+```
+# Frontend (Vercel)
+Tipo: CNAME
+Name: app
+Target: cname.vercel-dns.com
+Proxy: Orange cloud (activado)
+
+# Backend (Railway)
+Tipo: CNAME
+Name: api
+Target: fip-backend.up.railway.app
+Proxy: Orange cloud (activado)
+```
+
+**Paso 4**: Conectar dominio a Vercel
+1. Ve a vercel.com > Project > Settings > Domains
+2. Ingresa `app.tudominio.com`
+3. Vercel verifica el CNAME automaticamente (tarda 1-2 min)
+4. Si no lo detecta, espera 5 min y refresh
+
+**Paso 5**: Configurar SSL en Cloudflare
+1. Cloudflare > tu dominio > SSL/TLS > Overview
+2. Selecciona **Full (strict)**
+3. SSL/TLS > Edge Certificates:
+   - **Always Use HTTPS**: ON
+   - **Automatic HTTPS Rewrites**: ON
+   - **Minimum TLS Version**: 1.2
+
+**Paso 6**: Optimizaciones recomendadas
+
+| Seccion | Opcion | Valor |
+|---------|--------|-------|
+| Speed > Optimization | Auto Minify | HTML, CSS, JS (todo ON) |
+| Speed > Optimization | Brotli | ON |
+| Speed > Optimization | Rocket Loader | OFF |
+| Speed > Optimization | Polish | ON |
+| Speed > Optimization | HTTP/2 | ON |
+| Speed > Optimization | HTTP/3 (QUIC) | ON |
+| Security > Settings | Browser Integrity Check | ON |
+| Security > Settings | Bot Fight Mode | ON |
+| Security > WAF | Core Rules | ON |
+| Security > Rate Limiting | Create rule | Proteger /api |
+
+### 10.3 Estructura DNS final
 
 ```
-# A record para API (Railway)
-api.tudominio.com  CNAME  fip-backend.up.railway.app  (proxy naranja)
-
-# A record para Frontend (Vercel)
-app.tudominio.com  CNAME  cname.vercel-dns.com  (proxy naranja)
-
-# Si tienes R2 bucket con dominio custom
-cdn.tudominio.com  CNAME  xxx.r2.cloudflarestorage.com  (proxy naranja)
+tudominio.com
+  ├── app.tudominio.com  -> Vercel (frontend)
+  └── api.tudominio.com  -> Railway (backend)
 ```
 
-### Configuracion Cloudflare recomendada:
+### 10.4 Probar que el dominio funciona
 
-- **SSL/TLS**: Full (strict)
-- **Always Use HTTPS**: ON
-- **HTTP/2**: ON
-- **HTTP/3 (QUIC)**: ON
-- **Auto Minify**: HTML, CSS, JS
-- **Brotli**: ON
-- **Rocket Loader**: OFF (puede causar problemas con React)
-- **Polish**: ON (optimiza imagenes)
-- **Cache Level**: Standard
-- **Edge Cache TTL**: 1 day
-- **WAF**: ON con reglas comunes
-- **Rate Limiting**: ON (proteger API)
-- **Bot Fight Mode**: ON (bloquea bots maliciosos)
+```bash
+# El frontend debe responder
+curl -I https://app.tudominio.com
+# Debe devolver: HTTP/2 200 y headers de Vercel
+
+# El API debe responder
+curl https://api.tudominio.com/health/readiness
+# Debe devolver: {"status": "ready"}
+```
 
 ---
 
-## 11. Health Check Endpoints (Frontend los consume)
+## 11. Health Check Endpoints (Backend)
 
-El backend expone estos endpoints de health check que puedes usar para monitoreo:
+El backend FastAPI expone 3 endpoints de health check. No requieren autenticacion:
 
-| Endpoint | Proposito |
-|----------|-----------|
-| `GET /health` | Full health check (app, db, redis, disk, memory) |
-| `GET /health/readiness` | Readiness probe (app ready to serve) |
-| `GET /health/liveness` | Liveness probe (app process alive) |
+| Endpoint | Que verifica | Uso |
+|----------|-------------|-----|
+| `GET /health` | App, DB, Redis, disco, memoria | Monitoreo general |
+| `GET /health/readiness` | App lista para trafico | Orquestadores (K8s, Railway) |
+| `GET /health/liveness` | App viva | Orquestadores |
 
-Puedes crear un hook simple en el frontend para mostrar estado en el dashboard admin:
+### Probar localmente
+
+```bash
+curl http://localhost:8080/health
+# {"status":"healthy","version":"1.0.0","uptime_seconds":1234,...}
+
+curl http://localhost:8080/health/readiness
+# {"status":"ready"}
+
+curl http://localhost:8080/health/liveness
+# {"status":"alive"}
+```
+
+### Hook opcional para admin dashboard
+
+Si quieres mostrar estado del backend en el panel admin, crea:
+
+`fip-frontend/src/features/admin/hooks/useHealthCheck.ts`:
 
 ```tsx
-// features/admin/hooks/useHealthCheck.ts
 import { useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
 
@@ -1045,7 +1266,7 @@ export function useHealthCheck() {
   return useQuery<HealthStatus>({
     queryKey: ['health'],
     queryFn: () => api.get('/health').then((r) => r.data),
-    refetchInterval: 30_000, // cada 30s
+    refetchInterval: 30_000,
   })
 }
 ```
@@ -1054,147 +1275,252 @@ export function useHealthCheck() {
 
 ## 12. Checklist de Seguridad para Produccion
 
-- [ ] `CORS_ORIGINS` en backend configurado SOLO con la URL del frontend
-- [ ] `SECRET_KEY` generada con `openssl rand -hex 32`
-- [ ] HTTPS en todos los entornos (Vercel + Railway lo dan gratis)
-- [ ] Rate limiting activado en endpoints de auth (ya esta en el middleware)
-- [ ] CSP Headers configurados (en vercel.json o nginx)
-- [ ] No hay secretos hardcodeados en el codigo
-- [ ] Tokens JWT con expiracion corta + refresh tokens rotados
-- [ ] Sentry configurado sin datos sensibles (maskAllText: true)
-- [ ] `console.log` eliminados en build (con `esbuild.drop`)
-- [ ] Source maps no servidos al publico
-- [ ] `robots.txt` permite indexar
-- [ ] `sitemap.xml` generado
+### Como completar cada punto
+
+| # | Item | Como verificarlo/completarlo |
+|---|------|------------------------------|
+| 1 | `CORS_ORIGINS` configurado | En Railway dashboard > Variables: `CORS_ORIGINS=https://app.tudominio.com` (solo tu frontend, no `*`) |
+| 2 | `SECRET_KEY` segura | Genera con: `openssl rand -hex 32` en terminal. Pon el resultado en Railway dashboard |
+| 3 | HTTPS activado | Vercel lo da gratis, Railway da URL HTTPS, Cloudflare lo fuerza. Verifica: la URL empieza con `https://` |
+| 4 | Rate limiting activado | Ya esta en el middleware del backend. Verifica en `backend/app/middleware/rate_limit.py` linea 24 excluye health endpoints |
+| 5 | CSP Headers | En `vercel.json` ya estan definidos (seccion 5). Si usas nginx/Docker, estan en el `nginx.conf` |
+| 6 | Sin secretos hardcodeados | Busca en el codigo: `grep -r "password\|secret\|key\|token" src/ --include="*.ts" --include="*.tsx"` - no debe haber valores hardcodeados |
+| 7 | JWT con expiracion corta | Verifica en backend `settings.py` que `ACCESS_TOKEN_EXPIRE_MINUTES = 15` (o similar) y refresh token rotado |
+| 8 | Sentry sin datos sensibles | En `main.tsx` ya tienes `maskAllText: true` y `blockAllMedia: true` |
+| 9 | console.log eliminados | En build, Rolldown/Oxc tree-shaking los elimina. Verifica: el build no debe contener `console.log` |
+| 10 | Source maps no publicos | `build.sourcemap: false` en vite.config.ts (true solo si usas Sentry source maps con subida automatica) |
+| 11 | robots.txt | Creado en `public/robots.txt` con `Allow: /` |
+| 12 | sitemap.xml | Generado con `vite-plugin-sitemap` o manual en `public/sitemap.xml` |
+
+### Comandos de verificacion
+
+```bash
+# Verificar HTTPS
+curl -I https://app.tudominio.com | findstr "strict-transport-security"
+
+# Verificar CSP headers
+curl -I https://app.tudominio.com | findstr "content-security-policy"
+
+# Verificar que no hay secretos en el codigo
+cd fip-frontend
+pnpx secretlint "src/**/*" 2>$null || Write-Output "No se encontraron secretos"
+
+# Verificar build no contiene console.log
+pnpm build
+Select-String -Path "dist\assets\*.js" -Pattern "console\.log" | Measure-Object | % { if ($_.Count -gt 0) { Write-Output "ALERTA: console.log en build!" } else { Write-Output "OK: sin console.log" } }
+```
 
 ---
 
 ## 13. Post-Deploy Verification
 
-Despues del deploy, verifica:
+### Verificar backend
 
 ```bash
-# 1. Health check
 curl https://api.tudominio.com/health
+# Respuesta esperada: status "healthy" o "degraded" (si Redis no esta configurado)
 
-# 2. Frontend carga
-curl https://app.tudominio.com
-
-# 3. SEO headers
-curl -I https://app.tudominio.com
-
-# 4. API proxy funciona
-curl https://app.tudominio.com/api/v1/health/readiness
-
-# 5. Sentry - forzar un error para probar
-# En consola del navegador:
-throw new Error('Sentry test error')
-
-# 6. Lighthouse audit
-# Chrome DevTools > Lighthouse > Generate report
-# Target: >90 Performance, >90 Accessibility, >90 SEO, >90 Best Practices
-
-# 7. Verificar cache headers
-curl -I https://app.tudominio.com/assets/index-xxxxx.js
-# Debe devolver: Cache-Control: public, max-age=31536000, immutable
-
-# 8. Prueba PWA (si implementaste)
-# Chrome DevTools > Application > Manifest > verificar
+curl https://api.tudominio.com/health/readiness
+# {"status":"ready"}
 ```
+
+### Verificar frontend
+
+```bash
+curl -L https://app.tudominio.com
+# Debe devolver HTML del index.html (contenido de React)
+
+curl -I https://app.tudominio.com
+# Buscar: x-robots-tag, content-security-policy, x-frame-options
+
+curl -I https://app.tudominio.com/assets/index-*.js
+# Debe devolver: Cache-Control: public, max-age=31536000, immutable
+```
+
+### Verificar desde el navegador
+
+- Abre `https://app.tudominio.com` - debe cargar el login
+- Inicia sesion y navega a dashboard, accounts, transactions
+- Chrome DevTools > Lighthouse > Generate report
+- Targets: Performance >90, Accessibility >90, Best Practices >90, SEO >90
+
+### Probar Sentry
+
+```js
+// En consola del navegador en produccion:
+throw new Error('Sentry test error - FIP deploy verification')
+```
+
+Ve a sentry.io > Issues - debe aparecer el error en 1-2 min con environment=production.
+
+### Probar CI/CD
+
+1. Haz un cambio pequeno (ej: cambiar un color)
+2. Commit y push a main
+3. Ve a GitHub Actions - debe correr el workflow
+4. Ve a Vercel - debe mostrar nuevo deploy
+5. Recarga el sitio - debe mostrar el cambio
 
 ---
 
 ## 14. Estrategia de Deploy Gradual
 
-### Paso 1: Preparacion (ahora)
-1. Crea cuenta en Vercel (gratis)
-2. Crea cuenta en Sentry (gratis tier developer)
-3. Configura dominio en Cloudflare
-4. Genera assets SEO (favicon, og-image, etc.)
-5. Instala dependencias: `@sentry/react`, `@sentry/vite-plugin`
+Orden recomendado para hacer cada cosa, sin saltos:
 
-### Paso 2: Build local
+### Paso 1: Preparacion (30 min)
+
+1. Crea cuenta en **Vercel** (gratis): https://vercel.com/signup (conecta con GitHub, no crees proyecto aun)
+2. Crea cuenta en **Sentry** (gratis): https://sentry.io/signup/ (crea organizacion `fip`, proyecto "React", guarda el DSN)
+3. Crea cuenta en **Cloudflare** (gratis): https://dash.cloudflare.com/signup (agrega tu dominio, cambia nameservers)
+4. Si no tienes dominio, puedes saltar Cloudflare y usar la URL `*.vercel.app` temporalmente
+
+### Paso 2: Preparar el codigo (1 hora)
+
 ```bash
 cd fip-frontend
+
+# Instalar dependencias
 pnpm add @sentry/react @sentry/vite-plugin
-pnpm add -D @sentry/vite-plugin rollup-plugin-visualizer
-pnpm build
-# Verifica que no hay errores
-# Verifica el tamanio del bundle en dist/
+pnpm add -D @sentry/vite-plugin vite-plugin-sitemap
+
+# Crear assets SEO:
+# - public/favicon.svg (descarga o crea uno)
+# - public/og-image.png (1200x630px, disena en Canva)
+# - public/robots.txt (copiar de la guia)
 ```
 
-### Paso 3: Deploy a Vercel
-1. Conecta repo en Vercel
-2. Configura env vars
-3. Deploy automatico (push a main)
-4. Prueba la URL de vercel.app
+Modificar archivos en este orden:
+1. `index.html` - reemplazar con el de la guia (meta tags, OG, fonts)
+2. `vite.config.ts` - build optimizado
+3. `src/main.tsx` - agregar Sentry init
+4. `src/components/layout/ErrorBoundary.tsx` - agregar Sentry captureException
+5. `src/components/ui/SEOHead.tsx` - agregar OG/Twitter tags
+6. Crear `vercel.json`
+7. Crear `public/robots.txt`
 
-### Paso 4: Dominio custom
-1. Agrega dominio en Vercel
-2. Configura CNAME en Cloudflare
-3. Espera propagacion DNS (5-10 min)
-4. Verifica SSL
+```bash
+pnpm build  # verificar que compila sin errores
+```
 
-### Paso 5: Monitoreo
-1. Configura alertas en Sentry
-2. Prueba forzando un error
-3. Verifica que el error aparece en Sentry dashboard
+### Paso 3: Deploy a Vercel (15 min)
 
-### Paso 6: CI/CD
-1. Crea secrets en GitHub:
-   - `VERCEL_TOKEN` - generado en vercel.com/account/tokens
-   - `VERCEL_ORG_ID` - de vercel.com/project/settings
-   - `VERCEL_PROJECT_ID` - de vercel.com/project/settings
-   - `VITE_SENTRY_DSN` - de sentry.io
-   - `SENTRY_AUTH_TOKEN` - de sentry.io/settings/auth
-   - `RAILWAY_TOKEN` (para backend) - de railway.app/dashboard
-2. Pushea el workflow YAML
-3. Verifica que el action corre en GitHub
+1. Ve a https://vercel.com/new
+2. Importa tu repositorio de GitHub
+3. Selecciona `fip-frontend` como directorio raiz
+4. Framework: Vite
+5. Build command: `pnpm build`
+6. Output directory: `dist`
+7. Environment Variables (agregar todas):
+
+| Variable | Valor |
+|----------|-------|
+| `VITE_API_URL` | `https://api.tudominio.com/api/v1` |
+| `VITE_APP_NAME` | `FIP` |
+| `VITE_APP_URL` | `https://app.tudominio.com` |
+| `VITE_APP_DESCRIPTION` | `Financial Intelligence Platform` |
+| `VITE_SENTRY_DSN` | `https://xxx@sentry.io/xxx` |
+| `VITE_SENTRY_ENVIRONMENT` | `production` |
+| `VITE_ENABLE_MOCK` | `false` |
+| `VITE_ENABLE_DEBUG` | `false` |
+
+8. Haz clic en **Deploy**
+9. Espera 2-3 min, abre la URL que Vercel te da (ej: `fip-frontend.vercel.app`)
+
+### Paso 4: Configurar Sentry (10 min)
+
+1. sentry.io > Project > Settings > copia el DSN
+2. Agregalo como env var en Vercel si no lo hiciste
+3. Forza un error en produccion: abre la URL de Vercel, consola: `throw new Error('Sentry test')`
+4. Verifica en Sentry que aparece el error
+
+### Paso 5: Dominio custom con Cloudflare (20 min)
+
+Solo si tienes dominio:
+
+1. Cloudflare > DNS > Add record: `app` CNAME `cname.vercel-dns.com` (orange cloud)
+2. Cloudflare > DNS > Add record: `api` CNAME `fip-backend.up.railway.app` (orange cloud)
+3. Vercel > Project > Settings > Domains > Add: `app.tudominio.com`
+4. Espera 1-2 min, Vercel muestra "Valid configuration"
+5. Cloudflare > SSL/TLS > Full (strict)
+6. Prueba: `curl -I https://app.tudominio.com`
+7. Actualiza env vars en Vercel: `VITE_API_URL=https://api.tudominio.com/api/v1`, `VITE_APP_URL=https://app.tudominio.com`
+8. Redeploy en Vercel
+
+### Paso 6: CI/CD con GitHub Actions (15 min)
+
+1. Crea `.github/workflows/deploy-frontend.yml` con el contenido de la seccion 9
+2. Crea los 6 secrets en GitHub (ver seccion 9.3)
+3. Crea las 3 variables en GitHub (ver seccion 9.3)
+4. Commit y push:
+   ```bash
+   git add .github/
+   git commit -m "ci: add frontend deploy workflow"
+   git push origin main
+   ```
+5. Ve a GitHub > Actions y verifica que corre
+6. A partir de ahora, cada push a main deploya automaticamente
+
+### Paso 7: Post-deploy audit (15 min)
+
+Ejecuta los comandos de verificacion de la seccion 13. Corre Lighthouse audit y corrige problemas.
 
 ---
 
 ## 15. Resumen de Archivos a Crear/Modificar
 
-### Nuevos archivos:
-| Archivo | Proposito |
-|---------|-----------|
-| `fip-frontend/.env.production` | Variables de entorno prod |
-| `fip-frontend/vercel.json` | Configuracion Vercel |
-| `fip-frontend/Dockerfile` | Docker multi-stage build |
-| `fip-frontend/nginx.conf` | Nginx config para SPA |
-| `fip-frontend/.dockerignore` | Docker ignore |
-| `fip-frontend/.github/workflows/deploy-frontend.yml` | GitHub Actions |
-| `fip-frontend/public/robots.txt` | SEO |
-| `fip-frontend/public/site.webmanifest` | PWA manifest |
-| `fip-frontend/public/og-image.png` | Open Graph image |
-| `fip-frontend/public/favicon.svg` | SVG favicon |
-| `fip-frontend/public/favicon-32x32.png` | 32px favicon |
-| `fip-frontend/public/favicon-16x16.png` | 16px favicon |
-| `fip-frontend/public/apple-touch-icon.png` | iOS icon |
+### Nuevos archivos (crear):
 
-### Archivos a modificar:
-| Archivo | Cambio |
-|---------|--------|
-| `vite.config.ts` | Build optimizado, manualChunks, esbuild drop, Sentry plugin, PWA plugin |
-| `src/main.tsx` | Inicializar Sentry |
-| `src/components/layout/ErrorBoundary.tsx` | Integrar Sentry captureException |
-| `src/components/ui/SEOHead.tsx` | Agregar OG y Twitter tags |
-| `index.html` | Meta tags SEO completos, preconnect, fonts, Open Graph, Twitter Cards |
-| `tsconfig.json` | Ajustes de target y lib |
+| Archivo | Donde crearlo | Proposito |
+|---------|--------------|-----------|
+| `.env.production` | `fip-frontend/.env.production` | Variables de entorno para produccion |
+| `vercel.json` | `fip-frontend/vercel.json` | Configuracion de Vercel (headers, rewrites) |
+| `robots.txt` | `fip-frontend/public/robots.txt` | Instrucciones para crawlers de buscadores |
+| `favicon.svg` | `fip-frontend/public/favicon.svg` | Icono principal SVG |
+| `favicon-32x32.png` | `fip-frontend/public/favicon-32x32.png` | Icono 32px |
+| `favicon-16x16.png` | `fip-frontend/public/favicon-16x16.png` | Icono 16px |
+| `apple-touch-icon.png` | `fip-frontend/public/apple-touch-icon.png` | Icono iOS (180x180) |
+| `og-image.png` | `fip-frontend/public/og-image.png` | Imagen Open Graph (1200x630) |
+| `deploy-frontend.yml` | `.github/workflows/deploy-frontend.yml` | GitHub Actions para deploy automatico |
+
+### Archivos a modificar (editar):
+
+| Archivo | Que cambiar |
+|---------|-------------|
+| `vite.config.ts` | Agregar build optimizado (output, chunkSize, sourcemap) |
+| `src/main.tsx` | Agregar inicializacion de Sentry |
+| `src/components/layout/ErrorBoundary.tsx` | Agregar Sentry.captureException(error) |
+| `src/components/ui/SEOHead.tsx` | Agregar Open Graph y Twitter meta tags |
+| `index.html` | Reemplazar con version completa (meta tags SEO, OG, Twitter Cards, preconnect) |
+
+### Archivos opcionales (solo si los necesitas):
+
+| Archivo | Cuando usarlo |
+|---------|---------------|
+| `Dockerfile` | Si deployas en Railway/VPS en vez de Vercel |
+| `nginx.conf` | Si usas Docker con nginx |
+| `.dockerignore` | Si usas Docker |
+| `site.webmanifest` | Si implementas PWA |
+| `deploy-backend.yml` | Si quieres CI/CD para el backend en Railway |
 
 ---
 
-## 16. Pricing (Gratis / Low Cost)
+## 16. Pricing - Cuanto cuesta cada servicio
 
-| Servicio | Plan Gratis Incluye | Para que usar |
-|----------|---------------------|---------------|
-| Vercel | Hosting, SSL, CDN, 100GB ancho de banda | Frontend |
-| Railway | $5/mes o $0 con GitHub Student | Backend + Postgres + Redis |
-| Supabase | 500MB DB, 2GB bandwidth | Base de datos (alternativa mas barata) |
-| Upstash | 10,000 commands/dia gratis | Redis (cache + rate limit) |
-| Sentry | 5k events/mes gratis | Error tracking |
-| Cloudflare | Ilimitado (DNS, CDN, WAF, SSL) | Dominio, CDN, seguridad |
-| GitHub Actions | 2000 min/mes gratis | CI/CD |
+Todos los servicios tienen plan gratuito suficiente para empezar:
 
-**Setup minimal mensual**: $0 (Vercel + Railway free tier + Upstash free + Sentry free)
-**Setup recomendado**: $5-10/mes (Railway $5 + el resto gratis)
+| Servicio | Plan Gratis | Plan de Pago (cuando crezcas) |
+|----------|-------------|-------------------------------|
+| **Vercel** | Hosting, SSL, CDN, 100GB ancho de banda/mes, builds ilimitados | $20/mes (Pro) para equipo, mas ancho de banda |
+| **Railway** | $5 credito unico, $0.0003/hora | $5/mes (Developer) con $5 de credito extra |
+| **Supabase** | 500MB DB, 2GB bandwidth, 50,000 rows | $25/mes (Pro) |
+| **Upstash Redis** | 10,000 comandos/dia, 256MB | $0.20/mes por GB adicional |
+| **Sentry** | 5,000 eventos/mes | $29/mes (Team) |
+| **Cloudflare** | DNS, CDN, SSL, WAF, DDoS - ilimitado | $200/mes (Pro) para reglas avanzadas |
+| **GitHub Actions** | 2,000 minutos/mes (Windows: 1,000) | $4/mes por 3,000 min adicionales |
+| **Cloudflare R2** | 10GB almacenamiento, 10M lecturas/mes | $0.015/GB/mes adicional |
+
+### Costo mensual estimado
+
+- **Mes 1-3 (desarrollo)**: **$0** (Vercel + Railway credito + Cloudflare + Sentry gratis)
+- **Mes 3-12 (produccion temprana)**: **$5-10/mes** (Railway $5 + el resto gratis)
+- **Escalando (1000+ usuarios)**: **$50-100/mes** (Supabase Pro + Sentry Team + Vercel Pro)
