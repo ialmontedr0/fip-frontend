@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/stores/ui-store'
+import { useAuthStore } from '@/stores/auth-store'
 import {
   LayoutDashboard,
   Wallet,
@@ -37,68 +38,75 @@ import {
 type NavItem = { name: string; href: string; icon: React.ComponentType<{ className?: string }> }
 type NavSection = { section: string; items: (NavItem | { name: string; icon: React.ComponentType<{ className?: string }>; children: NavItem[] })[] }
 
-const navigation: NavSection[] = [
-  {
-    section: 'Principal',
-    items: [{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }],
-  },
-  {
-    section: 'Finanzas',
-    items: [
-      { name: 'Cuentas', href: '/accounts', icon: Wallet },
-      { name: 'Wallets', href: '/wallets', icon: PiggyBank },
-      { name: 'Transacciones', href: '/transactions', icon: ArrowLeftRight },
-      { name: 'Categorias', href: '/categories', icon: Tags },
-    ],
-  },
-  {
-    section: 'Ingresos y Gastos',
-    items: [
-      { name: 'Ingresos', href: '/incomes', icon: TrendingUp },
-      { name: 'Gastos', href: '/expenses', icon: TrendingDown },
-    ],
-  },
-  {
-    section: 'Planificacion',
-    items: [
-      { name: 'Metas', href: '/goals', icon: Target },
-      { name: 'Presupuestos', href: '/budgets', icon: PiggyBank },
-      { name: 'Tarjetas', href: '/cards', icon: CreditCard },
-      { name: 'Prestamos', href: '/loans', icon: Landmark },
-    ],
-  },
-  {
-    section: 'Inteligencia',
-    items: [
-      { name: 'Analitica', href: '/analytics', icon: BarChart3 },
-      {
-        name: 'IA', icon: Brain,
-        children: [
-          { name: 'Dashboard', href: '/ai/dashboard', icon: LayoutDashboard },
-          { name: 'Clasificar', href: '/ai/classify', icon: TagsIcon },
-          { name: 'Predecir', href: '/ai/predict', icon: TrendingUpIcon },
-          { name: 'Anomalias', href: '/ai/anomalies', icon: AlertTriangle },
-          { name: 'Recomendaciones', href: '/ai/recommendations', icon: Lightbulb },
-          { name: 'Habitos', href: '/ai/habits', icon: Activity },
-          { name: 'Riesgos', href: '/ai/risks', icon: ShieldIcon },
-          { name: 'Ahorros', href: '/ai/savings', icon: PiggyBank },
-          { name: 'Modelos', href: '/ai/models', icon: Cpu },
-        ],
-      },
-      { name: 'Automatizaciones', href: '/automations', icon: Bot },
-    ],
-  },
-  {
-    section: 'Sistema',
-    items: [
-      { name: 'Notificaciones', href: '/notifications', icon: Bell },
-      { name: 'Importar', href: '/imports', icon: Upload },
-      { name: 'Exportar', href: '/exports', icon: Download },
-      { name: 'Admin', href: '/admin/users', icon: Shield },
-      { name: 'Configuracion', href: '/settings', icon: Settings },
-    ],
-  },
-]
+function useNavigation(): NavSection[] {
+  const { user } = useAuthStore()
+  const isAdmin = user?.role === 'admin'
+
+  const sistemaItems: (NavItem | { name: string; icon: React.ComponentType<{ className?: string }>; children: NavItem[] })[] = [
+    { name: 'Notificaciones', href: '/notifications', icon: Bell },
+    { name: 'Importar', href: '/imports', icon: Upload },
+    { name: 'Exportar', href: '/exports', icon: Download },
+    ...(isAdmin ? [{ name: 'Admin', href: '/admin', icon: Shield }] : []),
+    { name: 'Configuracion', href: '/settings', icon: Settings },
+  ]
+
+  return [
+    {
+      section: 'Principal',
+      items: [{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }],
+    },
+    {
+      section: 'Finanzas',
+      items: [
+        { name: 'Cuentas', href: '/accounts', icon: Wallet },
+        { name: 'Wallets', href: '/wallets', icon: PiggyBank },
+        { name: 'Transacciones', href: '/transactions', icon: ArrowLeftRight },
+        { name: 'Categorias', href: '/categories', icon: Tags },
+      ],
+    },
+    {
+      section: 'Ingresos y Gastos',
+      items: [
+        { name: 'Ingresos', href: '/incomes', icon: TrendingUp },
+        { name: 'Gastos', href: '/expenses', icon: TrendingDown },
+      ],
+    },
+    {
+      section: 'Planificacion',
+      items: [
+        { name: 'Metas', href: '/goals', icon: Target },
+        { name: 'Presupuestos', href: '/budgets', icon: PiggyBank },
+        { name: 'Tarjetas', href: '/cards', icon: CreditCard },
+        { name: 'Prestamos', href: '/loans', icon: Landmark },
+      ],
+    },
+    {
+      section: 'Inteligencia',
+      items: [
+        { name: 'Analitica', href: '/analytics', icon: BarChart3 },
+        {
+          name: 'IA', icon: Brain,
+          children: [
+            { name: 'Dashboard', href: '/ai/dashboard', icon: LayoutDashboard },
+            { name: 'Clasificar', href: '/ai/classify', icon: TagsIcon },
+            { name: 'Predecir', href: '/ai/predict', icon: TrendingUpIcon },
+            { name: 'Anomalias', href: '/ai/anomalies', icon: AlertTriangle },
+            { name: 'Recomendaciones', href: '/ai/recommendations', icon: Lightbulb },
+            { name: 'Habitos', href: '/ai/habits', icon: Activity },
+            { name: 'Riesgos', href: '/ai/risks', icon: ShieldIcon },
+            { name: 'Ahorros', href: '/ai/savings', icon: PiggyBank },
+            { name: 'Modelos', href: '/ai/models', icon: Cpu },
+          ],
+        },
+        { name: 'Automatizaciones', href: '/automations', icon: Bot },
+      ],
+    },
+    {
+      section: 'Sistema',
+      items: sistemaItems,
+    },
+  ]
+}
 
 function NavSubmenu({ item, sidebarOpen, mobile, onClose }: { item: { name: string; icon: React.ComponentType<{ className?: string }>; children: NavItem[] }; sidebarOpen: boolean; mobile?: boolean; onClose?: () => void }) {
   const [open, setOpen] = useState(true)
@@ -157,6 +165,7 @@ interface SidebarProps {
 
 function Sidebar({ mobile, onClose }: SidebarProps) {
   const { sidebarOpen, toggleSidebar } = useUIStore()
+  const navigation = useNavigation()
 
   const content = (
     <div className="flex h-full flex-col">

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { badgeVariants } from './badge-variants'
@@ -9,4 +10,4 @@ function Badge({ className, variant, size, ...props }: BadgeProps) {
   return <span className={cn(badgeVariants({ variant, size }), className)} {...props} />
 }
 
-export default Badge
+export default memo(Badge)

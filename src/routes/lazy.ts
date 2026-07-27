@@ -9,6 +9,9 @@ export const VerifyEmailPage = lazy(() => import('@/features/auth/pages/VerifyEm
 export const DashboardPage = lazy(() => import('@/features/analytics/pages/DashboardPage'))
 export const AnalyticsPage = lazy(() => import('@/features/analytics/pages/AnalyticsPage'))
 export const SettingsPage = lazy(() => import('@/features/settings/pages/SettingsPage'))
+export const ProfilePage = lazy(() => import('@/features/settings/pages/ProfilePage'))
+export const SecurityPage = lazy(() => import('@/features/settings/pages/SecurityPage'))
+export const PreferencesPage = lazy(() => import('@/features/settings/pages/PreferencesPage'))
 
 // Accounts
 export const AccountListPage = lazy(() => import('@/features/accounts/pages/AccountListPage'))
@@ -124,3 +127,16 @@ export const AutomationDetailPage = lazy(() => import('@/features/automations/pa
 // Notifications
 export const NotificationsPage = lazy(() => import('@/features/notifications/pages/NotificationsPage'))
 export const NotificationPreferencesPage = lazy(() => import('@/features/notifications/pages/NotificationPreferencesPage'))
+
+// Imports & Exports
+export const ImportPage = lazy(() => import('@/features/imports/pages/ImportPage'))
+export const ExportPage = lazy(() => import('@/features/exports/pages/ExportPage'))
+
+// Admin
+export const AdminDashboardPage = lazy(() => import('@/features/admin/pages/AdminDashboardPage'))
+export const AdminUsersPage = lazy(() => import('@/features/admin/pages/AdminUsersPage'))
+export const AdminUserDetailPage = lazy(() => import('@/features/admin/pages/AdminUserDetailPage'))
+export const AdminRolesPage = lazy(() => import('@/features/admin/pages/AdminRolesPage'))
+export const AdminPermissionsPage = lazy(() => import('@/features/admin/pages/AdminPermissionsPage'))
+export const AdminAuditLogsPage = lazy(() => import('@/features/admin/pages/AdminAuditLogsPage'))
+export const AdminStatsPage = lazy(() => import('@/features/admin/pages/AdminStatsPage'))

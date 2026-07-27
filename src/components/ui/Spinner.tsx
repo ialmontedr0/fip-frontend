@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
 import { Loader2 } from 'lucide-react'
 
@@ -24,4 +25,4 @@ function Spinner({ size = 'md', className }: SpinnerProps) {
   )
 }
 
-export default Spinner
+export default memo(Spinner)

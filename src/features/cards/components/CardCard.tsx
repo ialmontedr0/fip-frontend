@@ -12,8 +12,9 @@ interface CardCardProps {
 }
 
 export default function CardCard({ card, onClick, index = 0 }: CardCardProps) {
+  const used = (Number(card.credit_limit) || 0) - (Number(card.available_credit) || 0)
   const utilPct = card.credit_limit && Number(card.credit_limit) > 0
-    ? Math.min((Number(card.available_credit ?? 0) / Number(card.credit_limit)) * 100, 100)
+    ? Math.min((used / Number(card.credit_limit)) * 100, 100)
     : 0
 
   const status = utilPct > 80 ? 'danger' : utilPct > 50 ? 'warning' : 'healthy'

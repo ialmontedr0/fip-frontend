@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
 
 interface AvatarProps {
@@ -42,4 +43,4 @@ function Avatar({ src, alt, size = 'md', className }: AvatarProps) {
   )
 }
 
-export default Avatar
+export default memo(Avatar)

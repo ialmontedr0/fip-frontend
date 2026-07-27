@@ -3,7 +3,7 @@ import MainLayout from '@/components/layout/MainLayout'
 import AuthLayout from '@/components/layout/AuthLayout'
 import RequireAuth from '@/components/layout/RequireAuth'
 import RequireAdmin from '@/components/layout/RequireAdmin'
-import { PlaceholderPage, SuspenseWrapper } from '@/components/layout/RouteHelpers'
+import { SuspenseWrapper } from '@/components/layout/RouteHelpers'
 import {
   LoginPage, RegisterPage, MFAChallengePage,
   RequestResetPage, ResetPasswordPage, VerifyEmailPage,
@@ -35,6 +35,10 @@ import {
   AIRisksPage, AISavingsPage, AISavingsSimulatorPage, AIModelsPage,
   AutomationListPage, AutomationCreatePage, AutomationDetailPage,
   NotificationsPage, NotificationPreferencesPage,
+  ImportPage, ExportPage,
+  ProfilePage, SecurityPage, PreferencesPage,
+  AdminDashboardPage, AdminUsersPage, AdminUserDetailPage, AdminRolesPage,
+  AdminPermissionsPage, AdminAuditLogsPage, AdminStatsPage,
 } from './lazy'
 
 export const router = createBrowserRouter([
@@ -565,7 +569,7 @@ export const router = createBrowserRouter([
             path: '/imports',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Importaciones" />
+                <ImportPage />
               </SuspenseWrapper>
             ),
           },
@@ -574,7 +578,7 @@ export const router = createBrowserRouter([
             path: '/exports',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Exportaciones" />
+                <ExportPage />
               </SuspenseWrapper>
             ),
           },
@@ -591,7 +595,7 @@ export const router = createBrowserRouter([
             path: '/settings/profile',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Perfil" />
+                <ProfilePage />
               </SuspenseWrapper>
             ),
           },
@@ -599,7 +603,7 @@ export const router = createBrowserRouter([
             path: '/settings/security',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Seguridad" />
+                <SecurityPage />
               </SuspenseWrapper>
             ),
           },
@@ -607,7 +611,7 @@ export const router = createBrowserRouter([
             path: '/settings/preferences',
             element: (
               <SuspenseWrapper>
-                <PlaceholderPage title="Preferencias" />
+                <PreferencesPage />
               </SuspenseWrapper>
             ),
           },
@@ -616,10 +620,26 @@ export const router = createBrowserRouter([
             element: <RequireAdmin />,
             children: [
               {
+                path: '/admin',
+                element: (
+                  <SuspenseWrapper>
+                    <AdminDashboardPage />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
                 path: '/admin/users',
                 element: (
                   <SuspenseWrapper>
-                    <PlaceholderPage title="Usuarios Admin" />
+                    <AdminUsersPage />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: '/admin/users/:id',
+                element: (
+                  <SuspenseWrapper>
+                    <AdminUserDetailPage />
                   </SuspenseWrapper>
                 ),
               },
@@ -627,7 +647,7 @@ export const router = createBrowserRouter([
                 path: '/admin/roles',
                 element: (
                   <SuspenseWrapper>
-                    <PlaceholderPage title="Roles Admin" />
+                    <AdminRolesPage />
                   </SuspenseWrapper>
                 ),
               },
@@ -635,7 +655,7 @@ export const router = createBrowserRouter([
                 path: '/admin/permissions',
                 element: (
                   <SuspenseWrapper>
-                    <PlaceholderPage title="Permisos Admin" />
+                    <AdminPermissionsPage />
                   </SuspenseWrapper>
                 ),
               },
@@ -643,7 +663,7 @@ export const router = createBrowserRouter([
                 path: '/admin/audit-logs',
                 element: (
                   <SuspenseWrapper>
-                    <PlaceholderPage title="Auditoria" />
+                    <AdminAuditLogsPage />
                   </SuspenseWrapper>
                 ),
               },
@@ -651,7 +671,7 @@ export const router = createBrowserRouter([
                 path: '/admin/stats',
                 element: (
                   <SuspenseWrapper>
-                    <PlaceholderPage title="Estadisticas Admin" />
+                    <AdminStatsPage />
                   </SuspenseWrapper>
                 ),
               },
