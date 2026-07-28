@@ -1,184 +1,184 @@
 # FIP — Financial Intelligence Platform (Frontend)
 
-Modern, intelligent personal finance management dashboard built with React 19 + TypeScript.
+Dashboard moderno e inteligente para finanzas personales, construido con React 19 + TypeScript.
 
-## Tech Stack
+## Stack Tecnologico
 
-| Layer | Technology |
+| Capa | Tecnologia |
 |-------|-----------|
 | Framework | React 19 |
-| Language | TypeScript (strict) |
+| Lenguaje | TypeScript (estricto) |
 | Build | Vite 8 + Rolldown |
-| Styling | Tailwind CSS v4 |
-| Routing | React Router v7 |
-| State | TanStack React Query v5 |
-| Forms | React Hook Form + Zod |
-| Auth | JWT with auto-refresh interceptor |
+| Estilos | Tailwind CSS v4 |
+| Rutas | React Router v7 |
+| Estado | TanStack React Query v5 |
+| Formularios | React Hook Form + Zod |
+| Autenticacion | JWT con interceptor de auto-refresh |
 | UI | shadcn/ui + Radix primitives + Framer Motion |
-| Charts | Recharts + Tremor |
-| Tables | TanStack Table v8 |
-| Icons | Lucide React |
-| Dates | date-fns |
+| Graficas | Recharts + Tremor |
+| Tablas | TanStack Table v8 |
+| Iconos | Lucide React |
+| Fechas | date-fns |
 
-## Features
+## Funcionalidades
 
-### Financial Dashboard
-- Overview with KPIs, spending breakdown, cash flow
-- Net worth tracking with historical chart
-- Quick-access navigation to all modules
+### Dashboard Financiero
+- Vista general con KPIs, desglose de gastos, flujo de caja
+- Seguimiento de patrimonio neto con grafico historico
+- Navegacion rapida a todos los modulos
 
-### Transaction Management
-- Full CRUD with advanced filtering, sorting, pagination
-- Split transactions, recurring patterns, tags, attachments
-- OCR receipt scanning
-- Import/export (CSV, Excel, PDF)
+### Gestion de Transacciones
+- CRUD completo con filtrado avanzado, ordenamiento y paginacion
+- Transacciones divididas, patrones recurrentes, etiquetas, adjuntos
+- Escaneo de recibos con OCR
+- Importacion y exportacion (CSV, Excel, PDF)
 
-### Account & Wallet Management
-- Multi-account support (checking, savings, cash, credit)
-- Wallet grouping for portfolio organization
-- Balance and liquidity tracking
+### Gestion de Cuentas y Carteras
+- Soporte multi-cuenta (cheques, ahorros, efectivo, credito)
+- Agrupacion en carteras para organizacion del portafolio
+- Seguimiento de saldo y liquidez
 
-### Budgeting
-- Monthly/period budgets with category allocation
-- Real-time progress bars and alert thresholds
-- Auto-adjust suggestions
+### Presupuestos
+- Presupuestos mensuales/periodicos con asignacion por categoria
+- Barras de progreso en tiempo real y umbrales de alerta
+- Sugerencias de auto-ajuste
 
-### Cards
-- Credit cards with bill tracking and payment scheduling
-- Spending limits and utilization monitoring
-- Alerts for due dates and overspending
+### Tarjetas
+- Tarjetas de credito con seguimiento de facturas y programacion de pagos
+- Limites de gasto y monitoreo de utilizacion
+- Alertas de fechas de vencimiento y sobregiro
 
-### Loans
-- Full amortization schedule viewer
-- Early payoff calculator with savings projection
-- Payment history tracking
+### Prestamos
+- Visualizacion completa de tabla de amortizacion
+- Calculadora de pago anticipado con proyeccion de ahorro
+- Historial de pagos
 
-### Goals
-- Goal creation with target amount and deadline
-- Progress tracking with predicted completion date
-- "What-if" simulations
+### Metas
+- Creacion de metas con monto objetivo y fecha limite
+- Seguimiento de progreso con fecha de finalizacion estimada
+- Simulaciones de "que pasaria si"
 
-### Analytics & AI
-- Spending trends, category breakdowns, heatmaps
-- Income vs expense cash flow visualization
-- AI-powered transaction classification
-- Expense and income predictions
-- Anomaly detection alerts
-- Personalized savings recommendations
-- Financial health score and risk assessment
-- Spending habit analysis
+### Analitica e IA
+- Tendencias de gastos, desglose por categorias, mapas de calor
+- Visualizacion de flujo de caja (ingresos vs gastos)
+- Clasificacion automatica de transacciones con IA
+- Prediccion de gastos e ingresos
+- Alertas de deteccion de anomalias
+- Recomendaciones personalizadas de ahorro
+- Puntaje de salud financiera y evaluacion de riesgos
+- Analisis de habitos de gasto
 
-### Automation
-- Create rules for auto-categorization, alerts, transfers
-- Execution logs and summary stats
+### Automatizacion
+- Creacion de reglas para auto-categorizacion, alertas, transferencias
+- Registros de ejecucion y estadisticas resumidas
 
-### Admin Panel
-- User management (create, edit, status toggle)
-- Role & permission management
-- Audit log viewer with filters and stats
-- Server health monitoring (DB, Redis, disk, memory)
+### Panel de Administracion
+- Gestion de usuarios (crear, editar, activar/desactivar)
+- Gestion de roles y permisos
+- Visor de registros de auditoria con filtros y estadisticas
+- Monitoreo de salud del servidor (BD, Redis, disco, memoria)
 
-### Security
-- JWT with automatic refresh and token rotation
-- MFA (TOTP) setup and verification
-- Session management
-- Rate-limited API calls
-- RBAC for admin features
+### Seguridad
+- JWT con refresco automatico y rotacion de tokens
+- Configuracion y verificacion de MFA (TOTP)
+- Gestion de sesiones
+- Llamadas a la API con limitacion de tasa
+- RBAC para funciones administrativas
 
-## Project Structure
+## Estructura del Proyecto
 
 ```
 src/
-  components/       # Shared UI components (shadcn/ui style)
-  features/         # Feature modules (admin, ai, analytics, auth, budgets, etc.)
-  hooks/            # Global hooks
-  layouts/          # App layouts (protected, auth, admin)
-  lib/              # Utilities, API client, constants
-  pages/            # Page components (routing targets)
-  providers/        # React context providers
-  routes/           # Route definitions
-  stores/           # Zustand stores (auth)
-  types/            # Shared TypeScript types
+  components/       # Componentes UI compartidos (estilo shadcn/ui)
+  features/         # Modulos funcionales (admin, ai, analytics, auth, budgets, etc.)
+  hooks/            # Hooks globales
+  layouts/          # Layouts de la app (protegido, auth, admin)
+  lib/              # Utilidades, cliente API, constantes
+  pages/            # Componentes de pagina (destinos de ruteo)
+  providers/        # Proveedores de contexto React
+  routes/           # Definiciones de rutas
+  stores/           # Stores de Zustand (auth)
+  types/            # Tipos TypeScript compartidos
 ```
 
-## Quick Start
+## Inicio Rapido
 
 ```bash
-# Prerequisites: Node.js 20+, pnpm 9+
+# Prerrequisitos: Node.js 20+, pnpm 9+
 
 cd fip-frontend
 
-# Install dependencies
+# Instalar dependencias
 pnpm install
 
-# Copy environment file
+# Copiar archivo de entorno
 cp .env.example .env
 
-# Start development server
+# Iniciar servidor de desarrollo
 pnpm dev
 ```
 
-The app runs at http://localhost:5173 and proxies API calls to http://localhost:8080.
+La app corre en http://localhost:5173 y proxy las llamadas API a http://localhost:8080.
 
-## Environment Variables
+## Variables de Entorno
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `VITE_API_URL` | No | `http://localhost:8080/api/v1` | Backend API base URL |
-| `VITE_APP_NAME` | No | `FIP` | Application name |
-| `VITE_APP_URL` | No | `http://localhost:5173` | Public app URL |
-| `VITE_APP_DESCRIPTION` | No | `...` | Meta description |
-| `VITE_SENTRY_DSN` | No | — | Sentry error tracking DSN |
-| `VITE_SENTRY_ENVIRONMENT` | No | `development` | Sentry environment tag |
-| `VITE_ENABLE_MOCK` | No | `false` | Enable mock data |
-| `VITE_ENABLE_DEBUG` | No | `false` | Enable debug features |
+| Variable | Requerida | Default | Descripcion |
+|----------|-----------|---------|-------------|
+| `VITE_API_URL` | No | `http://localhost:8080/api/v1` | URL base de la API backend |
+| `VITE_APP_NAME` | No | `FIP` | Nombre de la aplicacion |
+| `VITE_APP_URL` | No | `http://localhost:5173` | URL publica de la app |
+| `VITE_APP_DESCRIPTION` | No | `...` | Meta descripcion |
+| `VITE_SENTRY_DSN` | No | — | DSN de Sentry para seguimiento de errores |
+| `VITE_SENTRY_ENVIRONMENT` | No | `development` | Entorno en Sentry |
+| `VITE_ENABLE_MOCK` | No | `false` | Habilitar datos mock |
+| `VITE_ENABLE_DEBUG` | No | `false` | Habilitar funciones de depuracion |
 
-## Available Scripts
+## Scripts Disponibles
 
 ```bash
-pnpm dev        # Start dev server with HMR
-pnpm build      # Production build
-pnpm preview    # Preview production build locally
+pnpm dev        # Iniciar servidor de desarrollo con HMR
+pnpm build      # Compilacion para produccion
+pnpm preview    # Vista previa del build de produccion
 pnpm lint       # ESLint
-pnpm tsc        # TypeScript type check
-pnpm format     # Format with Prettier
+pnpm tsc        # Verificacion de tipos TypeScript
+pnpm format     # Formatear con Prettier
 ```
 
-## Routes
+## Rutas
 
-| Path | Module | Description |
+| Ruta | Modulo | Descripcion |
 |------|--------|-------------|
-| `/login`, `/register` | Auth | Login and registration |
-| `/dashboard` | Dashboard | Main overview |
-| `/accounts` | Accounts | Financial accounts |
-| `/wallets` | Wallets | Wallet management |
-| `/transactions` | Transactions | Transaction list and management |
-| `/incomes` | Incomes | Income tracking |
-| `/expenses` | Expenses | Expense tracking |
-| `/budgets` | Budgets | Budget management |
-| `/cards` | Cards | Credit card management |
-| `/loans` | Loans | Loan tracking |
-| `/goals` | Goals | Financial goals |
-| `/analytics` | Analytics | Charts and analytics |
-| `/ai` | AI | AI insights and predictions |
-| `/automations` | Automations | Automation rules |
-| `/notifications` | Notifications | User notifications |
-| `/settings` | Settings | User preferences |
-| `/admin/*` | Admin | Admin panel (users, roles, permissions, audit, stats) |
+| `/login`, `/register` | Auth | Inicio de sesion y registro |
+| `/dashboard` | Dashboard | Vista principal |
+| `/accounts` | Accounts | Cuentas financieras |
+| `/wallets` | Wallets | Gestion de carteras |
+| `/transactions` | Transactions | Lista y gestion de transacciones |
+| `/incomes` | Incomes | Seguimiento de ingresos |
+| `/expenses` | Expenses | Seguimiento de gastos |
+| `/budgets` | Budgets | Gestion de presupuestos |
+| `/cards` | Cards | Gestion de tarjetas de credito |
+| `/loans` | Loans | Seguimiento de prestamos |
+| `/goals` | Goals | Metas financieras |
+| `/analytics` | Analytics | Graficos y analitica |
+| `/ai` | AI | Informacion y predicciones de IA |
+| `/automations` | Automations | Reglas de automatizacion |
+| `/notifications` | Notifications | Notificaciones del usuario |
+| `/settings` | Settings | Preferencias del usuario |
+| `/admin/*` | Admin | Panel admin (usuarios, roles, permisos, auditoria, estadisticas) |
 
-## Deployment
+## Deploy
 
 ### Vercel
 
-Connect your GitHub repository to Vercel, set environment variables, and deploy.
+Conecta tu repositorio de GitHub a Vercel, configura las variables de entorno y despliega.
 
 ```
-pnpm build  # Output in dist/
+pnpm build  # Salida en dist/
 ```
 
-A `vercel.json` configures headers (CSP, cache), rewrites (SPA), and redirects.
+El archivo `vercel.json` configura headers (CSP, cache), rewrites (SPA) y redirects.
 
-### Docker (optional)
+### Docker (opcional)
 
 ```bash
 docker build -t fip-frontend .
