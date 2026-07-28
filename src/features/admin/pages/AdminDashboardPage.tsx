@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Shield, Users, Key, ScrollText, BarChart3, ArrowRight } from 'lucide-react'
 import SystemStatsCards from '../components/SystemStatsCards'
+import HealthStatusCard from '../components/HealthStatusCard'
 import AdminNav from '../components/AdminNav'
 
 const LINKS = [
@@ -89,7 +90,7 @@ export default function AdminDashboardPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Panel de Administraci&oacute;n</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Gesti&oacute;n del sistema</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Gestion del sistema</p>
           </div>
         </div>
       </div>
@@ -100,9 +101,15 @@ export default function AdminDashboardPage() {
         ))}
       </div>
 
-      <div className="pt-4">
-        <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-4">Estad&iacute;sticas del Sistema</h2>
-        <SystemStatsCards />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-4">Estadisticas del Sistema</h2>
+          <SystemStatsCards />
+        </div>
+        <div>
+          <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-4">Servidor</h2>
+          <HealthStatusCard />
+        </div>
       </div>
     </div>
   )

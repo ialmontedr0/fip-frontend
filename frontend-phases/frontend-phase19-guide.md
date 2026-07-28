@@ -1,5 +1,25 @@
 # Fase 19: Produccion & Deploy
 
+## Estado Actual (28-Jul-2026)
+
+### Backend (Railway) — COMPLETADO
+- [x] Railway project creado con PostgreSQL
+- [x] Deploy automatizado desde GitHub
+- [x] Migraciones (`alembic upgrade head`) como Pre-deploy Command
+- [x] CORS_ORIGINS fix: campo cambiado a `str` con `_parse_cors_origins()` para aceptar bare strings y JSON arrays (`backend/app/core/config.py`)
+- [x] DATABASE_URL fix: `database_url_async` property agrega `+asyncpg` automaticamente si Railway inyecta `postgresql://` (`backend/app/core/config.py`)
+- [x] Health endpoint funcional: `GET /health` responde con estado de DB, Redis, disco, memoria
+- [x] Backend URL: `https://financial-app-production-9de6.up.railway.app`
+- [ ] Redis: No configurado (health devuelve `degraded` por Redis no disponible)
+
+### Frontend (Vercel) — PENDIENTE
+- [x] `useHealthCheck` hook creado (`src/features/admin/hooks/useHealthCheck.ts`)
+- [x] `HealthStatusCard` component creado e integrado en `AdminDashboardPage`
+- [ ] Deploy en Vercel (ver seccion 4)
+- [ ] Sentry configurado (DSN pendiente)
+- [ ] SEO: index.html, OG tags, sitemap, robots.txt
+- [ ] CI/CD: GitHub Actions workflow
+
 ## Objetivos
 - Configurar variables de entorno para prod
 - Build optimizado (code splitting, tree shaking)
@@ -67,7 +87,7 @@ DATABASE_URL=postgresql+asyncpg://user:pass@host:6543/postgres
 REDIS_URL=rediss://default:pass@us1-steady-unicorn-12345.upstash.io:6379
 SECRET_KEY=genera-una-clave-segura-con-openssl
 SENTRY_DSN=https://xxx@sentry.io/xxx
-CORS_ORIGINS=https://app.tudominio.com
+CORS_ORIGINS=["https://app.tudominio.com"]  # Codigo acepta bare string o JSON array
 CLOUDFLARE_R2_ACCESS_KEY=xxx
 CLOUDFLARE_R2_SECRET_KEY=xxx
 CLOUDFLARE_R2_BUCKET=fip-uploads
@@ -1239,37 +1259,26 @@ curl http://localhost:8080/health/liveness
 # {"status":"alive"}
 ```
 
-### Hook opcional para admin dashboard
+### Admin Dashboard — YA IMPLEMENTADO
 
-Si quieres mostrar estado del backend en el panel admin, crea:
+Componentes creados en el frontend:
 
-`fip-frontend/src/features/admin/hooks/useHealthCheck.ts`:
+| Archivo | Proposito |
+|---------|-----------|
+| `src/features/admin/hooks/useHealthCheck.ts` | Hook que obtiene el estado cada 30s via `GET /health` |
+| `src/features/admin/components/HealthStatusCard.tsx` | Card con indicadores visuales de DB, Redis, disco, memoria, uptime, version |
+| `src/features/admin/pages/AdminDashboardPage.tsx` | Integrado en la columna derecha del dashboard admin |
 
-```tsx
-import { useQuery } from '@tanstack/react-query'
-import api from '@/lib/api'
-
-interface HealthStatus {
-  status: 'healthy' | 'degraded'
-  version: string
-  uptime_seconds: number
-  timestamp: string
-  checks: {
-    database: { status: string; error?: string }
-    redis: { status: string; error?: string }
-    disk: { free_gb: number; status: string }
-    memory: { total_gb: number; available_gb: number; percent_used: number; status: string }
-  }
-}
-
-export function useHealthCheck() {
-  return useQuery<HealthStatus>({
-    queryKey: ['health'],
-    queryFn: () => api.get('/health').then((r) => r.data),
-    refetchInterval: 30_000,
-  })
-}
-```
+La `HealthStatusCard` muestra:
+- Estado general (healthy/degraded) con badge de color
+- DB: OK/ERROR con icono
+- Redis: OK/ERROR con mensaje de error si falla
+- Disco: GB libres
+- Memoria: porcentaje usado
+- Version de la API y uptime
+- Boton de refresh manual
+- Estado de loading con skeleton
+- Estado de error con boton de reintentar
 
 ---
 
@@ -1279,7 +1288,7 @@ export function useHealthCheck() {
 
 | # | Item | Como verificarlo/completarlo |
 |---|------|------------------------------|
-| 1 | `CORS_ORIGINS` configurado | En Railway dashboard > Variables: `CORS_ORIGINS=https://app.tudominio.com` (solo tu frontend, no `*`) |
+| 1 | `CORS_ORIGINS` configurado | En Railway dashboard > Variables: `CORS_ORIGINS=["https://app.tudominio.com"]` (solo tu frontend, no `*`). El codigo acepta JSON array o bare string gracias al fix en `backend/app/core/config.py` |
 | 2 | `SECRET_KEY` segura | Genera con: `openssl rand -hex 32` en terminal. Pon el resultado en Railway dashboard |
 | 3 | HTTPS activado | Vercel lo da gratis, Railway da URL HTTPS, Cloudflare lo fuerza. Verifica: la URL empieza con `https://` |
 | 4 | Rate limiting activado | Ya esta en el middleware del backend. Verifica en `backend/app/middleware/rate_limit.py` linea 24 excluye health endpoints |
@@ -1468,29 +1477,35 @@ Ejecuta los comandos de verificacion de la seccion 13. Corre Lighthouse audit y 
 
 ## 15. Resumen de Archivos a Crear/Modificar
 
+### Leyenda
+- **[Creado]** — Ya existe en el codigo
+- **[Pendiente]** — Falta crear
+
 ### Nuevos archivos (crear):
 
-| Archivo | Donde crearlo | Proposito |
-|---------|--------------|-----------|
-| `.env.production` | `fip-frontend/.env.production` | Variables de entorno para produccion |
-| `vercel.json` | `fip-frontend/vercel.json` | Configuracion de Vercel (headers, rewrites) |
-| `robots.txt` | `fip-frontend/public/robots.txt` | Instrucciones para crawlers de buscadores |
-| `favicon.svg` | `fip-frontend/public/favicon.svg` | Icono principal SVG |
-| `favicon-32x32.png` | `fip-frontend/public/favicon-32x32.png` | Icono 32px |
-| `favicon-16x16.png` | `fip-frontend/public/favicon-16x16.png` | Icono 16px |
-| `apple-touch-icon.png` | `fip-frontend/public/apple-touch-icon.png` | Icono iOS (180x180) |
-| `og-image.png` | `fip-frontend/public/og-image.png` | Imagen Open Graph (1200x630) |
-| `deploy-frontend.yml` | `.github/workflows/deploy-frontend.yml` | GitHub Actions para deploy automatico |
+| Archivo | Donde crearlo | Estado |
+|---------|--------------|--------|
+| `.env.production` | `fip-frontend/.env.production` | Pendiente |
+| `vercel.json` | `fip-frontend/vercel.json` | Pendiente |
+| `robots.txt` | `fip-frontend/public/robots.txt` | Pendiente |
+| `favicon.svg` | `fip-frontend/public/favicon.svg` | Pendiente |
+| `favicon-32x32.png` | `fip-frontend/public/favicon-32x32.png` | Pendiente |
+| `favicon-16x16.png` | `fip-frontend/public/favicon-16x16.png` | Pendiente |
+| `apple-touch-icon.png` | `fip-frontend/public/apple-touch-icon.png` | Pendiente |
+| `og-image.png` | `fip-frontend/public/og-image.png` | Pendiente |
+| `deploy-frontend.yml` | `.github/workflows/deploy-frontend.yml` | Pendiente |
+| `HealthStatusCard.tsx` | `src/features/admin/components/HealthStatusCard.tsx` | Creado |
 
 ### Archivos a modificar (editar):
 
-| Archivo | Que cambiar |
-|---------|-------------|
-| `vite.config.ts` | Agregar build optimizado (output, chunkSize, sourcemap) |
-| `src/main.tsx` | Agregar inicializacion de Sentry |
-| `src/components/layout/ErrorBoundary.tsx` | Agregar Sentry.captureException(error) |
-| `src/components/ui/SEOHead.tsx` | Agregar Open Graph y Twitter meta tags |
-| `index.html` | Reemplazar con version completa (meta tags SEO, OG, Twitter Cards, preconnect) |
+| Archivo | Que cambiar | Estado |
+|---------|-------------|--------|
+| `vite.config.ts` | Agregar build optimizado (output, chunkSize, sourcemap) | Pendiente |
+| `src/main.tsx` | Agregar inicializacion de Sentry | Pendiente |
+| `src/components/layout/ErrorBoundary.tsx` | Agregar Sentry.captureException(error) | Pendiente |
+| `src/components/ui/SEOHead.tsx` | Agregar Open Graph y Twitter meta tags | Pendiente |
+| `index.html` | Reemplazar con version completa (meta tags SEO, OG, Twitter Cards, preconnect) | Pendiente |
+| `src/features/admin/pages/AdminDashboardPage.tsx` | Integrar HealthStatusCard | Completado |
 
 ### Archivos opcionales (solo si los necesitas):
 

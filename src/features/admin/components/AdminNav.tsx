@@ -11,8 +11,8 @@ const TABS = [
   { path: '/admin/users', label: 'Usuarios', icon: Users },
   { path: '/admin/roles', label: 'Roles', icon: Shield },
   { path: '/admin/permissions', label: 'Permisos', icon: Key },
-  { path: '/admin/audit-logs', label: 'Auditor&iacute;a', icon: ScrollText },
-  { path: '/admin/stats', label: 'Estad&iacute;sticas', icon: BarChart3 },
+  { path: '/admin/audit-logs', label: 'Auditoria', icon: ScrollText },
+  { path: '/admin/stats', label: 'Estadisticas', icon: BarChart3 },
 ]
 
 function ActivePill({ style }: { style: React.CSSProperties }) {
