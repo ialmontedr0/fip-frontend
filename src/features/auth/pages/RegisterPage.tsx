@@ -8,7 +8,6 @@ import { useRegister } from '../hooks/useAuth'
 
 const registerSchema = z
   .object({
-    name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
     email: z.string().min(1, 'El email es requerido').email('Email invalido'),
     password: z.string().min(8, 'La contrasena debe tener al menos 8 caracteres'),
     confirmPassword: z.string().min(1, 'Confirma tu contrasena'),
@@ -35,19 +34,11 @@ function RegisterPage() {
     registerMutation.mutate({
       email: data.email,
       password: data.password,
-      name: data.name,
     })
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <Input
-        label="Nombre"
-        placeholder="Tu nombre"
-        error={errors.name?.message}
-        {...register('name')}
-      />
-
       <Input
         label="Email"
         type="email"

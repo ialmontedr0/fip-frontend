@@ -10,7 +10,7 @@ src/
     automations.ts                    # Tipos TypeScript
   features/
     automations/
-      api/
+      api//
         automations.ts                # Funciones API
       hooks/
         useAutomations.ts             # TanStack Query hooks
