@@ -10,7 +10,7 @@ import type { CreateTemplateRequest } from '@/types/expenses'
 const schema = z.object({
   name: z.string().min(1, 'Nombre es requerido').max(200),
   description: z.string().min(1, 'Descripcion es requerida'),
-  default_amount: z.string().optional().nullable(),
+  default_amount: z.number().optional().nullable(),
   default_currency: z.string().optional(),
   default_account_id: z.string().optional().nullable(),
   default_category_id: z.string().optional().nullable(),
@@ -28,15 +28,19 @@ interface Props {
 }
 
 export default function TemplateForm({ onSubmit, isSubmitting }: Props) {
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { default_currency: 'DOP' },
   })
 
+  const selectedAccountId = watch('default_account_id')
+
   const submit = async (data: FormData) => {
     await onSubmit({
-      ...data,
-      default_amount: data.default_amount || null,
+      name: data.name,
+      description: data.description,
+      default_amount: (typeof data.default_amount === 'number' && !Number.isNaN(data.default_amount)) ? data.default_amount : null,
+      default_currency: data.default_currency,
       default_account_id: data.default_account_id || null,
       default_notes: data.default_notes || null,
       default_frequency: data.default_frequency || null,
@@ -67,7 +71,7 @@ export default function TemplateForm({ onSubmit, isSubmitting }: Props) {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">Monto por defecto</label>
-          <Input {...register('default_amount')} type="number" step="0.01" placeholder="0.00" className="rounded-xl" />
+          <Input {...register('default_amount', { valueAsNumber: true })} type="number" step="0.01" placeholder="0.00" className="rounded-xl" />
         </div>
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">Moneda</label>
@@ -82,8 +86,8 @@ export default function TemplateForm({ onSubmit, isSubmitting }: Props) {
       <div className="space-y-1.5">
         <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">Cuenta por defecto</label>
         <AccountPicker
-          value=""
-          onChange={(id) => setValue('default_account_id', id)}
+          value={selectedAccountId || ''}
+          onChange={(id) => setValue('default_account_id', id, { shouldDirty: true })}
         />
       </div>
 

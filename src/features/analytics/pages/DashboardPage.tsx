@@ -4,6 +4,7 @@ import CashFlowChart from '../components/CashFlowChart'
 import NetWorthWidget from '../components/NetWorthWidget'
 import TopCategoriesWidget from '../components/TopCategoriesWidget'
 import SpendingTrendChart from '../components/SpendingTrendChart'
+import FinancialHealthWidget from '../components/FinancialHealthWidget'
 import BudgetStatusWidget from '../components/BudgetStatusWidget'
 import UpcomingPaymentsWidget from '../components/UpcomingPaymentsWidget'
 import GoalsProgressWidget from '../components/GoalsProgressWidget'
@@ -96,6 +97,25 @@ function DashboardPage() {
               />
             </ErrorBoundary>
           </div>
+        </div>
+      </div>
+
+      {/* Financial Health */}
+      <div>
+        <div className="mb-4 flex items-center gap-3">
+          <div className="h-1 w-6 rounded-full bg-gradient-to-r from-rose-500 to-pink-400" />
+          <h2 className="text-xs font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">
+            Salud Financiera
+          </h2>
+        </div>
+        <div style={{ animation: 'fadeIn 0.5s ease-out 0.52s both' }}>
+          <ErrorBoundary>
+            <FinancialHealthWidget
+              portfolio={data?.portfolio}
+              loading={isLoading}
+              error={isError}
+            />
+          </ErrorBoundary>
         </div>
       </div>
 

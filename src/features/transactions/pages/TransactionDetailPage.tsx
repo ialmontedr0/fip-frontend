@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { Button, Skeleton } from '@/components/ui'
 import { useTransaction, useDeleteTransaction } from '../hooks/useTransactions'
+import { useAccount } from '@/features/accounts/hooks/useAccounts'
 import { TRANSACTION_TYPE_CONFIG } from '../constants'
 import TransactionTypeBadge from '../components/TransactionTypeBadge'
 import TransactionStatusBadge from '../components/TransactionStatusBadge'
@@ -24,6 +25,8 @@ export default function TransactionDetailPage() {
   const { data: transaction, isLoading, isError, refetch } = useTransaction(id)
   const deleteTransaction = useDeleteTransaction()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+
+  const { data: accountData } = useAccount(transaction?.account_id || undefined)
 
   if (isLoading) {
     return (
@@ -57,9 +60,15 @@ export default function TransactionDetailPage() {
     )
   }
 
-  const typeConfig = TRANSACTION_TYPE_CONFIG[transaction.transaction_type as keyof typeof TRANSACTION_TYPE_CONFIG]
-  const amount = parseFloat(transaction.amount)
-  const isNegative = transaction.transaction_type === 'expense' || transaction.transaction_type === 'adjustment'
+  const typeConfig = transaction ? TRANSACTION_TYPE_CONFIG[transaction.transaction_type as keyof typeof TRANSACTION_TYPE_CONFIG] : null
+  const amount = transaction ? parseFloat(transaction.amount) : 0
+  const isNegative = transaction ? transaction.transaction_type === 'expense' || transaction.transaction_type === 'adjustment' : false
+  const accountDisplay = accountData
+    ? `${accountData.name}${accountData.account_number_last4 ? ' ····' + accountData.account_number_last4 : ''}`
+    : transaction?.account_id || '—'
+  const sourceDisplay = transaction?.source
+    ? transaction.source.charAt(0).toUpperCase() + transaction.source.slice(1)
+    : '—'
 
   const handleDelete = async () => {
     await deleteTransaction.mutateAsync(transaction.id)
@@ -140,10 +149,10 @@ export default function TransactionDetailPage() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              <InfoItem icon={Building2} label="Cuenta" value={transaction.account_id} />
+              <InfoItem icon={Building2} label="Cuenta" value={accountDisplay} />
               <InfoItem icon={Calendar} label="Fecha" value={transaction.effective_date ? new Date(transaction.effective_date).toLocaleDateString('es-DO') : '—'} />
               <InfoItem icon={Clock} label="Creado" value={transaction.created_at ? new Date(transaction.created_at).toLocaleDateString('es-DO') : '—'} />
-              <InfoItem icon={Tag} label="Origen" value={transaction.source} />
+              <InfoItem icon={Tag} label="Origen" value={sourceDisplay} />
             </div>
 
             {transaction.notes && (

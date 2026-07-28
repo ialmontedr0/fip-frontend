@@ -3,18 +3,66 @@ import { Button } from '@/components/ui'
 import { useNavigate } from 'react-router-dom'
 
 interface Props {
-  variant?: 'expenses' | 'templates' | 'services' | 'subscriptions' | 'cards' | 'bills' | 'duplicates' | 'recurring'
+  variant?:
+    | 'expenses'
+    | 'templates'
+    | 'services'
+    | 'subscriptions'
+    | 'cards'
+    | 'bills'
+    | 'duplicates'
+    | 'recurring'
 }
 
 const VARIANTS = {
-  expenses: { title: 'No hay gastos', desc: 'Crea tu primer gasto para empezar a trackear', link: '/expenses/new', label: 'Nuevo Gasto' },
-  templates: { title: 'No hay plantillas', desc: 'Crea plantillas para gastos frecuentes', link: '/expenses/templates/new', label: 'Nueva Plantilla' },
-  services: { title: 'No hay servicios', desc: 'Agrega tus servicios de utilities', link: '/expenses/services/new', label: 'Nuevo Servicio' },
-  subscriptions: { title: 'No hay suscripciones', desc: 'Registra tus suscripciones activas', link: '/expenses/subscriptions/new', label: 'Nueva Suscripcion' },
-  cards: { title: 'No hay tarjetas', desc: 'Agrega tus tarjetas de credito', link: '/expenses/credit-cards/new', label: 'Nueva Tarjeta' },
-  bills: { title: 'No hay facturas', desc: 'Las facturas apareceran aqui cuando las generes', link: '#', label: '' },
-  duplicates: { title: 'Sin duplicados', desc: 'No se detectaron gastos duplicados en los ultimos 30 dias', link: '#', label: '' },
-  recurring: { title: 'Sin candidatos', desc: 'No se encontraron patrones recurrentes en tus gastos', link: '#', label: '' },
+  expenses: {
+    title: 'No hay gastos',
+    desc: 'Crea tu primer gasto para empezar a trackear',
+    link: '/expenses/new',
+    label: 'Nuevo Gasto',
+  },
+  templates: {
+    title: 'No hay plantillas',
+    desc: 'Crea plantillas para gastos frecuentes',
+    link: '/expenses/templates',
+    label: 'Nueva Plantilla',
+  },
+  services: {
+    title: 'No hay servicios',
+    desc: 'Agrega tus servicios de utilities',
+    link: '/expenses/services/new',
+    label: 'Nuevo Servicio',
+  },
+  subscriptions: {
+    title: 'No hay suscripciones',
+    desc: 'Registra tus suscripciones activas',
+    link: '/expenses/subscriptions/new',
+    label: 'Nueva Suscripcion',
+  },
+  cards: {
+    title: 'No hay tarjetas',
+    desc: 'Agrega tus tarjetas de credito',
+    link: '/expenses/credit-cards/new',
+    label: 'Nueva Tarjeta',
+  },
+  bills: {
+    title: 'No hay facturas',
+    desc: 'Las facturas apareceran aqui cuando las generes',
+    link: '#',
+    label: '',
+  },
+  duplicates: {
+    title: 'Sin duplicados',
+    desc: 'No se detectaron gastos duplicados en los ultimos 30 dias',
+    link: '#',
+    label: '',
+  },
+  recurring: {
+    title: 'Sin candidatos',
+    desc: 'No se encontraron patrones recurrentes en tus gastos',
+    link: '#',
+    label: '',
+  },
 }
 
 export default function EmptyExpenseState({ variant = 'expenses' }: Props) {

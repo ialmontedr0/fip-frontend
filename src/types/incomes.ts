@@ -162,6 +162,8 @@ export interface CreateSourceRequest {
   default_category_id?: string | null
   frequency?: string | null
   pay_day?: number | null
+  pay_month?: number | null
+  pay_weekday?: number | null
   icon?: string | null
   color?: string | null
 }
@@ -177,6 +179,8 @@ export interface UpdateSourceRequest {
   default_category_id?: string | null
   frequency?: string | null
   pay_day?: number | null
+  pay_month?: number | null
+  pay_weekday?: number | null
   icon?: string | null
   color?: string | null
   is_active?: boolean
@@ -194,6 +198,8 @@ export interface SourceResponse {
   default_category_id: string | null
   frequency: string | null
   pay_day: number | null
+  pay_month: number | null
+  pay_weekday: number | null
   icon: string | null
   color: string | null
   total_received: string

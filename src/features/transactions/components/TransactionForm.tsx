@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -11,6 +12,9 @@ import { Button } from '@/components/ui'
 import TagInput from './TagInput'
 import CategoryPicker from '@/features/categories/components/CategoryPicker'
 import FundingSourcePicker from '@/features/accounts/components/FundingSourcePicker'
+import IncomeSourcePicker from '@/features/incomes/components/IncomeSourcePicker'
+import { useSource } from '@/features/incomes/hooks/useSources'
+import { useTemplates } from '@/features/expenses/hooks/useTemplates'
 import { TRANSACTION_TYPE_CONFIG } from '../constants'
 import type { TransactionType, CreateTransactionRequest, TransactionResponse } from '@/types/transactions'
 
@@ -29,6 +33,8 @@ const transactionSchema = z.object({
   notes: z.string().max(1000).optional().or(z.literal('')),
   tags: z.array(z.string()).optional(),
   adjustment_operation: z.enum(['add', 'subtract']).optional(),
+  income_source_id: z.string().optional().nullable(),
+  expense_template_id: z.string().optional().nullable(),
   credit_card_id: z.string().optional().nullable(),
   debit_card_id: z.string().optional().nullable(),
 }).refine(
@@ -70,6 +76,8 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
       adjustment_operation: (defaultValues as any).adjustment_operation || 'subtract',
       credit_card_id: (defaultValues as any).credit_card_id || '',
       debit_card_id: (defaultValues as any).debit_card_id || '',
+      income_source_id: (defaultValues as any).income_source_id || null,
+      expense_template_id: (defaultValues as any).expense_template_id || null,
     } : {
       transaction_type: 'expense',
       account_id: '',
@@ -85,12 +93,57 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
       adjustment_operation: 'subtract',
       credit_card_id: '',
       debit_card_id: '',
+      income_source_id: null,
+      expense_template_id: null,
     },
   })
 
   const transactionType = watch('transaction_type')
   const adjustmentOp = watch('adjustment_operation')
   const tags = watch('tags') || []
+  const incomeSourceId = watch('income_source_id')
+
+  const { data: selectedSource } = useSource(
+    transactionType === 'income' && incomeSourceId ? incomeSourceId : undefined,
+  )
+  const { data: templatesData } = useTemplates()
+  const templates = templatesData?.templates || (Array.isArray(templatesData) ? templatesData : [])
+
+  const expenseTemplateId = watch('expense_template_id')
+  const selectedTemplate = expenseTemplateId
+    ? templates.find((t: { id: string }) => t.id === expenseTemplateId)
+    : null
+
+  useEffect(() => {
+    if (selectedSource && transactionType === 'income') {
+      if (selectedSource.default_amount && !watch('amount')) {
+        setValue('amount', parseFloat(selectedSource.default_amount).toString())
+      }
+      if (selectedSource.default_account_id && !watch('account_id')) {
+        setValue('account_id', selectedSource.default_account_id)
+      }
+      if (selectedSource.default_category_id && !watch('category_id')) {
+        setValue('category_id', selectedSource.default_category_id)
+      }
+    }
+  }, [selectedSource, transactionType, setValue, watch])
+
+  useEffect(() => {
+    if (selectedTemplate && transactionType === 'expense') {
+      if (selectedTemplate.default_amount && !watch('amount')) {
+        setValue('amount', parseFloat(selectedTemplate.default_amount).toString())
+      }
+      if (selectedTemplate.default_account_id && !watch('account_id')) {
+        setValue('account_id', selectedTemplate.default_account_id)
+      }
+      if (selectedTemplate.default_category_id && !watch('category_id')) {
+        setValue('category_id', selectedTemplate.default_category_id)
+      }
+      if (selectedTemplate.default_notes && !watch('notes')) {
+        setValue('notes', selectedTemplate.default_notes)
+      }
+    }
+  }, [selectedTemplate, transactionType, setValue, watch])
 
   const handleFormSubmit = (data: Record<string, unknown>) => {
     const payload: Record<string, unknown> = {
@@ -103,11 +156,18 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
       account_id: data.account_id || null,
       credit_card_id: data.credit_card_id || null,
       debit_card_id: data.debit_card_id || null,
+      income_source_id: data.income_source_id || null,
     }
     if (transactionType === 'adjustment') {
       payload.adjustment_operation = data.adjustment_operation || 'subtract'
     } else {
       delete payload.adjustment_operation
+    }
+    if (transactionType !== 'expense') {
+      delete payload.expense_template_id
+    }
+    if (transactionType !== 'income') {
+      delete payload.income_source_id
     }
     if (isEdit) {
       delete payload.tags
@@ -190,6 +250,44 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
                 </button>
               )
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Source / Template selector */}
+      {transactionType === 'income' && (
+        <div className="animate-fade-in">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            Fuente de Ingreso (opcional)
+          </label>
+          <p className="mb-2 text-xs text-gray-400">Selecciona una fuente para heredar datos</p>
+          <IncomeSourcePicker
+            value={watch('income_source_id') || ''}
+            onChange={(id) => setValue('income_source_id', id || null)}
+            placeholder="Seleccionar fuente..."
+          />
+        </div>
+      )}
+
+      {transactionType === 'expense' && (
+        <div className="animate-fade-in">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            Plantilla de Gasto (opcional)
+          </label>
+          <p className="mb-2 text-xs text-gray-400">Selecciona una plantilla para heredar datos</p>
+          <div className="relative">
+            <select
+              value={watch('expense_template_id') || ''}
+              onChange={(e) => setValue('expense_template_id', e.target.value || null)}
+              className="w-full rounded-xl border border-gray-200 bg-white/70 px-3 py-2.5 text-sm backdrop-blur-sm transition-all dark:border-gray-700 dark:bg-gray-800/70 dark:text-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
+            >
+              <option value="">Seleccione una plantilla</option>
+              {templates.map((t: { id: string; name: string; default_amount: string | null }) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}{t.default_amount ? ` (${parseFloat(t.default_amount).toFixed(2)})` : ''}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       )}

@@ -7,6 +7,7 @@ import { Button, Input } from '@/components/ui'
 import AccountPicker from '@/features/accounts/components/AccountPicker'
 import CategoryPicker from '@/features/categories/components/CategoryPicker'
 import IncomeSourcePicker from './IncomeSourcePicker'
+import { useSource } from '../hooks/useSources'
 import { INCOME_TYPE_CONFIG, STABILITY_CONFIG } from '../constants'
 import {
   Save, X, ChevronDown, ChevronUp, Calculator, Receipt,
@@ -46,16 +47,6 @@ const INCOME_STATUS_OPTIONS = [
   { value: 'cancelled', label: 'Cancelado', color: 'text-gray-600 bg-gray-100 dark:bg-gray-500/10', dot: 'bg-gray-500' },
 ]
 
-const FREQUENCY_OPTIONS = [
-  { value: '', label: 'No recurrente' },
-  { value: 'daily', label: 'Diario' },
-  { value: 'weekly', label: 'Semanal' },
-  { value: 'biweekly', label: 'Quincenal' },
-  { value: 'monthly', label: 'Mensual' },
-  { value: 'quarterly', label: 'Trimestral' },
-  { value: 'yearly', label: 'Anual' },
-]
-
 interface Props {
   defaultValues?: Partial<FormValues>
   onSubmit: (data: CreateIncomeRequest | UpdateIncomeRequest) => void
@@ -70,7 +61,7 @@ export default function IncomeForm({ defaultValues, onSubmit, onCancel, isSubmit
   const [tagInput, setTagInput] = useState('')
   const [activeSection, setActiveSection] = useState<string | null>(null)
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(incomeSchema),
     defaultValues: {
       currency_code: 'DOP',
@@ -88,6 +79,31 @@ export default function IncomeForm({ defaultValues, onSubmit, onCancel, isSubmit
   const incomeType = watch('income_type')
   const incomeStatus = watch('income_status')
   const tags = watch('tags') || []
+  const incomeSourceId = watch('income_source_id')
+  const { data: selectedSource } = useSource(incomeSourceId || undefined)
+
+  useEffect(() => {
+    if (!selectedSource || mode !== 'create') return
+    const source = selectedSource
+    if (source.default_amount) {
+      setValue('amount', Number(source.default_amount))
+    }
+    if (source.default_account_id) {
+      setValue('account_id', source.default_account_id)
+    }
+    if (source.default_category_id) {
+      setValue('category_id', source.default_category_id)
+    }
+    if (source.income_type) {
+      setValue('income_type', source.income_type)
+    }
+    if (source.stability) {
+      setValue('stability', source.stability)
+    }
+    if (source.name) {
+      setValue('description', source.name)
+    }
+  }, [selectedSource, mode, setValue, incomeSourceId])
 
   useEffect(() => {
     if (grossAmount && taxWithheld) {
@@ -248,6 +264,19 @@ export default function IncomeForm({ defaultValues, onSubmit, onCancel, isSubmit
               {errors.description && <p className="text-xs text-red-500 mt-0.5">{errors.description.message}</p>}
             </div>
           </div>
+
+          {/* Income Source */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Fuente de Ingreso
+              <span className="ml-1 text-xs font-normal text-gray-400">(opcional — hereda datos)</span>
+            </label>
+            <IncomeSourcePicker
+              value={watch('income_source_id') || ''}
+              onChange={(id) => setValue('income_source_id', id || null)}
+              placeholder="Seleccione una fuente de ingreso"
+            />
+          </div>
         </div>
       </div>
 
@@ -338,28 +367,6 @@ export default function IncomeForm({ defaultValues, onSubmit, onCancel, isSubmit
                 )
               })}
             </div>
-          </div>
-
-          {/* Income Source */}
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Fuente de Ingreso</label>
-            <IncomeSourcePicker
-              value={watch('income_source_id') || ''}
-              onChange={(id) => setValue('income_source_id', id || null)}
-            />
-          </div>
-
-          {/* Frequency */}
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Frecuencia</label>
-            <select
-              {...register('frequency')}
-              className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 px-3 py-2.5 text-sm backdrop-blur-sm dark:text-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
-            >
-              {FREQUENCY_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
           </div>
         </div>
       </div>

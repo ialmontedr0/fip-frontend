@@ -5,7 +5,43 @@ import { cn } from '@/lib/utils'
 import { Button, Input } from '@/components/ui'
 import AccountPicker from '@/features/accounts/components/AccountPicker'
 import CategoryPicker from '@/features/categories/components/CategoryPicker'
-import { INCOME_TYPE_CONFIG, STABILITY_CONFIG, FREQUENCY_OPTIONS } from '../constants'
+import { INCOME_TYPE_CONFIG, STABILITY_CONFIG } from '../constants'
+
+const FREQUENCY_OPTIONS = [
+  { value: '', label: 'Sin frecuencia' },
+  { value: 'daily', label: 'Diario' },
+  { value: 'weekly', label: 'Semanal' },
+  { value: 'biweekly', label: 'Quincenal' },
+  { value: 'monthly', label: 'Mensual' },
+  { value: 'quarterly', label: 'Trimestral' },
+  { value: 'cuatrimestral', label: 'Cuatrimestral' },
+  { value: 'yearly', label: 'Anual' },
+]
+
+const MONTH_OPTIONS = [
+  { value: 1, label: 'Enero' },
+  { value: 2, label: 'Febrero' },
+  { value: 3, label: 'Marzo' },
+  { value: 4, label: 'Abril' },
+  { value: 5, label: 'Mayo' },
+  { value: 6, label: 'Junio' },
+  { value: 7, label: 'Julio' },
+  { value: 8, label: 'Agosto' },
+  { value: 9, label: 'Septiembre' },
+  { value: 10, label: 'Octubre' },
+  { value: 11, label: 'Noviembre' },
+  { value: 12, label: 'Diciembre' },
+]
+
+const WEEKDAY_OPTIONS = [
+  { value: 0, label: 'Domingo' },
+  { value: 1, label: 'Lunes' },
+  { value: 2, label: 'Martes' },
+  { value: 3, label: 'Miercoles' },
+  { value: 4, label: 'Jueves' },
+  { value: 5, label: 'Viernes' },
+  { value: 6, label: 'Sabado' },
+]
 import { Save } from 'lucide-react'
 import type { CreateSourceRequest, UpdateSourceRequest } from '@/types/incomes'
 
@@ -20,6 +56,8 @@ const sourceSchema = z.object({
   default_category_id: z.string().optional().nullable(),
   frequency: z.string().optional().nullable(),
   pay_day: z.number().min(1).max(31).optional().nullable(),
+  pay_month: z.number().min(1).max(12).optional().nullable(),
+  pay_weekday: z.number().min(0).max(6).optional().nullable(),
   icon: z.string().optional().nullable(),
   color: z.string().optional().nullable(),
 })
@@ -66,6 +104,8 @@ export default function IncomeSourceForm({ defaultValues, onSubmit, onCancel, is
       ...defaultValues,
     },
   })
+
+  const frequency = watch('frequency')
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={cn('space-y-6', className)}>
@@ -142,23 +182,55 @@ export default function IncomeSourceForm({ defaultValues, onSubmit, onCancel, is
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Frecuencia</label>
             <select
               {...register('frequency')}
               className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 px-3 py-2.5 text-sm backdrop-blur-sm dark:text-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
             >
-              <option value="">Sin frecuencia</option>
               {FREQUENCY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </select>
           </div>
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Dia de Pago</label>
-            <Input type="number" min={1} max={31} placeholder="1-31" {...register('pay_day', { valueAsNumber: true })} />
-          </div>
+          {frequency === 'monthly' || frequency === 'quarterly' || frequency === 'cuatrimestral' ? (
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Dia de Pago</label>
+              <Input type="number" min={1} max={31} placeholder="1-31" {...register('pay_day', { valueAsNumber: true })} />
+            </div>
+          ) : frequency === 'weekly' ? (
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Dia de la Semana</label>
+              <select
+                {...register('pay_weekday', { valueAsNumber: true })}
+                className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 px-3 py-2.5 text-sm backdrop-blur-sm dark:text-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
+              >
+                <option value="">Seleccionar...</option>
+                {WEEKDAY_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+          ) : frequency === 'yearly' ? (
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Mes</label>
+              <select
+                {...register('pay_month', { valueAsNumber: true })}
+                className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 px-3 py-2.5 text-sm backdrop-blur-sm dark:text-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
+              >
+                <option value="">Seleccionar mes...</option>
+                {MONTH_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Dia de Pago</label>
+              <Input type="number" min={1} max={31} placeholder="1-31" {...register('pay_day', { valueAsNumber: true })} disabled />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

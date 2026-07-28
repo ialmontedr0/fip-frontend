@@ -34,6 +34,7 @@ export interface CreateGoalRequest {
   name: string
   description?: string | null
   target_amount: string
+  current_amount?: string | null
   goal_type?: GoalType
   start_date?: string | null
   target_date?: string | null

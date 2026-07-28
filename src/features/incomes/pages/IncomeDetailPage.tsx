@@ -2,6 +2,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { formatCurrency } from '@/lib/utils'
 import { Button, Card, CardContent, Skeleton } from '@/components/ui'
 import { useIncome, useDeleteIncome } from '../hooks/useIncomes'
+import { useAccount } from '@/features/accounts/hooks/useAccounts'
+import { useCategory } from '@/features/categories/hooks/useCategories'
 import IncomeTypeBadge from '../components/IncomeTypeBadge'
 import IncomeStatusBadge from '../components/IncomeStatusBadge'
 import StabilityBadge from '../components/StabilityBadge'
@@ -14,6 +16,9 @@ export default function IncomeDetailPage() {
   const navigate = useNavigate()
   const { data: income, isLoading, isError, refetch } = useIncome(id)
   const deleteMutation = useDeleteIncome()
+
+  const { data: accountData } = useAccount(income?.account_id || undefined)
+  const { data: categoryData } = useCategory(income?.category_id || undefined)
 
   const handleDelete = () => {
     if (!income) return
@@ -42,16 +47,22 @@ export default function IncomeDetailPage() {
     )
   }
 
-  const typeConfig = INCOME_TYPE_CONFIG[income.income_type as keyof typeof INCOME_TYPE_CONFIG]
+  const typeConfig = income ? INCOME_TYPE_CONFIG[income.income_type as keyof typeof INCOME_TYPE_CONFIG] : null
   const TypeIcon = typeConfig?.icon as LucideIcon | undefined
 
+  const accountDisplay = accountData
+    ? `${accountData.name}${accountData.account_number_last4 ? ' ····' + accountData.account_number_last4 : ''}`
+    : income?.account_id || '—'
+  const categoryDisplay = categoryData?.name || income?.category_id || 'Sin categoria'
+  const transactionDisplay = income?.transaction_id ? `#${income.transaction_id.slice(0, 8)}` : '—'
+
   const detailItems = [
-    { label: 'Cuenta', value: income.account_id, icon: Building2 },
+    { label: 'Cuenta', value: accountDisplay, icon: Building2 },
     { label: 'Fecha Efectiva', value: income.effective_date ? new Date(income.effective_date).toLocaleDateString('es-DO', { day: 'numeric', month: 'long', year: 'numeric' }) : '-', icon: Calendar },
-    { label: 'Categoria', value: income.category_id || 'Sin categoria', icon: Hash },
+    { label: 'Categoria', value: categoryDisplay, icon: Hash },
     { label: 'Fuente', value: income.income_source_name || 'Sin fuente', icon: TrendingUp },
     { label: 'Frecuencia', value: income.frequency || 'No recurrente', icon: RepeatIcon },
-    { label: 'Transaccion', value: income.transaction_id, icon: FileText },
+    { label: 'Transaccion', value: transactionDisplay, icon: FileText },
   ]
 
   return (

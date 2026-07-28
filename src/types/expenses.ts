@@ -123,7 +123,7 @@ export interface RecurringCandidatesResponse {
 export interface CreateTemplateRequest {
   name: string
   description: string
-  default_amount?: string | null
+  default_amount?: number | null
   default_currency?: string
   default_account_id?: string | null
   default_category_id?: string | null
@@ -141,6 +141,7 @@ export interface TemplateResponse {
   description: string
   default_amount: string | null
   default_currency: string
+  default_account_id: string | null
   default_category_id: string | null
   default_subcategory_id: string | null
   default_notes: string | null

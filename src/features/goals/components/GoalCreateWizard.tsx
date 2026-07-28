@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Check, Target, CalendarIcon } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Check, Target, CalendarIcon, RotateCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useCreateGoal } from '../hooks/useGoals'
 import { useAccounts } from '@/features/accounts/hooks/useAccounts'
@@ -25,6 +25,7 @@ const wizardSchema = z.object({
   category_id: z.string().optional(),
   priority: z.number().min(1).max(5).default(3),
   auto_contribute: z.boolean().default(false),
+  start_from_zero: z.boolean().default(false),
 })
 
 type WizardData = z.infer<typeof wizardSchema>
@@ -94,6 +95,7 @@ export default function GoalCreateWizard() {
       category_id: '',
       priority: 3,
       auto_contribute: false,
+      start_from_zero: false,
     },
   })
 
@@ -141,14 +143,20 @@ export default function GoalCreateWizard() {
 
   const onSubmit = async (data: WizardData) => {
     const payload = {
-      ...data,
+      name: data.name,
       description: data.description || null,
+      target_amount: data.target_amount,
+      current_amount: data.start_from_zero ? '0' : null,
+      goal_type: data.goal_type as GoalType,
+      start_date: data.start_date,
+      target_date: data.target_date,
       monthly_contribution: data.monthly_contribution || null,
       interest_rate: data.interest_rate || null,
+      compound_frequency: (data.compound_frequency || null) as CompoundFrequency | null,
       account_id: data.account_id || null,
       category_id: data.category_id || null,
-      goal_type: data.goal_type as GoalType,
-      compound_frequency: (data.compound_frequency || null) as CompoundFrequency | null,
+      priority: data.priority,
+      auto_contribute: data.auto_contribute,
     } as CreateGoalRequest
     const result = await createMutation.mutateAsync(payload)
     navigate(`/goals/${result.data.id}`)
@@ -277,6 +285,22 @@ export default function GoalCreateWizard() {
                   </p>
                 )}
               </div>
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-900/10 p-3">
+              <input
+                type="checkbox"
+                id="start_from_zero"
+                {...register('start_from_zero')}
+                className="rounded border-gray-300 dark:border-gray-600 text-amber-500 focus:ring-amber-500/30"
+              />
+              <label htmlFor="start_from_zero" className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer flex items-center gap-2">
+                <RotateCcw className="h-4 w-4 text-amber-500" />
+                <div>
+                  <span className="font-semibold">Empezar desde 0</span>
+                  <p className="text-xs text-gray-400">No incluir mis activos actuales en el progreso inicial de la meta</p>
+                </div>
+              </label>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">

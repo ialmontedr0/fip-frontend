@@ -1,5 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useExpense, useDeleteExpense } from '../hooks/useExpenses'
+import { useAccount } from '@/features/accounts/hooks/useAccounts'
+import { useCategory } from '@/features/categories/hooks/useCategories'
 import { Button, Skeleton } from '@/components/ui'
 import { ArrowLeft, Edit3, Trash2, Calendar, DollarSign, Tag, FileText, AlertCircle, TrendingDown } from 'lucide-react'
 import PriorityBadge from '../components/PriorityBadge'
@@ -10,6 +12,9 @@ export default function ExpenseDetailPage() {
   const navigate = useNavigate()
   const { data: expense, isLoading, isError, refetch } = useExpense(id || '')
   const deleteMutation = useDeleteExpense()
+
+  const { data: accountData } = useAccount(expense?.account_id || undefined)
+  const { data: categoryData } = useCategory(expense?.category_id || undefined)
 
   if (isLoading) {
     return (
@@ -33,6 +38,14 @@ export default function ExpenseDetailPage() {
       </div>
     )
   }
+
+  const accountDisplay = accountData
+    ? `${accountData.name}${accountData.account_number_last4 ? ' ····' + accountData.account_number_last4 : ''}`
+    : expense.account_id || '—'
+  const categoryDisplay = categoryData?.name || expense.category_id || '—'
+  const sourceDisplay = expense.source
+    ? expense.source.charAt(0).toUpperCase() + expense.source.slice(1)
+    : '—'
 
   const handleDelete = () => {
     if (window.confirm(`Eliminar este gasto?`)) {
@@ -109,7 +122,7 @@ export default function ExpenseDetailPage() {
                   <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Categoria</p>
                   <div className="flex items-center gap-1.5">
                     <Tag className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{expense.category_id}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{categoryDisplay}</span>
                   </div>
                 </div>
               )}
@@ -131,14 +144,14 @@ export default function ExpenseDetailPage() {
           {expense.account_id && (
             <div className="rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 p-5">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Cuenta</h2>
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{expense.account_id}</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{accountDisplay}</p>
             </div>
           )}
 
           {expense.source && (
             <div className="rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 p-5">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Origen</h2>
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{expense.source}</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{sourceDisplay}</p>
             </div>
           )}
 

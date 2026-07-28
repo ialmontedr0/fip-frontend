@@ -1,10 +1,12 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Loader2, DollarSign, Calendar, FileText, AlertTriangle, Tag } from 'lucide-react'
+import { Loader2, DollarSign, Calendar, FileText, AlertTriangle, Tag, Save } from 'lucide-react'
 import { Button, Input } from '@/components/ui'
 import FundingSourcePicker from '@/features/accounts/components/FundingSourcePicker'
 import CategoryPicker from '@/features/categories/components/CategoryPicker'
+import { useTemplates, useCreateTemplate } from '../hooks/useTemplates'
 import { cn } from '@/lib/utils'
 import { PRIORITY_OPTIONS } from '../constants'
 import type { CreateExpenseRequest, ExpenseResponse } from '@/types/expenses'
@@ -22,6 +24,9 @@ const schema = z.object({
   source: z.string().optional(),
   priority: z.enum(['low', 'normal', 'high', 'critical']).optional(),
   template_id: z.string().optional().nullable(),
+  expense_template_id: z.string().optional().nullable(),
+  save_as_template: z.boolean().optional(),
+  new_template_name: z.string().optional(),
   service_id: z.string().optional().nullable(),
   subscription_id: z.string().optional().nullable(),
   credit_card_id: z.string().optional().nullable(),
@@ -51,17 +56,63 @@ export default function ExpenseForm({ mode, defaultValues, onSubmit, isSubmittin
       notes: defaultValues.notes || '',
       source: defaultValues.source || 'manual',
       priority: defaultValues.priority || 'normal',
+      save_as_template: false,
     } : {
       currency_code: 'DOP',
       effective_date: new Date().toISOString().split('T')[0],
       source: 'manual',
       priority: 'normal',
+      save_as_template: false,
     },
   })
 
   const priority = watch('priority')
+  const expenseTemplateId = watch('expense_template_id')
+  const saveAsTemplate = watch('save_as_template')
+
+  const { data: templatesData } = useTemplates()
+  const templates = templatesData?.templates || (Array.isArray(templatesData) ? templatesData : [])
+  const createTemplate = useCreateTemplate()
+
+  const selectedTemplate = expenseTemplateId
+    ? templates.find((t: { id: string }) => t.id === expenseTemplateId)
+    : null
+
+  useEffect(() => {
+    if (selectedTemplate && mode === 'create') {
+      if (selectedTemplate.default_amount && !watch('amount')) {
+        setValue('amount', parseFloat(selectedTemplate.default_amount).toString())
+      }
+      if (selectedTemplate.default_account_id && !watch('account_id')) {
+        setValue('account_id', selectedTemplate.default_account_id)
+      }
+      if (selectedTemplate.default_category_id && !watch('category_id')) {
+        setValue('category_id', selectedTemplate.default_category_id)
+      }
+      if (selectedTemplate.default_notes && !watch('notes')) {
+        setValue('notes', selectedTemplate.default_notes)
+      }
+      if (selectedTemplate.description && !watch('description')) {
+        setValue('description', selectedTemplate.description)
+      }
+    }
+  }, [selectedTemplate, mode, setValue, watch])
 
   const submit = async (data: FormData) => {
+    if (mode === 'create' && data.save_as_template) {
+      const templateName = data.new_template_name?.trim() || data.description?.trim()
+      if (templateName) {
+        createTemplate.mutate({
+          name: templateName,
+          description: data.description || templateName,
+          default_amount: data.amount ? parseFloat(data.amount) : null,
+          default_account_id: data.account_id || null,
+          default_category_id: data.category_id || null,
+          default_notes: data.notes || null,
+          default_currency: data.currency_code || 'DOP',
+        })
+      }
+    }
     await onSubmit({
       ...data,
       account_id: data.account_id || null,
@@ -81,6 +132,26 @@ export default function ExpenseForm({ mode, defaultValues, onSubmit, isSubmittin
         <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
           {mode === 'create' ? 'Nuevo Gasto' : 'Editar Gasto'}
         </h3>
+
+        {mode === 'create' && (
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              Plantilla de Gasto (opcional)
+            </label>
+            <select
+              value={watch('expense_template_id') || ''}
+              onChange={(e) => setValue('expense_template_id', e.target.value || null)}
+              className="w-full rounded-xl border border-gray-200 bg-white/70 px-3 py-2.5 text-sm backdrop-blur-sm transition-all dark:border-gray-700 dark:bg-gray-800/70 dark:text-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
+            >
+              <option value="">Seleccione una plantilla</option>
+              {templates.map((t: { id: string; name: string; default_amount: string | null }) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}{t.default_amount ? ` (${parseFloat(t.default_amount).toFixed(2)})` : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
@@ -202,6 +273,35 @@ export default function ExpenseForm({ mode, defaultValues, onSubmit, isSubmittin
             />
           </div>
         </div>
+
+        {mode === 'create' && (
+          <div className="space-y-3 rounded-xl border border-dashed border-primary-200 dark:border-primary-800 bg-primary-50/50 dark:bg-primary-900/10 p-3">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                {...register('save_as_template')}
+                className="rounded border-gray-300 dark:border-gray-600 text-primary-500 focus:ring-primary-500/30"
+              />
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                <Save className="h-3.5 w-3.5" />
+                Guardar como plantilla
+              </span>
+            </label>
+            {saveAsTemplate && (
+              <div className="animate-fade-in space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  Nombre de la plantilla
+                </label>
+                <input
+                  {...register('new_template_name')}
+                  placeholder="Ej: Supermercado mensual"
+                  className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 px-3 py-2 text-sm backdrop-blur-sm dark:text-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20 placeholder:text-gray-400"
+                />
+                <p className="text-xs text-gray-400">Si no se especifica, se usara la descripcion</p>
+              </div>
+            )}
+          </div>
+        )}
 
         <input type="hidden" {...register('source')} />
       </div>
