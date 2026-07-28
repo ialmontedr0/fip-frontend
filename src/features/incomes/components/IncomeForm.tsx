@@ -61,7 +61,7 @@ export default function IncomeForm({ defaultValues, onSubmit, onCancel, isSubmit
   const [tagInput, setTagInput] = useState('')
   const [activeSection, setActiveSection] = useState<string | null>(null)
 
-  const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(incomeSchema),
     defaultValues: {
       currency_code: 'DOP',
