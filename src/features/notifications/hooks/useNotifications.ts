@@ -126,6 +126,19 @@ export function useCheckTelegramLink() {
   })
 }
 
+export function useUnlinkTelegram() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => notificationsApi.unlinkTelegram().then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: notificationKeys.preferences() })
+      queryClient.invalidateQueries({ queryKey: [...notificationKeys.all, 'telegram-link'] })
+      toast.success('Telegram desvinculado')
+    },
+    onError: () => toast.error('Error al desvincular Telegram'),
+  })
+}
+
 export function useSendTestNotification() {
   return useMutation({
     mutationFn: (params: { channel: string; telegramChatId?: string }) => notificationsApi.sendTestNotification(params).then((r) => r.data),

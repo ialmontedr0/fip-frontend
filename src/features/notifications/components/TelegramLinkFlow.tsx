@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
-import { Send, Check, Loader2, ExternalLink } from 'lucide-react'
+import { Send, Check, Loader2, ExternalLink, Unlink } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useGenerateTelegramLinkCode, useCheckTelegramLink } from '../hooks/useNotifications'
+import { useGenerateTelegramLinkCode, useCheckTelegramLink, useUnlinkTelegram } from '../hooks/useNotifications'
 
 interface TelegramLinkFlowProps {
   linked: boolean
@@ -12,8 +12,10 @@ interface TelegramLinkFlowProps {
 export default function TelegramLinkFlow({ linked, telegramChatId, onLinked }: TelegramLinkFlowProps) {
   const [step, setStep] = useState<'idle' | 'code' | 'linked'>(linked ? 'linked' : 'idle')
   const [code, setCode] = useState<string | null>(null)
+  const [confirmUnlink, setConfirmUnlink] = useState(false)
   const generateCode = useGenerateTelegramLinkCode()
   const checkLink = useCheckTelegramLink()
+  const unlink = useUnlinkTelegram()
 
   const handleStart = useCallback(async () => {
     try {
@@ -25,11 +27,53 @@ export default function TelegramLinkFlow({ linked, telegramChatId, onLinked }: T
     }
   }, [generateCode])
 
+  const handleUnlink = useCallback(async () => {
+    try {
+      await unlink.mutateAsync()
+      setStep('idle')
+      setCode(null)
+      setConfirmUnlink(false)
+    } catch {
+      /* error toast handled by hook */
+    }
+  }, [unlink])
+
   if (step === 'linked' || linked) {
     return (
-      <div className="ml-12 flex items-center gap-2 rounded-lg bg-emerald-100/80 dark:bg-emerald-500/15 border border-emerald-200/60 dark:border-emerald-500/30 px-3.5 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300">
-        <Check className="h-4 w-4" />
-        Telegram vinculado {telegramChatId && <span className="font-mono opacity-70">({telegramChatId})</span>}
+      <div className="ml-12 space-y-2">
+        <div className="flex items-center gap-2 rounded-lg bg-emerald-100/80 dark:bg-emerald-500/15 border border-emerald-200/60 dark:border-emerald-500/30 px-3.5 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+          <Check className="h-4 w-4" />
+          Telegram vinculado {telegramChatId && <span className="font-mono opacity-70">({telegramChatId})</span>}
+        </div>
+        {confirmUnlink ? (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-500 dark:text-gray-400">¿Desvincular?</span>
+            <button
+              type="button"
+              onClick={handleUnlink}
+              disabled={unlink.isPending}
+              className="inline-flex items-center gap-1 rounded-md bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider hover:bg-red-200 dark:hover:bg-red-500/30 transition-colors"
+            >
+              {unlink.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Si, desvincular'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmUnlink(false)}
+              className="text-[10px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline"
+            >
+              Cancelar
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setConfirmUnlink(true)}
+            className="inline-flex items-center gap-1 text-[10px] text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors ml-1"
+          >
+            <Unlink className="h-3 w-3" />
+            Desvincular
+          </button>
+        )}
       </div>
     )
   }

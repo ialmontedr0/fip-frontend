@@ -55,3 +55,7 @@ export function generateTelegramLinkCode() {
 export function checkTelegramLink() {
   return api.get<{ linked: boolean; telegram_chat_id?: string | null }>('/telegram/check-link')
 }
+
+export function unlinkTelegram() {
+  return api.post<{ success: boolean }>('/telegram/unlink')
+}
