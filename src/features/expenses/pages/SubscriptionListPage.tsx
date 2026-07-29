@@ -2,15 +2,18 @@ import { useState } from 'react'
 import {
   useSubscriptions,
   useSubscriptionSummary,
+  useCreateSubscription,
+  useUpdateSubscription,
   useDeleteSubscription,
 } from '../hooks/useSubscriptions'
 import SubscriptionCard from '../components/SubscriptionCard'
 import SubscriptionSummaryCard from '../components/SubscriptionSummary'
+import SubscriptionForm from '../components/SubscriptionForm'
 import ExpenseNav from '../components/ExpenseNav'
 import EmptyExpenseState from '../components/EmptyExpenseState'
 import { Button, Skeleton, Modal } from '@/components/ui'
 import { Repeat, AlertCircle, Plus } from 'lucide-react'
-import type { SubscriptionResponse } from '@/types/expenses'
+import type { SubscriptionResponse, CreateSubscriptionRequest } from '@/types/expenses'
 
 export default function SubscriptionListPage() {
   const [formOpen, setFormOpen] = useState(false)
@@ -18,10 +21,23 @@ export default function SubscriptionListPage() {
 
   const { data: subscriptions, isLoading, isError, refetch } = useSubscriptions()
   const { data: summary, isLoading: summaryLoading } = useSubscriptionSummary()
+  const createMutation = useCreateSubscription()
+  const updateMutation = useUpdateSubscription()
   const deleteMutation = useDeleteSubscription()
 
   const handleDelete = (id: string) => {
     if (window.confirm('Eliminar esta suscripcion?')) deleteMutation.mutate(id)
+  }
+
+  const handleCreate = async (data: CreateSubscriptionRequest) => {
+    await createMutation.mutateAsync(data)
+    setFormOpen(false)
+  }
+
+  const handleUpdate = async (data: CreateSubscriptionRequest) => {
+    if (!editingSub) return
+    await updateMutation.mutateAsync({ id: editingSub.id, data })
+    setEditingSub(null)
   }
 
   const subList = subscriptions?.subscriptions || []
@@ -79,13 +95,29 @@ export default function SubscriptionListPage() {
       )}
 
       <Modal isOpen={formOpen || !!editingSub} onClose={() => { setFormOpen(false); setEditingSub(null) }} title={editingSub ? 'Editar Suscripcion' : 'Nueva Suscripcion'}>
-        <div className="space-y-4">
-          {editingSub ? (
-            <p className="text-sm text-gray-500">Editar funcionalidad pendiente</p>
-          ) : (
-            <p className="text-sm text-gray-500">Crear funcionalidad pendiente</p>
-          )}
-        </div>
+        {editingSub ? (
+          <SubscriptionForm
+            key={editingSub.id}
+            initialData={{
+              name: editingSub.name,
+              description: editingSub.description || '',
+              provider: editingSub.provider || '',
+              amount: parseFloat(editingSub.amount).toString(),
+              billing_frequency: editingSub.billing_frequency,
+              start_date: editingSub.start_date?.slice(0, 10),
+              end_date: editingSub.end_date?.slice(0, 10) || '',
+              next_billing_date: editingSub.next_billing_date?.slice(0, 10) || '',
+              website_url: editingSub.website_url || '',
+            }}
+            onSubmit={handleUpdate}
+            isSubmitting={updateMutation.isPending}
+          />
+        ) : (
+          <SubscriptionForm
+            onSubmit={handleCreate}
+            isSubmitting={createMutation.isPending}
+          />
+        )}
       </Modal>
     </div>
   )

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -15,6 +15,11 @@ import FundingSourcePicker from '@/features/accounts/components/FundingSourcePic
 import IncomeSourcePicker from '@/features/incomes/components/IncomeSourcePicker'
 import { useSource } from '@/features/incomes/hooks/useSources'
 import { useTemplates } from '@/features/expenses/hooks/useTemplates'
+import { useServices } from '@/features/expenses/hooks/useServices'
+import { useSubscriptions } from '@/features/expenses/hooks/useSubscriptions'
+import TemplatePicker from '@/features/expenses/components/TemplatePicker'
+import type { CombinedOption } from '@/features/expenses/components/TemplatePicker'
+import { useCategories } from '@/features/categories/hooks/useCategories'
 import { TRANSACTION_TYPE_CONFIG } from '../constants'
 import type { TransactionType, CreateTransactionRequest, TransactionResponse } from '@/types/transactions'
 
@@ -106,13 +111,71 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
   const { data: selectedSource } = useSource(
     transactionType === 'income' && incomeSourceId ? incomeSourceId : undefined,
   )
-  const { data: templatesData } = useTemplates()
+  const { data: templatesData, isLoading: templatesLoading } = useTemplates()
   const templates = templatesData?.templates || (Array.isArray(templatesData) ? templatesData : [])
+  const { data: servicesData, isLoading: servicesLoading } = useServices()
+  const services = Array.isArray(servicesData) ? servicesData : servicesData?.services || []
+  const { data: subscriptionsData, isLoading: subsLoading } = useSubscriptions()
+  const subscriptions = subscriptionsData?.subscriptions || []
+  const { data: categoriesData } = useCategories()
+  const categories = categoriesData?.categories || []
 
-  const expenseTemplateId = watch('expense_template_id')
-  const selectedTemplate = expenseTemplateId
-    ? templates.find((t: { id: string }) => t.id === expenseTemplateId)
+  const catMap = useMemo(() => {
+    const m: Record<string, string> = {}
+    for (const c of categories) {
+      m[c.id] = c.name
+      if (c.subcategories) {
+        for (const sc of c.subcategories) {
+          m[sc.id] = sc.name
+        }
+      }
+    }
+    return m
+  }, [categories])
+
+  const combinedOptions: CombinedOption[] = useMemo(() => [
+    ...templates.map((t: any) => ({
+      id: `template_${t.id}`,
+      label: `[Plantilla] ${t.name}`,
+      type: 'template' as const,
+      amount: t.default_amount,
+      account_id: t.default_account_id,
+      category_id: t.default_category_id,
+      category: t.default_category_id ? (catMap[t.default_category_id] || null) : null,
+      notes: t.default_notes,
+      description: t.description || t.name,
+      account_name: null as string | null,
+    })),
+    ...services.map((s: any) => ({
+      id: `service_${s.id}`,
+      label: `[Servicio] ${s.name}${s.provider ? ` - ${s.provider}` : ''}`,
+      type: 'service' as const,
+      amount: s.estimated_amount,
+      category_id: s.category_id,
+      category: s.category_id ? (catMap[s.category_id] || null) : null,
+      account_name: null as string | null,
+      description: s.name,
+    })),
+    ...subscriptions.map((s: any) => ({
+      id: `sub_${s.id}`,
+      label: `[Suscripcion] ${s.name}${s.provider ? ` - ${s.provider}` : ''}`,
+      type: 'subscription' as const,
+      amount: s.amount,
+      category_id: s.category_id,
+      category: s.category_id ? (catMap[s.category_id] || null) : null,
+      account_name: null as string | null,
+      description: s.description || s.name,
+    })),
+  ], [templates, services, subscriptions, catMap])
+
+  const isCombinedLoading = templatesLoading || servicesLoading || subsLoading
+
+  const selectedOptionId = watch('expense_template_id')
+  const selectedOption = selectedOptionId
+    ? combinedOptions.find((o) => o.id === selectedOptionId)
     : null
+
+  const prevTemplateIdRef = useRef<string | null>(null)
 
   useEffect(() => {
     if (selectedSource && transactionType === 'income') {
@@ -129,21 +192,28 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
   }, [selectedSource, transactionType, setValue, watch])
 
   useEffect(() => {
-    if (selectedTemplate && transactionType === 'expense') {
-      if (selectedTemplate.default_amount && !watch('amount')) {
-        setValue('amount', parseFloat(selectedTemplate.default_amount).toString())
-      }
-      if (selectedTemplate.default_account_id && !watch('account_id')) {
-        setValue('account_id', selectedTemplate.default_account_id)
-      }
-      if (selectedTemplate.default_category_id && !watch('category_id')) {
-        setValue('category_id', selectedTemplate.default_category_id)
-      }
-      if (selectedTemplate.default_notes && !watch('notes')) {
-        setValue('notes', selectedTemplate.default_notes)
+    const currentId = selectedOption?.id || null
+    if (currentId && currentId !== prevTemplateIdRef.current) {
+      prevTemplateIdRef.current = currentId
+      if (transactionType === 'expense' && selectedOption) {
+        if (selectedOption.amount) {
+          setValue('amount', parseFloat(selectedOption.amount).toString())
+        }
+        if (selectedOption.account_id) {
+          setValue('account_id', selectedOption.account_id)
+        }
+        if (selectedOption.category_id) {
+          setValue('category_id', selectedOption.category_id)
+        }
+        if (selectedOption.notes) {
+          setValue('notes', selectedOption.notes)
+        }
+        if (selectedOption.description) {
+          setValue('description', selectedOption.description)
+        }
       }
     }
-  }, [selectedTemplate, transactionType, setValue, watch])
+  }, [selectedOption, transactionType, setValue])
 
   const handleFormSubmit = (data: Record<string, unknown>) => {
     const payload: Record<string, unknown> = {
@@ -272,23 +342,16 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
       {transactionType === 'expense' && (
         <div className="animate-fade-in">
           <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-            Plantilla de Gasto (opcional)
+            Plantilla (opcional)
           </label>
-          <p className="mb-2 text-xs text-gray-400">Selecciona una plantilla para heredar datos</p>
-          <div className="relative">
-            <select
-              value={watch('expense_template_id') || ''}
-              onChange={(e) => setValue('expense_template_id', e.target.value || null)}
-              className="w-full rounded-xl border border-gray-200 bg-white/70 px-3 py-2.5 text-sm backdrop-blur-sm transition-all dark:border-gray-700 dark:bg-gray-800/70 dark:text-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
-            >
-              <option value="">Seleccione una plantilla</option>
-              {templates.map((t: { id: string; name: string; default_amount: string | null }) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}{t.default_amount ? ` (${parseFloat(t.default_amount).toFixed(2)})` : ''}
-                </option>
-              ))}
-            </select>
-          </div>
+          <p className="mb-2 text-xs text-gray-400">Selecciona una plantilla, servicio o suscripcion para heredar datos</p>
+          <TemplatePicker
+            value={watch('expense_template_id') || ''}
+            onChange={(id) => setValue('expense_template_id', id)}
+            options={combinedOptions}
+            isLoading={isCombinedLoading}
+            placeholder="Seleccionar plantilla..."
+          />
         </div>
       )}
 
