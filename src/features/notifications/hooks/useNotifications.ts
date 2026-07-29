@@ -110,9 +110,25 @@ export function useUpdatePreferences() {
   })
 }
 
+export function useGenerateTelegramLinkCode() {
+  return useMutation({
+    mutationFn: () => notificationsApi.generateTelegramLinkCode().then((r) => r.data),
+    onError: () => toast.error('Error al generar codigo de vinculacion'),
+  })
+}
+
+export function useCheckTelegramLink() {
+  return useQuery({
+    queryKey: [...notificationKeys.all, 'telegram-link'] as const,
+    queryFn: () => notificationsApi.checkTelegramLink().then((r) => r.data),
+    refetchInterval: (query) => (query.state.data?.linked ? false : 2000),
+    staleTime: 0,
+  })
+}
+
 export function useSendTestNotification() {
   return useMutation({
-    mutationFn: () => notificationsApi.sendTestNotification().then((r) => r.data),
+    mutationFn: (params: { channel: string; telegramChatId?: string }) => notificationsApi.sendTestNotification(params).then((r) => r.data),
     onSuccess: (data) => {
       const successCount = data.results.filter((r) => r.success).length
       const failCount = data.results.filter((r) => !r.success).length

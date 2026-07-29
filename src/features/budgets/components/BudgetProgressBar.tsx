@@ -60,10 +60,10 @@ export default function BudgetProgressBar({
       {showLabels && (
         <div className="flex items-center justify-between">
           <span className="text-xs text-gray-500 dark:text-gray-400">
-            Restante:
+            {Number(remaining) >= 0 ? 'Restante:' : 'Sobregiro:'}
             {' '}
             <span className={`font-semibold ${Number(remaining) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-              {formatCurrency(remaining)}
+              {Number(remaining) >= 0 ? formatCurrency(remaining) : `+${formatCurrency(String(Math.abs(Number(remaining))))}`}
             </span>
           </span>
           <span className={`text-xs font-medium ${config.textColor}`}>

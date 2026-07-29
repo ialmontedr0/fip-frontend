@@ -50,6 +50,7 @@ export interface TrainPredictorResponse {
   model_id: string | null
   model_version: string
   target_type: string
+  model_type?: string
   r2: number
   mse: number
   mae: number
@@ -397,6 +398,16 @@ export interface SavingsSimulateParams {
   monthly_amount?: number
   months?: number
   annual_return_pct?: number
+}
+
+export interface LatestRecommendationsResponse {
+  recommendations: RecommendationItem[]
+  total: number
+  high_priority: number
+  estimated_total_savings: number
+  last_generated_at: string | null
+  has_new_transactions: boolean
+  has_batch: boolean
 }
 
 export interface TrainingStatus {

@@ -6,9 +6,10 @@ import type { NotificationChannel } from '@/types/notifications'
 
 interface TestNotificationButtonProps {
   channel: NotificationChannel
+  telegramChatId?: string
 }
 
-export default function TestNotificationButton({ channel }: TestNotificationButtonProps) {
+export default function TestNotificationButton({ channel, telegramChatId }: TestNotificationButtonProps) {
   const sendTest = useSendTestNotification()
   const [feedback, setFeedback] = useState<'success' | 'error' | null>(null)
   const [sending, setSending] = useState(false)
@@ -26,7 +27,7 @@ export default function TestNotificationButton({ channel }: TestNotificationButt
     setSending(true)
     setFeedback(null)
     try {
-      const result = await sendTest.mutateAsync()
+      const result = await sendTest.mutateAsync({ channel, telegramChatId: channel === 'telegram' ? telegramChatId : undefined })
       const chResult = result.results.find((r) => r.channel === channel)
       setFeedback(chResult?.success ? 'success' : 'error')
     } catch {
@@ -42,7 +43,7 @@ export default function TestNotificationButton({ channel }: TestNotificationButt
         <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500/20">
           <Check className="h-2.5 w-2.5" />
         </span>
-        Notificación enviada
+        Notificacion enviada
       </span>
     )
   }

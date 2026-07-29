@@ -14,6 +14,7 @@ import {
   PiggyBank,
   CreditCard,
   Landmark,
+  ShoppingCart,
   BarChart3,
   Brain,
   Bot,
@@ -78,6 +79,7 @@ function useNavigation(): NavSection[] {
         { name: 'Presupuestos', href: '/budgets', icon: PiggyBank },
         { name: 'Tarjetas', href: '/cards', icon: CreditCard },
         { name: 'Prestamos', href: '/loans', icon: Landmark },
+        { name: 'Compras a Credito', href: '/credit-purchases', icon: ShoppingCart },
       ],
     },
     {

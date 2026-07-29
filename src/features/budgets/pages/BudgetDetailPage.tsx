@@ -206,13 +206,22 @@ export default function BudgetDetailPage() {
           <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50">
             <p className="text-xs text-gray-500 dark:text-gray-400">Restante</p>
             <p className={`text-sm font-bold ${Number(budget.remaining) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-              {formatCurrency(budget.remaining)}
+              {Number(budget.remaining) >= 0 ? formatCurrency(budget.remaining) : formatCurrency(0)}
             </p>
           </div>
-          <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50">
-            <p className="text-xs text-gray-500 dark:text-gray-400">Uso</p>
-            <p className={`text-sm font-bold ${config.textColor}`}>{budget.pct_used.toFixed(1)}%</p>
-          </div>
+          {Number(budget.remaining) >= 0 ? (
+            <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50">
+              <p className="text-xs text-gray-500 dark:text-gray-400">Uso</p>
+              <p className={`text-sm font-bold ${config.textColor}`}>{budget.pct_used.toFixed(1)}%</p>
+            </div>
+          ) : (
+            <div className="p-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200/50 dark:border-red-700/30">
+              <p className="text-xs text-red-500 dark:text-red-400 font-medium">Sobregiro</p>
+              <p className="text-sm font-bold text-red-600 dark:text-red-400">
+                +{formatCurrency(Math.abs(Number(budget.remaining)))}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

@@ -10,6 +10,7 @@ import {
   detectAnomalies,
   getAnomalyHistory,
   getRecommendations,
+  getLatestRecommendations,
   getRecommendationHistory,
   listModels,
   getModelDetail,
@@ -63,19 +64,20 @@ export function useClassifierStatus() {
 
 export function usePredictExpenses() {
   return useMutation({
-    mutationFn: () => predictExpenses().then(r => r.data),
+    mutationFn: (model_version?: string) => predictExpenses(model_version).then(r => r.data),
   })
 }
 
 export function usePredictIncome() {
   return useMutation({
-    mutationFn: () => predictIncome().then(r => r.data),
+    mutationFn: (model_version?: string) => predictIncome(model_version).then(r => r.data),
   })
 }
 
 export function useTrainPredictor() {
   return useMutation({
-    mutationFn: (target_type: string = 'expense') => trainPredictor(target_type).then(r => r.data),
+    mutationFn: ({ target_type, model_type }: { target_type: string; model_type: string }) =>
+      trainPredictor(target_type, model_type).then(r => r.data),
   })
 }
 
@@ -98,8 +100,21 @@ export function useAnomalyHistory(limit: number = 20) {
 }
 
 export function useGetRecommendations() {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () => getRecommendations().then(r => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ai', 'recommendations', 'latest'] })
+    },
+  })
+}
+
+export function useLatestRecommendations() {
+  return useQuery({
+    queryKey: ['ai', 'recommendations', 'latest'],
+    queryFn: () => getLatestRecommendations().then(r => r.data),
+    staleTime: 1000 * 60 * 2,
+    retry: false,
   })
 }
 

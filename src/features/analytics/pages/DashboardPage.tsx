@@ -1,4 +1,7 @@
+import { useState } from 'react'
 import { useDashboard } from '../hooks/useAnalytics'
+import { useLatestRecommendations } from '@/features/ai/hooks/useAI'
+import RecommendationDetailModal from '@/features/ai/components/RecommendationDetailModal'
 import KPIWidgets from '../components/KPIWidgets'
 import CashFlowChart from '../components/CashFlowChart'
 import NetWorthWidget from '../components/NetWorthWidget'
@@ -9,9 +12,27 @@ import BudgetStatusWidget from '../components/BudgetStatusWidget'
 import UpcomingPaymentsWidget from '../components/UpcomingPaymentsWidget'
 import GoalsProgressWidget from '../components/GoalsProgressWidget'
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary'
+import { Link } from 'react-router-dom'
+import { cn } from '@/lib/utils'
+import type { RecommendationItem } from '@/types/ai'
+import { Lightbulb, Sparkles, PiggyBank, ArrowRight } from 'lucide-react'
 
 function DashboardPage() {
   const { data, isLoading, isError } = useDashboard()
+  const { data: latestRecs } = useLatestRecommendations()
+  const [selectedRec, setSelectedRec] = useState<RecommendationItem | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
+  const recs = latestRecs?.has_batch ? latestRecs.recommendations.slice(0, 3) : []
+
+  const openRecModal = (rec: RecommendationItem) => {
+    setSelectedRec(rec)
+    setModalOpen(true)
+  }
+
+  const closeRecModal = () => {
+    setModalOpen(false)
+    setSelectedRec(null)
+  }
 
   return (
     <div className="relative space-y-8 pb-8">
@@ -168,6 +189,63 @@ function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {recs.length > 0 && (
+        <div>
+          <div className="mb-4 flex items-center gap-3">
+            <div className="h-1 w-6 rounded-full bg-gradient-to-r from-amber-500 to-orange-400" />
+            <h2 className="text-xs font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">
+              Recomendaciones IA
+            </h2>
+            <Link
+              to="/ai"
+              className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+            >
+              Ver todas <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            {recs.map((rec, i) => (
+              <button
+                key={`${i}-${rec.title}`}
+                type="button"
+                onClick={() => openRecModal(rec)}
+                className={cn(
+                  'w-full text-left rounded-2xl border border-gray-100/80 dark:border-gray-700/80 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl p-4 shadow-sm transition-all duration-300',
+                  'hover:shadow-lg hover:-translate-y-0.5 hover:border-amber-200/50 dark:hover:border-amber-700/30 group cursor-pointer',
+                  rec.priority === 'high' && 'border-l-4 border-l-amber-500',
+                  rec.priority === 'medium' && 'border-l-4 border-l-blue-400',
+                  rec.priority === 'low' && 'border-l-4 border-l-gray-300 dark:border-l-gray-600',
+                )}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 shadow-sm">
+                    <Lightbulb className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{rec.title}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-0.5">{rec.description}</p>
+                    {rec.estimated_savings > 0 && (
+                      <div className="flex items-center gap-1 mt-2">
+                        <PiggyBank className="h-3 w-3 text-emerald-500" />
+                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                          ${rec.estimated_savings.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <Sparkles className="h-3.5 w-3.5 text-amber-400 shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </button>
+            ))}
+          </div>
+          <RecommendationDetailModal
+            rec={selectedRec}
+            isOpen={modalOpen}
+            onClose={closeRecModal}
+          />
+        </div>
+      )}
     </div>
   )
 }

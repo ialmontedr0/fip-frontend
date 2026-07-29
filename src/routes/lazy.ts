@@ -87,6 +87,12 @@ export const CardBillPayPage = lazy(() => import('@/features/cards/pages/CardBil
 export const CardSpendingLimitsPage = lazy(() => import('@/features/cards/pages/CardSpendingLimitsPage'))
 export const CardAlertsPage = lazy(() => import('@/features/cards/pages/CardAlertsPage'))
 
+// Credit Purchases
+export const CreditPurchaseListPage = lazy(() => import('@/features/creditPurchases/pages/CreditPurchaseListPage'))
+export const CreditPurchaseCreatePage = lazy(() => import('@/features/creditPurchases/pages/CreditPurchaseCreatePage'))
+export const CreditPurchaseDetailPage = lazy(() => import('@/features/creditPurchases/pages/CreditPurchaseDetailPage'))
+export const CreditPurchaseSimulatorPage = lazy(() => import('@/features/creditPurchases/pages/CreditPurchaseSimulatorPage'))
+
 // Loans
 export const LoanListPage = lazy(() => import('@/features/loans/pages/LoanListPage'))
 export const LoanCreatePage = lazy(() => import('@/features/loans/pages/LoanCreatePage'))
@@ -127,6 +133,9 @@ export const AutomationDetailPage = lazy(() => import('@/features/automations/pa
 // Notifications
 export const NotificationsPage = lazy(() => import('@/features/notifications/pages/NotificationsPage'))
 export const NotificationPreferencesPage = lazy(() => import('@/features/notifications/pages/NotificationPreferencesPage'))
+
+// Search
+export const SearchPage = lazy(() => import('@/features/search/pages/SearchPage'))
 
 // Imports & Exports
 export const ImportPage = lazy(() => import('@/features/imports/pages/ImportPage'))

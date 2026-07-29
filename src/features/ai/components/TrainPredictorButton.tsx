@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useTrainPredictor } from '../hooks/useAI'
 import { cn } from '@/lib/utils'
-import { BrainCircuit, Loader2, CheckCircle2, XCircle, BarChart3 } from 'lucide-react'
+import { BrainCircuit, Loader2, CheckCircle2, XCircle, BarChart3, Zap } from 'lucide-react'
 
 function TrainPredictorButton() {
   const mutation = useTrainPredictor()
   const [targetType, setTargetType] = useState<'expense' | 'income'>('expense')
+  const [modelType, setModelType] = useState<'xgboost' | 'lightgbm'>('xgboost')
   const [status, setStatus] = useState<'idle' | 'pending' | 'completed' | 'failed'>('idle')
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [metrics, setMetrics] = useState<{ r2: number; mse: number; mae: number; samples: number; months_used: number; duration_seconds: number } | null>(null)
@@ -13,7 +14,7 @@ function TrainPredictorButton() {
   const handleTrain = () => {
     setStatus('pending')
     setErrorMsg('')
-    mutation.mutate(targetType, {
+    mutation.mutate({ target_type: targetType, model_type: modelType }, {
       onSuccess: (data) => {
         if (data.success) {
           setStatus('completed')
@@ -42,7 +43,8 @@ function TrainPredictorButton() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mb-5">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mr-1">Tipo:</span>
         <button
           type="button"
           onClick={() => { setTargetType('expense'); setStatus('idle') }}
@@ -66,6 +68,36 @@ function TrainPredictorButton() {
           )}
         >
           Ingresos
+        </button>
+      </div>
+
+      <div className="flex items-center gap-2 mb-5">
+        <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mr-1">Modelo:</span>
+        <button
+          type="button"
+          onClick={() => { setModelType('xgboost'); setStatus('idle') }}
+          className={cn(
+            'rounded-xl px-4 py-2 text-xs font-semibold transition-all duration-300 shadow-sm inline-flex items-center gap-1.5',
+            modelType === 'xgboost'
+              ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-md'
+              : 'border border-gray-200/70 dark:border-gray-700/70 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800',
+          )}
+        >
+          <BrainCircuit className="h-3 w-3" />
+          XGBoost
+        </button>
+        <button
+          type="button"
+          onClick={() => { setModelType('lightgbm'); setStatus('idle') }}
+          className={cn(
+            'rounded-xl px-4 py-2 text-xs font-semibold transition-all duration-300 shadow-sm inline-flex items-center gap-1.5',
+            modelType === 'lightgbm'
+              ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-md'
+              : 'border border-gray-200/70 dark:border-gray-700/70 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800',
+          )}
+        >
+          <Zap className="h-3 w-3" />
+          LightGBM
         </button>
         <button
           type="button"
@@ -93,7 +125,9 @@ function TrainPredictorButton() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-400 to-green-500 shadow-sm">
               <CheckCircle2 className="h-4 w-4 text-white" />
             </div>
-            <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Entrenamiento completado</span>
+            <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+              Entrenamiento completado ({modelType === 'lightgbm' ? 'LightGBM' : 'XGBoost'} - {targetType === 'expense' ? 'Gastos' : 'Ingresos'})
+            </span>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {[

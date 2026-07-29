@@ -27,6 +27,7 @@ import {
   GoalSimulationDetailPage,
   CardListPage, CardCreatePage, CardEditPage, CardDetailPage,
   CardBillListPage, CardBillPayPage, CardSpendingLimitsPage, CardAlertsPage,
+  CreditPurchaseListPage, CreditPurchaseCreatePage, CreditPurchaseDetailPage, CreditPurchaseSimulatorPage,
   LoanListPage, LoanCreatePage, LoanDetailPage,
   LoanEditPage, LoanAmortizationPage, LoanPaymentPage,
   LoanPaymentHistoryPage, LoanSimulatorPage,
@@ -37,6 +38,7 @@ import {
   NotificationsPage, NotificationPreferencesPage,
   ImportPage, ExportPage,
   ProfilePage, SecurityPage, PreferencesPage,
+  SearchPage,
   AdminDashboardPage, AdminUsersPage, AdminUserDetailPage, AdminRolesPage,
   AdminPermissionsPage, AdminAuditLogsPage, AdminStatsPage,
 } from './lazy'
@@ -447,6 +449,23 @@ export const router = createBrowserRouter([
             path: '/cards/alerts',
             element: (<SuspenseWrapper><CardAlertsPage /></SuspenseWrapper>),
           },
+          // Credit Purchases
+          {
+            path: '/credit-purchases',
+            element: (<SuspenseWrapper><CreditPurchaseListPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/credit-purchases/new',
+            element: (<SuspenseWrapper><CreditPurchaseCreatePage /></SuspenseWrapper>),
+          },
+          {
+            path: '/credit-purchases/simulator',
+            element: (<SuspenseWrapper><CreditPurchaseSimulatorPage /></SuspenseWrapper>),
+          },
+          {
+            path: '/credit-purchases/:id',
+            element: (<SuspenseWrapper><CreditPurchaseDetailPage /></SuspenseWrapper>),
+          },
           // Loans
           {
             path: '/loans',
@@ -579,6 +598,15 @@ export const router = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <ExportPage />
+              </SuspenseWrapper>
+            ),
+          },
+          // Search
+          {
+            path: '/search',
+            element: (
+              <SuspenseWrapper>
+                <SearchPage />
               </SuspenseWrapper>
             ),
           },

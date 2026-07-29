@@ -19,7 +19,7 @@ function MainLayout() {
       {mobileSidebarOpen && <Sidebar mobile onClose={() => setMobileSidebarOpen(false)} />}
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col">
         <Header />
         <main className="flex-1 overflow-y-scroll p-4 lg:p-6">
           <ErrorBoundary>

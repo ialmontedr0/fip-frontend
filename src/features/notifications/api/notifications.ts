@@ -44,6 +44,14 @@ export function updateNotificationPreferences(data: NotificationPreferenceUpdate
   return api.put<NotificationPreferences>('/notifications/preferences', data)
 }
 
-export function sendTestNotification() {
-  return api.post<NotificationTestResponse>('/notifications/test')
+export function sendTestNotification(params: { channel?: string; telegramChatId?: string } = {}) {
+  return api.post<NotificationTestResponse>('/notifications/test', { channel: params.channel || 'telegram', telegram_chat_id: params.telegramChatId || null })
+}
+
+export function generateTelegramLinkCode() {
+  return api.post<{ code: string }>('/telegram/link-code')
+}
+
+export function checkTelegramLink() {
+  return api.get<{ linked: boolean; telegram_chat_id?: string | null }>('/telegram/check-link')
 }

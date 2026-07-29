@@ -5,6 +5,7 @@ import type {
   PredictResponse, TrainPredictorResponse,
   AnomalyDetectResponse, AnomalyHistoryResponse,
   RecommendationsResponse, RecommendationHistoryResponse,
+  LatestRecommendationsResponse,
   ModelListResponse, ModelDetail,
   HabitAnalysisResponse, HabitTrendsResponse,
   RiskAssessmentResponse, HealthScoreResponse,
@@ -32,17 +33,19 @@ export function getClassifierStatus() {
   return api.get<ClassifierStatus>('/ai/classifier/status')
 }
 
-export function predictExpenses() {
-  return api.post<PredictResponse>('/ai/predict/expenses')
+export function predictExpenses(model_version?: string) {
+  const params = model_version ? { model_version } : undefined
+  return api.post<PredictResponse>('/ai/predict/expenses', null, { params })
 }
 
-export function predictIncome() {
-  return api.post<PredictResponse>('/ai/predict/income')
+export function predictIncome(model_version?: string) {
+  const params = model_version ? { model_version } : undefined
+  return api.post<PredictResponse>('/ai/predict/income', null, { params })
 }
 
-export function trainPredictor(target_type: string = 'expense') {
+export function trainPredictor(target_type: string = 'expense', model_type: string = 'xgboost') {
   return api.post<TrainPredictorResponse>('/ai/train/predictor', null, {
-    params: { target_type },
+    params: { target_type, model_type },
   })
 }
 
@@ -58,6 +61,10 @@ export function getAnomalyHistory(limit: number = 20) {
 
 export function getRecommendations() {
   return api.post<RecommendationsResponse>('/ai/recommendations')
+}
+
+export function getLatestRecommendations() {
+  return api.get<LatestRecommendationsResponse>('/ai/recommendations/latest')
 }
 
 export function getRecommendationHistory(limit: number = 20) {

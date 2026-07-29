@@ -6,11 +6,13 @@ import BackButton from '../components/BackButton'
 import AISectionHeader from '../components/AISectionHeader'
 import PredictCard from '../components/PredictCard'
 import TrainPredictorButton from '../components/TrainPredictorButton'
-import { TrendingDown, TrendingUp, BarChart3 } from 'lucide-react'
+import { TrendingDown, TrendingUp, BarChart3, Zap, BrainCircuit } from 'lucide-react'
 
 function AIPredictPage() {
   const expenseMutation = usePredictExpenses()
   const incomeMutation = usePredictIncome()
+  const lgbmExpenseMutation = usePredictExpenses()
+  const lgbmIncomeMutation = usePredictIncome()
   const [expenseResult, setExpenseResult] = useState<{
     predicted_amount: number
     confidence: number
@@ -23,8 +25,22 @@ function AIPredictPage() {
     model_version: string
     reason: string
   } | null>(null)
+  const [lgbmExpenseResult, setLgbmExpenseResult] = useState<{
+    predicted_amount: number
+    confidence: number
+    model_version: string
+    reason: string
+  } | null>(null)
+  const [lgbmIncomeResult, setLgbmIncomeResult] = useState<{
+    predicted_amount: number
+    confidence: number
+    model_version: string
+    reason: string
+  } | null>(null)
   const [expenseError, setExpenseError] = useState<string | null>(null)
   const [incomeError, setIncomeError] = useState<string | null>(null)
+  const [lgbmExpenseError, setLgbmExpenseError] = useState<string | null>(null)
+  const [lgbmIncomeError, setLgbmIncomeError] = useState<string | null>(null)
 
   const handlePredictExpense = () => {
     setExpenseError(null)
@@ -39,6 +55,22 @@ function AIPredictPage() {
     incomeMutation.mutate(undefined, {
       onSuccess: (data) => setIncomeResult(data),
       onError: (err) => setIncomeError(err instanceof Error ? err.message : 'Error al predecir'),
+    })
+  }
+
+  const handlePredictLgbmExpense = () => {
+    setLgbmExpenseError(null)
+    lgbmExpenseMutation.mutate('lgbm_expense_v1.0', {
+      onSuccess: (data) => setLgbmExpenseResult(data),
+      onError: (err) => setLgbmExpenseError(err instanceof Error ? err.message : 'Error al predecir'),
+    })
+  }
+
+  const handlePredictLgbmIncome = () => {
+    setLgbmIncomeError(null)
+    lgbmIncomeMutation.mutate('lgbm_income_v1.0', {
+      onSuccess: (data) => setLgbmIncomeResult(data),
+      onError: (err) => setLgbmIncomeError(err instanceof Error ? err.message : 'Error al predecir'),
     })
   }
 
@@ -58,6 +90,7 @@ function AIPredictPage() {
 
       <AINav />
 
+      <AISectionHeader icon={<BrainCircuit className="h-3.5 w-3.5 text-white" />} title="XGBoost" subtitle="Modelo por defecto" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PredictCard
           title="Predecir Gastos"
@@ -79,7 +112,29 @@ function AIPredictPage() {
         />
       </div>
 
-      <AISectionHeader icon={<BarChart3 className="h-3.5 w-3.5 text-white" />} title="Entrenamiento" subtitle="Entrena el predictor" />
+      <AISectionHeader icon={<Zap className="h-3.5 w-3.5 text-white" />} title="LightGBM" subtitle="Modelo alternativo (entrena primero)" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PredictCard
+          title="Predecir Gastos (LightGBM)"
+          icon={<TrendingDown className="h-4 w-4 text-white" />}
+          gradient="from-violet-400 to-purple-500"
+          result={lgbmExpenseResult}
+          onPredict={handlePredictLgbmExpense}
+          isPending={lgbmExpenseMutation.isPending}
+          error={lgbmExpenseError}
+        />
+        <PredictCard
+          title="Predecir Ingresos (LightGBM)"
+          icon={<TrendingUp className="h-4 w-4 text-white" />}
+          gradient="from-amber-400 to-orange-500"
+          result={lgbmIncomeResult}
+          onPredict={handlePredictLgbmIncome}
+          isPending={lgbmIncomeMutation.isPending}
+          error={lgbmIncomeError}
+        />
+      </div>
+
+      <AISectionHeader icon={<BarChart3 className="h-3.5 w-3.5 text-white" />} title="Entrenamiento" subtitle="Entrena XGBoost o LightGBM" />
       <TrainPredictorButton />
     </div>
   )

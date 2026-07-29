@@ -1,5 +1,12 @@
 import api from '@/lib/api'
 import type { ExportTransactionsFilters } from '@/types/exports'
+import { EXPORT_FILE_NAMES } from '@/types/exports'
+
+const FORMAT_MAP: Record<string, string> = {
+  xlsx: 'excel',
+  csv: 'csv',
+  pdf: 'pdf',
+}
 
 function buildExportUrl(
   entity: string,
@@ -15,7 +22,8 @@ function buildExportUrl(
     })
   }
   const qs = params.toString()
-  const formatPart = format ? `/${format}` : ''
+  const mappedFormat = FORMAT_MAP[format] || format
+  const formatPart = mappedFormat ? `/${mappedFormat}` : ''
   return `/exports/${entity}${formatPart}${qs ? `?${qs}` : ''}`
 }
 
@@ -36,15 +44,36 @@ export function getExportUrl(
   return buildExportUrl(entity, format, filters)
 }
 
-async function fetchBlob(url: string, onProgress?: (pct: number) => void) {
+function getDateSuffix(): string {
+  return new Date().toISOString().slice(0, 10)
+}
+
+function buildFallbackFilename(entity: string, format: string): string {
+  const nameKey = `${entity}_${format}`
+  const baseName = EXPORT_FILE_NAMES[nameKey] || entity
+  const ext = format === 'xlsx' ? 'xlsx' : format
+  return `${baseName}_${getDateSuffix()}.${ext}`
+}
+
+async function fetchBlob(
+  entity: string,
+  format: string,
+  url: string,
+  onProgress?: (pct: number) => void,
+) {
   onProgress?.(25)
   const response = await api.get(url, { responseType: 'blob' })
   onProgress?.(75)
   const disposition = (response.headers as Record<string, string>)['content-disposition']
-  let filename = url.split('/').pop() || 'export'
+  let filename = buildFallbackFilename(entity, format)
   if (disposition) {
-    const match = disposition.match(/filename="?(.+?)"?\s*(?:;|$)/)
-    if (match) filename = match[1]
+    const match = disposition.match(/filename\*?=(?:UTF-8'')?"?([^";]+)"?/)
+    if (!match) {
+      const match2 = disposition.match(/filename="?(.+?)"?\s*(?:;|$)/)
+      if (match2) filename = match2[1]
+    } else {
+      filename = decodeURIComponent(match[1])
+    }
   }
   return { blob: response.data as Blob, filename }
 }
@@ -56,7 +85,7 @@ export async function downloadExport(
   onProgress?: (pct: number) => void,
 ): Promise<void> {
   const url = buildExportUrl(entity, format, filters as Record<string, unknown>)
-  const { blob, filename } = await fetchBlob(url, onProgress)
+  const { blob, filename } = await fetchBlob(entity, format, url, onProgress)
   const blobUrl = window.URL.createObjectURL(blob)
   triggerDownload(blobUrl, filename)
   onProgress?.(100)
@@ -68,7 +97,9 @@ export async function downloadExportFromUrl(
   fallbackFilename: string,
   onProgress?: (pct: number) => void,
 ): Promise<void> {
-  const { blob, filename } = await fetchBlob(url, onProgress)
+  const entity = 'export'
+  const format = url.split('.').pop() || fallbackFilename.split('.').pop() || 'ics'
+  const { blob, filename } = await fetchBlob(entity, format, url, onProgress)
   const blobUrl = window.URL.createObjectURL(blob)
   triggerDownload(blobUrl, filename || fallbackFilename)
   onProgress?.(100)

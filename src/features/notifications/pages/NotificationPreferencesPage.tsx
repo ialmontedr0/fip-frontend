@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { Bell, Save, RotateCcw, RefreshCw, Sparkles } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { useNotificationPreferences, useUpdatePreferences } from '../hooks/useNotifications'
+import { useQueryClient } from '@tanstack/react-query'
 import ChannelToggle from '../components/ChannelToggle'
 import ChannelConfigFields from '../components/ChannelConfigFields'
 import TypeToggleList from '../components/TypeToggleList'
 import TestNotificationButton from '../components/TestNotificationButton'
+import TelegramLinkFlow from '../components/TelegramLinkFlow'
 import { Skeleton } from '@/components/ui'
 import { CHANNEL_CONFIG } from '../constants'
 import type { NotificationChannel } from '@/types/notifications'
@@ -20,6 +23,7 @@ function emptyChannelState() {
 }
 
 export default function NotificationPreferencesPage() {
+  const queryClient = useQueryClient()
   const { data: preferences, isLoading } = useNotificationPreferences()
   const updatePrefs = useUpdatePreferences()
 
@@ -66,8 +70,11 @@ export default function NotificationPreferencesPage() {
       if (dcConfig?.discord_webhook_url !== undefined) payload.discord_webhook_url = dcConfig.discord_webhook_url || null
       const whConfig = form.webhook?.config
       if (whConfig?.webhook_url !== undefined) payload.webhook_url = whConfig.webhook_url || null
-      await updatePrefs.mutateAsync(payload as never)
+      await updatePrefs.mutateAsync(payload as any)
       setDirty(false)
+    } catch (e) {
+      console.error('Save error:', e)
+      toast.error('Error al guardar preferencias')
     } finally { setSaving(false) }
   }
 
@@ -211,8 +218,16 @@ export default function NotificationPreferencesPage() {
 
               <div className={cn('space-y-4 transition-all duration-300', state.enabled ? 'opacity-100 max-h-[2000px]' : 'opacity-40 max-h-0 overflow-hidden pointer-events-none')}>
                 <TypeToggleList types={state.types} onChange={(types) => updateChannel(channel, { types })} />
-                <ChannelConfigFields channel={channel} values={state.config} onChange={(key, value) => updateChannel(channel, { config: { ...state.config, [key]: value } })} />
-                <TestNotificationButton channel={channel} />
+                {channel === 'telegram' ? (
+                  <TelegramLinkFlow
+                    linked={!!preferences?.telegram_chat_id}
+                    telegramChatId={preferences?.telegram_chat_id}
+                    onLinked={() => queryClient.invalidateQueries({ queryKey: ['notifications', 'preferences'] })}
+                  />
+                ) : (
+                  <ChannelConfigFields channel={channel} values={state.config} onChange={(key, value) => updateChannel(channel, { config: { ...state.config, [key]: value } })} />
+                )}
+                <TestNotificationButton channel={channel} telegramChatId={preferences?.telegram_chat_id ?? state.config.telegram_chat_id} />
               </div>
             </div>
           )
