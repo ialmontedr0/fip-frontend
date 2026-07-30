@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import {
   getDashboard,
   getMonthlyKPIs,
-  getChashFlow,
+  getCashFlow,
   getCashFlowByAccount,
   getNetWorth,
   getSpendingTrend,
@@ -35,7 +35,7 @@ export function useMonthlyKPIs(year?: number, month?: number) {
 export function useCashFlow(params?: DateRangeParams) {
   return useQuery({
     queryKey: ['cash-flow', params],
-    queryFn: () => getChashFlow(params).then((r) => r.data),
+    queryFn: () => getCashFlow(params).then((r) => r.data),
   })
 }
 

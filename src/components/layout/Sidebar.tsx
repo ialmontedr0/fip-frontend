@@ -27,12 +27,9 @@ import {
   ChevronRight,
   ChevronDown,
   X,
-  Tags as TagsIcon,
-  TrendingUp as TrendingUpIcon,
   AlertTriangle,
   Lightbulb,
   Activity,
-  Shield as ShieldIcon,
   Cpu,
 } from 'lucide-react'
 
@@ -90,12 +87,12 @@ function useNavigation(): NavSection[] {
           name: 'IA', icon: Brain,
           children: [
             { name: 'Dashboard', href: '/ai/dashboard', icon: LayoutDashboard },
-            { name: 'Clasificar', href: '/ai/classify', icon: TagsIcon },
-            { name: 'Predecir', href: '/ai/predict', icon: TrendingUpIcon },
+            { name: 'Clasificar', href: '/ai/classify', icon: Tags },
+            { name: 'Predecir', href: '/ai/predict', icon: TrendingUp },
             { name: 'Anomalias', href: '/ai/anomalies', icon: AlertTriangle },
             { name: 'Recomendaciones', href: '/ai/recommendations', icon: Lightbulb },
             { name: 'Habitos', href: '/ai/habits', icon: Activity },
-            { name: 'Riesgos', href: '/ai/risks', icon: ShieldIcon },
+            { name: 'Riesgos', href: '/ai/risks', icon: Shield },
             { name: 'Ahorros', href: '/ai/savings', icon: PiggyBank },
             { name: 'Modelos', href: '/ai/models', icon: Cpu },
           ],
@@ -111,7 +108,7 @@ function useNavigation(): NavSection[] {
 }
 
 function NavSubmenu({ item, sidebarOpen, mobile, onClose }: { item: { name: string; icon: React.ComponentType<{ className?: string }>; children: NavItem[] }; sidebarOpen: boolean; mobile?: boolean; onClose?: () => void }) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const Icon = item.icon
 
   return (

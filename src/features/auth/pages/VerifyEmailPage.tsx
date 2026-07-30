@@ -13,8 +13,7 @@ function VerifyEmailPage() {
     if (token) {
       verifyMutation.mutate({ token })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [token, verifyMutation])
 
   if (verifyMutation.isPending) {
     return (

@@ -33,25 +33,33 @@ export default function AccountDetailPage() {
 
   const handleUpdate = async (formData: AccountFormData) => {
     if (!id) return
-    await updateAccount.mutateAsync({
-      id,
-      data: {
-        name: formData.name,
-        institution: formData.institution || null,
-        account_number_last4: formData.account_number_last4 || null,
-        color: formData.color || null,
-        notes: formData.notes || null,
-        include_in_net_worth: formData.include_in_net_worth,
-        include_in_totals: formData.include_in_totals,
-      },
-    })
-    setIsEditing(false)
+    try {
+      await updateAccount.mutateAsync({
+        id,
+        data: {
+          name: formData.name,
+          institution: formData.institution || null,
+          account_number_last4: formData.account_number_last4 || null,
+          color: formData.color || null,
+          notes: formData.notes || null,
+          include_in_net_worth: formData.include_in_net_worth,
+          include_in_totals: formData.include_in_totals,
+        },
+      })
+      setIsEditing(false)
+    } catch {
+      // Error toast is handled by the mutation hook
+    }
   }
 
   const handleDelete = async () => {
     if (!id) return
-    await deleteAccount.mutateAsync(id)
-    navigate('/accounts')
+    try {
+      await deleteAccount.mutateAsync(id)
+      navigate('/accounts')
+    } catch {
+      // Error toast is handled by the mutation hook
+    }
   }
 
   if (isLoading) {

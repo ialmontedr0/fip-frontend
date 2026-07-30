@@ -27,6 +27,7 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: 'fip-theme',
+      partialize: (state) => ({ theme: state.theme }),
     },
   ),
 )

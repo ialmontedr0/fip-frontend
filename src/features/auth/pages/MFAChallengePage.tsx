@@ -1,4 +1,4 @@
-import { useState, useRef, type KeyboardEvent, type ClipboardEvent } from 'react'
+import { useState, useRef, useEffect, type KeyboardEvent, type ClipboardEvent } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Button from '@/components/ui/Button'
 import { useMFAVerify } from '../hooks/useAuth'
@@ -13,8 +13,13 @@ function MFAChallengePage() {
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(''))
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
+  useEffect(() => {
+    if (!mfaToken) {
+      navigate('/login', { replace: true })
+    }
+  }, [mfaToken, navigate])
+
   if (!mfaToken) {
-    navigate('/login', { replace: true })
     return null
   }
 

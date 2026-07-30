@@ -78,12 +78,14 @@ export function useMFAVerify() {
 export function useLogout() {
   const storeLogout = useAuthStore((s) => s.logout)
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   return useMutation({
     mutationFn: () => logoutApi().then((r) => r.data),
     onSettled: () => {
       storeLogout()
       queryClient.clear()
+      navigate('/login', { replace: true })
     },
   })
 }

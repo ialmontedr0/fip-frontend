@@ -74,7 +74,7 @@ function formatValue(value: number, fmt?: string): string {
 }
 
 function calcChange(current: number, previous: number): number {
-  if (previous === 0) return current > 0 ? 100 : 0
+  if (Math.abs(previous) < 0.0001) return current > 0 ? 100 : 0
   return ((current - previous) / Math.abs(previous)) * 100
 }
 

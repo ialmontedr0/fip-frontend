@@ -18,7 +18,7 @@ export function getMonthlyKPIs(year?: number, month?: number) {
   })
 }
 
-export function getChashFlow(params?: DateRangeParams) {
+export function getCashFlow(params?: DateRangeParams) {
   return api.get<DashboardResponse['cash_flow']>(`/analytics/cash-flow`, { params })
 }
 

@@ -48,8 +48,9 @@ export function useUpdateAccount() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateAccountRequest }) =>
       accountsApi.updateAccount(id, data),
-    onSuccess: () => {
+    onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['accounts'] })
+      queryClient.invalidateQueries({ queryKey: ['accounts', id] })
       toast.success('Cuenta actualizada exitosamente')
     },
     onError: () => toast.error('Error al actualizar la cuenta'),
@@ -60,9 +61,10 @@ export function useDeleteAccount() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (id: string) => accountsApi.deleteAccount(id),
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ['accounts'] })
       queryClient.invalidateQueries({ queryKey: ['accounts', 'summary'] })
+      queryClient.removeQueries({ queryKey: ['accounts', id] })
       toast.success('Cuenta eliminada exitosamente')
     },
     onError: () => toast.error('Error al eliminar la cuenta'),
