@@ -126,6 +126,11 @@ export default function GoalSimulationDetailPage() {
   }
 
   const targetAmount = Number(goal.target_amount)
+  const startingAmount = Number(result.starting_amount ?? goal.current_amount) || 0
+  const lastPoint = result.projection?.[result.projection.length - 1]
+  const totalAccumulated = lastPoint
+    ? lastPoint.cumulative
+    : startingAmount + (Number(result.total_contributions) || 0) + (Number(result.total_interest) || 0)
   const hasMonteCarlo = result?.monte_carlo && result.monte_carlo.length > 0
   const hasRecommendations = result?.recommendations && result.recommendations.length > 0
   const hasIncome = result?.income_sources && result.income_sources.length > 0
@@ -141,7 +146,7 @@ export default function GoalSimulationDetailPage() {
 
       <div className="relative">
         {/* Back + Title */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
           <button
             type="button"
             onClick={() => navigate(`/goals/${id}/simulations`)}
@@ -214,9 +219,9 @@ export default function GoalSimulationDetailPage() {
           } color="text-violet-500" />
           <ResultCard icon={CheckCircle2} label="Probabilidad" value={prob != null ? `${prob.toFixed(0)}%` : '—'} color={prob != null && prob >= 80 ? 'text-emerald-500 text-emerald-500' : prob != null && prob >= 50 ? 'text-amber-500' : 'text-red-500'} />
           <ResultCard icon={TrendingUp} label="Meses" value={`${result.months_to_complete ?? '—'} meses`} />
+          <ResultCard icon={PiggyBank} label="Patrimonio inicial" value={formatCurrency(startingAmount)} color="text-emerald-500" />
           <ResultCard icon={DollarSign} label="Contribuciones" value={formatCurrency(result.total_contributions)} color="text-blue-500" />
-          <ResultCard icon={PiggyBank} label="Interes" value={formatCurrency(result.total_interest)} color="text-emerald-500" />
-          <ResultCard icon={Target} label="Total acumulado" value={formatCurrency(Number(result.total_contributions) + Number(result.total_interest))} color="text-violet-500" />
+          <ResultCard icon={Target} label="Total acumulado" value={formatCurrency(totalAccumulated)} color="text-violet-500" />
         </div>
 
         {/* Income & Expense */}

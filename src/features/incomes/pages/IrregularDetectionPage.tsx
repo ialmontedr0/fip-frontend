@@ -4,6 +4,7 @@ import { Button, Skeleton } from '@/components/ui'
 import { useIrregularIncomes } from '../hooks/useIncomes'
 import IrregularIncomeList from '../components/IrregularIncomeList'
 import EmptyIncomeState from '../components/EmptyIncomeState'
+import IncomeNav from '../components/IncomeNav'
 import { ArrowLeft, AlertTriangle, RefreshCw } from 'lucide-react'
 
 export default function IrregularDetectionPage() {
@@ -13,8 +14,10 @@ export default function IrregularDetectionPage() {
 
   return (
     <div className="space-y-6">
+      <IncomeNav />
+
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-500 via-red-600 to-rose-700 p-6 text-white">
-        <div className="relative flex items-center justify-between">
+        <div className="relative flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -29,7 +32,7 @@ export default function IrregularDetectionPage() {
               <p className="text-red-100 text-sm mt-1">Identifica ingresos atipicos o fuera de lo comun</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <select
               value={months}
               onChange={(e) => setMonths(Number(e.target.value))}

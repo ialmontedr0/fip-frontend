@@ -95,7 +95,7 @@ export default function LoanPaymentHistoryPage() {
             {data.payments.map((payment, idx) => (
               <PaymentCard key={payment.id} payment={payment} index={idx} />
             ))}
-            <div className="flex items-center justify-between pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-4">
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 Mostrando {offset + 1}-{Math.min(offset + PAGE_SIZE, data.total)} de {data.total} pagos
               </p>

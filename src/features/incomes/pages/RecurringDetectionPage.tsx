@@ -3,6 +3,7 @@ import { Button, Skeleton } from '@/components/ui'
 import { useRecurringCandidates } from '../hooks/useIncomes'
 import RecurringCandidatesList from '../components/RecurringCandidatesList'
 import EmptyIncomeState from '../components/EmptyIncomeState'
+import IncomeNav from '../components/IncomeNav'
 import { ArrowLeft, Repeat, RefreshCw } from 'lucide-react'
 
 export default function RecurringDetectionPage() {
@@ -20,8 +21,10 @@ export default function RecurringDetectionPage() {
 
   return (
     <div className="space-y-6">
+      <IncomeNav />
+
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 via-purple-600 to-pink-700 p-6 text-white">
-        <div className="relative flex items-center justify-between">
+        <div className="relative flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -36,7 +39,7 @@ export default function RecurringDetectionPage() {
               <p className="text-purple-100 text-sm mt-1">Encuentra patrones de ingresos que se repiten</p>
             </div>
           </div>
-          <Button onClick={() => refetch()} className="bg-white/20 hover:bg-white/30 text-white border-0 rounded-xl backdrop-blur-sm">
+          <Button onClick={() => refetch()} className="bg-white/20 hover:bg-white/30 text-white border-0 rounded-xl backdrop-blur-sm w-full sm:w-auto">
             <RefreshCw className="h-4 w-4 mr-2" />
             Actualizar
           </Button>

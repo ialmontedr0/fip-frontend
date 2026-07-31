@@ -58,7 +58,7 @@ export default function WalletForm({ defaultValues, onSubmit, isSubmitting, mode
         <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Tipo de Wallet
         </label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {(Object.entries(WALLET_TYPE_CONFIG) as [WalletType, typeof WALLET_TYPE_CONFIG[WalletType]][]).map(([type, config]) => {
             const Icon = config.icon
             const isSelected = selectedType === type

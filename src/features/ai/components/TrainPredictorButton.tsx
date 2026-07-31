@@ -71,7 +71,7 @@ function TrainPredictorButton() {
         </button>
       </div>
 
-      <div className="flex items-center gap-2 mb-5">
+      <div className="flex flex-wrap items-center gap-2 mb-5">
         <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mr-1">Modelo:</span>
         <button
           type="button"
@@ -129,7 +129,7 @@ function TrainPredictorButton() {
               Entrenamiento completado ({modelType === 'lightgbm' ? 'LightGBM' : 'XGBoost'} - {targetType === 'expense' ? 'Gastos' : 'Ingresos'})
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {[
               { label: 'R²', value: metrics.r2.toFixed(3) },
               { label: 'MSE', value: metrics.mse.toFixed(2) },

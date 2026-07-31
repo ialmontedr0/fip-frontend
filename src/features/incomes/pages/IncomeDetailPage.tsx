@@ -9,6 +9,7 @@ import IncomeStatusBadge from '../components/IncomeStatusBadge'
 import StabilityBadge from '../components/StabilityBadge'
 import { ArrowLeft, Edit3, Trash2, ExternalLink, Calendar, Building2, Hash, FileText, Briefcase, Receipt, TrendingUp } from 'lucide-react'
 import { INCOME_TYPE_CONFIG } from '../constants'
+import IncomeNav from '../components/IncomeNav'
 import type { LucideIcon } from 'lucide-react'
 
 export default function IncomeDetailPage() {
@@ -67,6 +68,8 @@ export default function IncomeDetailPage() {
 
   return (
     <div className="space-y-6">
+      <IncomeNav />
+
       {/* Header */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 p-6 text-white">
         <div className="relative">
@@ -89,7 +92,7 @@ export default function IncomeDetailPage() {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Button variant="outline" onClick={() => navigate(`/incomes/${id}/edit`)} className="rounded-xl">
           <Edit3 className="h-4 w-4 mr-2" />
           Editar
@@ -138,7 +141,7 @@ export default function IncomeDetailPage() {
               <Receipt className="h-4 w-4 text-gray-400" />
               Informacion Fiscal
             </h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {income.gross_amount && (
                 <div>
                   <p className="text-[11px] font-medium text-gray-400 uppercase">Gross</p>

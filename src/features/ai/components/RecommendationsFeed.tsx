@@ -80,7 +80,7 @@ function RecommendationsFeed({ recommendations, isLoading, isError, onRetry, est
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-2xl border border-gray-100/80 dark:border-gray-700/80 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl p-4 shadow-sm">
           <div className="flex items-center gap-1.5 text-xs text-purple-600 dark:text-purple-400 mb-1.5">
             <Lightbulb className="h-3.5 w-3.5" />

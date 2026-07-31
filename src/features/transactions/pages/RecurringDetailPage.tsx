@@ -110,15 +110,15 @@ export default function RecurringDetailPage() {
       </div>
 
       <div className="relative max-w-2xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-4 min-w-0">
             <button onClick={() => navigate('/transactions/recurring')}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/70 dark:bg-gray-800/70 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/70 dark:bg-gray-800/70 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
               <ArrowLeft className="h-5 w-5 text-gray-600 dark:text-gray-300" />
             </button>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{recurring.description}</h1>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 truncate">{recurring.description}</h1>
                 <span className={cn(
                   'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium',
                   recurring.is_active

@@ -72,7 +72,7 @@ function ModelDetailPanel({ modelId, className }: ModelDetailPanelProps) {
         <TrainingStatusBadge status={data.status} />
       </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-5">
+      <div className="grid grid-cols-1 gap-3 mb-5 sm:grid-cols-3">
         {metrics.map((m) => (
           <div key={m.label} className="rounded-xl border border-gray-100/60 dark:border-gray-700/60 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md px-3 py-2.5 shadow-sm">
             <p className="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{m.label}</p>

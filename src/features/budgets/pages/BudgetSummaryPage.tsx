@@ -43,7 +43,7 @@ export default function BudgetSummaryPage() {
       </div>
 
       {/* Status breakdown */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-1 gap-3 mb-6 sm:grid-cols-3">
         {Object.entries(statusCounts).map(([status, count]) => {
           const config = STATUS_CONFIG[status as BudgetStatus]
           return (

@@ -21,7 +21,7 @@ export default function ExportFormatSelector({ formats, onSelect, disabled }: Ex
       <p className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
         Seleccionar formato
       </p>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {availableOptions.map((option) => {
           const Icon = FORMAT_ICONS[option.value] || FileText
           return (

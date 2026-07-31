@@ -143,7 +143,7 @@ export default function CardSpendingLimitsPage() {
           {card?.name ? `Volver a ${card.name}` : 'Volver'}
         </button>
 
-        <div className="flex items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/20">
               <Wallet className="h-6 w-6 text-white" />
@@ -157,8 +157,8 @@ export default function CardSpendingLimitsPage() {
               </p>
             </div>
           </div>
-          <motion.div whileHover={{ y: -2, transition: { duration: 0.2 } }}>
-            <Button onClick={openCreate} className="rounded-xl gap-2">
+          <motion.div whileHover={{ y: -2, transition: { duration: 0.2 } }} className="w-full sm:w-auto">
+            <Button onClick={openCreate} className="rounded-xl gap-2 w-full sm:w-auto">
               <Plus className="h-4 w-4" />
               Nuevo Limite
             </Button>

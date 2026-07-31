@@ -42,7 +42,7 @@ function Allocation50_30_20Chart({ allocation, className }: Allocation50_30_20Ch
         <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Regla 50/30/20</span>
       </div>
 
-      <div className="mb-4 grid grid-cols-3 gap-3">
+      <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-xl border border-gray-100/80 dark:border-gray-700/80 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm p-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
           <p className="text-[10px] font-medium text-gray-400 dark:text-gray-500 mb-1">Ingresos</p>
           <p className="text-sm font-bold text-gray-900 dark:text-white">{formatCurrency(allocation.total_income)}</p>

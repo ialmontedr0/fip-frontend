@@ -64,7 +64,7 @@ export default function ExpenseDashboardPage() {
       <ExpenseNav />
 
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-rose-500 via-red-500 to-orange-600 p-6 text-white">
-        <div className="relative flex items-center justify-between">
+        <div className="relative flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm">
               <Target className="h-6 w-6" />
@@ -74,7 +74,7 @@ export default function ExpenseDashboardPage() {
               <p className="text-rose-100/80 text-sm">Visualiza y analiza tus gastos</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {(['30d', '90d', '12m'] as const).map((p) => (
               <button
                 key={p}

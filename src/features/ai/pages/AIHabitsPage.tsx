@@ -13,9 +13,9 @@ function AIHabitsPage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-transparent via-transparent to-gray-100/50 dark:to-gray-950/50" />
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <BackButton to="/ai/dashboard" />
-        <AIPageHeader title="Analisis de Habitos" subtitle="Comprende tus patrones de gasto" className="flex-1" />
+        <AIPageHeader title="Analisis de Habitos" subtitle="Comprende tus patrones de gasto" className="flex-1 min-w-[220px]" />
       </div>
 
       <AINav />

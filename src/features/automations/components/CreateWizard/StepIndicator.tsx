@@ -4,9 +4,9 @@ import { WIZARD_STEPS } from '../../constants'
 
 export default function StepIndicator({ currentStep }: { currentStep: number }) {
   return (
-    <div className="flex items-center justify-center gap-0 mb-8 animate-fade-in">
+    <div className="flex items-center justify-center gap-0 mb-8 animate-fade-in overflow-x-auto pb-1">
       {WIZARD_STEPS.map((step, idx) => (
-        <div key={step.id} className="flex items-center">
+        <div key={step.id} className="flex items-center shrink-0">
           <div className="flex flex-col items-center gap-1.5 group">
             <div
               className={cn(
@@ -29,7 +29,7 @@ export default function StepIndicator({ currentStep }: { currentStep: number }) 
             </div>
             <span
               className={cn(
-                'text-[10px] font-medium whitespace-nowrap transition-all duration-300',
+                'text-[10px] font-medium whitespace-nowrap transition-all duration-300 hidden md:block',
                 currentStep > step.id
                   ? 'text-emerald-600 dark:text-emerald-400'
                   : currentStep === step.id
@@ -43,7 +43,7 @@ export default function StepIndicator({ currentStep }: { currentStep: number }) 
           {idx < WIZARD_STEPS.length - 1 && (
             <div
               className={cn(
-                'relative h-0.5 w-10 sm:w-16 mx-2 rounded-full transition-all duration-500 overflow-hidden',
+                'relative h-0.5 w-8 sm:w-16 mx-2 rounded-full transition-all duration-500 overflow-hidden',
                 currentStep > step.id ? 'bg-emerald-400' : 'bg-gray-200 dark:bg-gray-700',
               )}
             >

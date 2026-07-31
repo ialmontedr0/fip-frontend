@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, Check, Target, CalendarIcon, RotateCcw } fro
 import { cn } from '@/lib/utils'
 import { useCreateGoal } from '../hooks/useGoals'
 import { useAccounts } from '@/features/accounts/hooks/useAccounts'
+import { useNetWorth } from '@/features/analytics/hooks/useAnalytics'
 import AutoContributeToggle from './AutoContributeToggle'
 import { GOAL_TYPE_OPTIONS, PRIORITY_OPTIONS, COMPOUND_OPTIONS, formatCurrency } from '../constants'
 import type { GoalType, CompoundFrequency, CreateGoalRequest } from '@/types/goals'
@@ -74,12 +75,14 @@ export default function GoalCreateWizard() {
   const navigate = useNavigate()
   const createMutation = useCreateGoal()
   const { data: accountsData } = useAccounts()
+  const { data: netWorth } = useNetWorth()
   const [step, setStep] = useState(1)
   const [showAdvanced, setShowAdvanced] = useState(false)
 
   const today = new Date().toISOString().split('T')[0]
 
   const form = useForm<WizardData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(wizardSchema) as any,
     defaultValues: {
       goal_type: '',
@@ -103,6 +106,7 @@ export default function GoalCreateWizard() {
   const goalType = watch('goal_type')
   const priority = watch('priority')
   const autoContribute = watch('auto_contribute')
+  const startFromZero = watch('start_from_zero')
   const name = watch('name')
   const targetAmount = watch('target_amount')
   const monthlyContribution = watch('monthly_contribution')
@@ -146,7 +150,7 @@ export default function GoalCreateWizard() {
       name: data.name,
       description: data.description || null,
       target_amount: data.target_amount,
-      current_amount: data.start_from_zero ? '0' : null,
+      start_from_zero: data.start_from_zero,
       goal_type: data.goal_type as GoalType,
       start_date: data.start_date,
       target_date: data.target_date,
@@ -298,7 +302,11 @@ export default function GoalCreateWizard() {
                 <RotateCcw className="h-4 w-4 text-amber-500" />
                 <div>
                   <span className="font-semibold">Empezar desde 0</span>
-                  <p className="text-xs text-gray-400">No incluir mis activos actuales en el progreso inicial de la meta</p>
+                  <p className="text-xs text-gray-400">
+                    {startFromZero
+                      ? 'No incluir mis activos actuales en el progreso inicial de la meta'
+                      : `Se sumarán tus activos actuales (${netWorth && Number(netWorth.total_assets) > 0 ? formatCurrency(netWorth.total_assets) : 'DOP 0'}) al progreso inicial de la meta`}
+                  </p>
                 </div>
               </label>
             </div>
@@ -344,7 +352,7 @@ export default function GoalCreateWizard() {
             {/* Priority */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Prioridad</label>
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
                 {PRIORITY_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}

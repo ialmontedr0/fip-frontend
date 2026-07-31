@@ -241,7 +241,7 @@ export default function GoalForm({ defaultValues, mode = 'create' }: GoalFormPro
         <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Configuracion</h4>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Prioridad</label>
-          <div className="grid grid-cols-5 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
             {PRIORITY_OPTIONS.map((opt) => (
               <button
                 key={opt.value}

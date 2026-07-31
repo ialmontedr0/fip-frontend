@@ -2,7 +2,7 @@ export const GOAL_TYPES = {
   savings: 'Ahorro',
   debt_payoff: 'Pago Deuda',
   investment: 'Inversion',
-  emergency: 'Emergencia',
+  emergency_fund: 'Emergencia',
   education: 'Educacion',
   retirement: 'Jubilacion',
   custom: 'Personalizado',
@@ -34,7 +34,7 @@ export interface CreateGoalRequest {
   name: string
   description?: string | null
   target_amount: string
-  current_amount?: string | null
+  start_from_zero?: boolean
   goal_type?: GoalType
   start_date?: string | null
   target_date?: string | null
@@ -210,6 +210,7 @@ export interface CreateSimulationRequest {
   expenses?: SimulationExpenseProjection[]
   enable_monte_carlo?: boolean
   notes?: string | null
+  preview?: boolean
 }
 
 export interface SimulationProjection {
@@ -238,10 +239,12 @@ export interface RecommendationPoint {
 }
 
 export interface SimulationResponse {
-  id: string
+  id: string | null
+  saved?: boolean
   name: string
   goal_id: string
   goal_name: string
+  starting_amount?: string
   monthly_contribution: string
   lump_sum: string | null
   lump_sum_date: string | null

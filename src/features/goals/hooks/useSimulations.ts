@@ -32,7 +32,8 @@ export function useCreateSimulation(goalId: string) {
   return useMutation({
     mutationFn: (data: CreateSimulationRequest) =>
       simulationsApi.createSimulation(goalId, data),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      if (variables.preview) return
       queryClient.invalidateQueries({ queryKey: simulationKeys.list(goalId) })
       toast.success('Simulacion creada exitosamente')
     },

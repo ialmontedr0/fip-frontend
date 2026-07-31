@@ -157,7 +157,7 @@ export default function StepReview({
           </span>
           <Sparkles className="h-3 w-3 text-amber-400 animate-pulse" />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="relative">
             <label className="block text-[10px] font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
               Ejecuciones máx./mes

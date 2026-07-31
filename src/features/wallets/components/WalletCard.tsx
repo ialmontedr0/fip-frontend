@@ -61,7 +61,7 @@ export default function WalletCard({ wallet, index = 0 }: Props) {
 
       <div className="relative p-5">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             <div className={cn(
               'flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110',
               config?.bgColor ?? 'bg-gray-100',

@@ -19,9 +19,9 @@ function MainLayout() {
       {mobileSidebarOpen && <Sidebar mobile onClose={() => setMobileSidebarOpen(false)} />}
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <Header />
-        <main className="flex-1 overflow-y-scroll p-4 lg:p-6">
+        <main className="min-w-0 flex-1 overflow-y-scroll overflow-x-hidden p-4 lg:p-6">
           <ErrorBoundary>
             <AnimatePresence mode="wait">
               <PageTransition key={location.pathname}>

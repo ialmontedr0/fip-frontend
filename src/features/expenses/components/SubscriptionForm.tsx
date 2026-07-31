@@ -110,7 +110,7 @@ export default function SubscriptionForm({ onSubmit, isSubmitting, initialData }
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">Inicio <span className="text-red-400">*</span></label>
           <input {...register('start_date')} type="date" className={cn('w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 px-3 py-2 text-sm dark:text-gray-200', errors.start_date && 'border-red-400')} />

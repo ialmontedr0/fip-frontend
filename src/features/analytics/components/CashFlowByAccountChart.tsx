@@ -200,7 +200,7 @@ export default function CashFlowByAccountChart({ data, loading, error }: Props) 
       </div>
 
       {/* Summary strip */}
-      <div className="relative mb-5 grid grid-cols-3 gap-2">
+      <div className="relative mb-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
         <div className="rounded-xl bg-gradient-to-br from-green-50 to-emerald-50/50 p-3 dark:from-green-500/5 dark:to-emerald-500/0">
           <p className="text-[10px] font-medium text-green-600 dark:text-green-400 uppercase tracking-wider flex items-center gap-1">
             <TrendingUp className="h-3 w-3" /> Ingresos

@@ -79,7 +79,7 @@ function AutomationDetailPage() {
                   <Skeleton className="h-5 w-48" />
                 </div>
               </div>
-              <div className="mt-4 ml-11 grid grid-cols-3 gap-4">
+              <div className="mt-4 ml-11 grid grid-cols-3 gap-4 sm:grid-cols-3">
                 <div className="space-y-1">
                   <Skeleton className="h-3 w-16" />
                   <Skeleton className="h-7 w-10" />

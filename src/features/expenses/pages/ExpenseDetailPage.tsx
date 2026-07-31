@@ -56,7 +56,7 @@ export default function ExpenseDetailPage() {
   return (
     <div className="space-y-5 animate-fade-in">
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-rose-500 via-red-500 to-orange-600 p-6 text-white">
-        <div className="relative flex items-center justify-between">
+        <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -65,12 +65,12 @@ export default function ExpenseDetailPage() {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm shrink-0">
                 <TrendingDown className="h-6 w-6" />
               </div>
-              <div>
-                <h1 className="text-xl font-bold">{expense.description}</h1>
+              <div className="min-w-0">
+                <h1 className="text-xl font-bold truncate">{expense.description}</h1>
                 <p className="text-rose-100/80 text-sm">{expense.effective_date ? new Date(expense.effective_date).toLocaleDateString('es-DO') : ''}</p>
               </div>
             </div>

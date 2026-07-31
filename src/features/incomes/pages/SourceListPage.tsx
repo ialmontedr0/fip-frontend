@@ -4,6 +4,7 @@ import { Button, Skeleton, Modal } from '@/components/ui'
 import { useSources, useDeleteSource, useCreateIncomeFromSource } from '../hooks/useSources'
 import IncomeSourceCard from '../components/IncomeSourceCard'
 import EmptyIncomeState from '../components/EmptyIncomeState'
+import IncomeNav from '../components/IncomeNav'
 import { ArrowLeft, Plus, Building2 } from 'lucide-react'
 import type { SourceResponse } from '@/types/incomes'
 
@@ -38,8 +39,10 @@ export default function SourceListPage() {
 
   return (
     <div className="space-y-6">
+      <IncomeNav />
+
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-700 p-6 text-white">
-        <div className="relative flex items-center justify-between">
+        <div className="relative flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -54,7 +57,7 @@ export default function SourceListPage() {
               <p className="text-purple-100 text-sm mt-1">Gestiona tus empleadores, clientes y negocios</p>
             </div>
           </div>
-          <Button onClick={() => navigate('/incomes/sources/new')} className="bg-white/20 hover:bg-white/30 text-white border-0 rounded-xl backdrop-blur-sm">
+          <Button onClick={() => navigate('/incomes/sources/new')} className="bg-white/20 hover:bg-white/30 text-white border-0 rounded-xl backdrop-blur-sm w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             Nueva Fuente
           </Button>

@@ -67,7 +67,7 @@ export default function CreditCardForm({ onSubmit, isSubmitting, initialData }: 
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="space-y-1.5">
           <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">Ultimos 4 digitos</label>
           <Input {...register('last_four_digits')} maxLength={4} placeholder="1234" className={cn('rounded-xl', errors.last_four_digits && 'border-red-400')} />

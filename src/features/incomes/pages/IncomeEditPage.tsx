@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Button, Skeleton } from '@/components/ui'
 import { useIncome, useUpdateIncome } from '../hooks/useIncomes'
 import IncomeForm from '../components/IncomeForm'
+import IncomeNav from '../components/IncomeNav'
 import { ArrowLeft } from 'lucide-react'
 import type { UpdateIncomeRequest } from '@/types/incomes'
 
@@ -39,6 +40,8 @@ export default function IncomeEditPage() {
 
   return (
     <div className="space-y-6">
+      <IncomeNav />
+
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 p-6 text-white">
         <div className="relative flex items-center gap-4">
           <Button

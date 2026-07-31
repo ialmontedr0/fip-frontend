@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import IncomeScheduleForm from '../components/IncomeScheduleForm'
+import IncomeNav from '../components/IncomeNav'
 import { useCreateSchedule } from '../hooks/useSchedules'
 import { ArrowLeft, CalendarDays } from 'lucide-react'
 import { Button } from '@/components/ui'
@@ -17,6 +18,8 @@ export default function ScheduleCreatePage() {
 
   return (
     <div className="space-y-6">
+      <IncomeNav />
+
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 p-6 text-white">
         <div className="relative flex items-center gap-4">
           <Button

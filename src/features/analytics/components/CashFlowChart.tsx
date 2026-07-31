@@ -119,7 +119,7 @@ export default function CashFlowChart({ cashFlow, loading, error }: Props) {
         />
       </FIPAreaChart>
 
-      <div className="mt-5 grid grid-cols-3 gap-3">
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {[
           { label: 'Total Ingresos', value: cashFlow.summary.total_income, color: 'text-green-600 dark:text-green-400' },
           { label: 'Total Gastos', value: cashFlow.summary.total_expenses, color: 'text-red-600 dark:text-red-400' },

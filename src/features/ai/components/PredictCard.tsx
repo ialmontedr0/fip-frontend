@@ -26,14 +26,14 @@ function PredictCard({ title, icon, gradient, result, onPredict, isPending, erro
       'hover:shadow-lg hover:-translate-y-0.5 hover:border-gray-200/80 dark:hover:border-gray-600/80',
       className,
     )}>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div className="flex items-center gap-3">
-          <div className={cn('flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg', gradient)}>
+          <div className={cn('flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg shrink-0', gradient)}>
             {icon}
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">Prediccion</p>
-            <p className="text-sm font-semibold text-gray-900 dark:text-white">{title}</p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{title}</p>
           </div>
         </div>
         <button
@@ -41,7 +41,7 @@ function PredictCard({ title, icon, gradient, result, onPredict, isPending, erro
           onClick={onPredict}
           disabled={isPending}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold transition-all duration-200',
+            'inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold transition-all duration-200 self-start sm:self-auto',
             'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25',
             'hover:from-blue-600 hover:to-cyan-600 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5',
             isPending && 'opacity-60 cursor-wait',

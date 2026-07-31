@@ -1,16 +1,16 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, forwardRef, useImperativeHandle } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
   TrendingUp, Plus, Trash2, ChevronDown,
-  DollarSign, Percent, Settings2, Brain, Database, Loader2, Search,
+  DollarSign, Percent, Settings2, Brain, Database, Loader2, Search, CalendarDays, Play,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { fetchExistingIncomes, fetchExistingExpenses } from '../api/simulations'
 import { useCreateSimulation } from '../hooks/useSimulations'
 import { formatCurrency } from '../constants'
-import type { SimulationResponse } from '@/types/goals'
+import type { SimulationResponse, CreateSimulationRequest } from '@/types/goals'
 
 const sourceSchema = z.object({
   name: z.string().min(1, 'Nombre requerido'),
@@ -37,13 +37,52 @@ const simulationSchema = z.object({
 
 type FormData = z.infer<typeof simulationSchema>
 
+const FREQUENCY_LABELS: Record<string, string> = {
+  monthly: 'Mensual',
+  quarterly: 'Trimestral',
+  quadrimestral: 'Cuatrimestral',
+  yearly: 'Anual',
+  one_time: 'Unico',
+}
+
+function monthlyEquivalent(amount: number, frequency: string): number {
+  switch (frequency) {
+    case 'quarterly': return amount / 3
+    case 'quadrimestral': return amount / 4
+    case 'yearly': return amount / 12
+    case 'monthly': return amount
+    default: return 0
+  }
+}
+
+/** Convierte "YYYY-MM" a mes relativo (mes 1 = inicio del goal). */
+function toRelativeMonth(ym: string, startDate: string | undefined): number | undefined {
+  if (!ym || !startDate) return undefined
+  const [iy, im] = ym.split('-').map(Number)
+  const start = new Date(startDate)
+  if (!iy || !im || isNaN(start.getTime())) return undefined
+  return Math.max((iy - start.getFullYear()) * 12 + (im - (start.getMonth() + 1)) + 1, 1)
+}
+
+/** Devuelve el mes actual como "YYYY-MM" para prefijar el campo "Primer pago". */
+function currentMonthInput(): string {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+}
+
+const inputClass =
+  'w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30'
+
+const labelClass = 'block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1'
+
 function IncomeSourceRow({
-  index, register, errors: fieldErrors, onRemove,
+  index, register, errors: fieldErrors, onRemove, startDate,
 }: {
   index: number
   register: any
   errors: any
   onRemove: () => void
+  startDate?: string
 }) {
   return (
     <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-700/20 border border-gray-200 dark:border-gray-700/50 space-y-3 relative">
@@ -52,18 +91,18 @@ function IncomeSourceRow({
       </button>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pr-8">
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Nombre</label>
-          <input {...register(`income_sources.${index}.name`)} placeholder="Salario" className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          <label className={labelClass}>Nombre</label>
+          <input {...register(`income_sources.${index}.name`)} placeholder="Salario" className={inputClass} />
           {fieldErrors?.name && <p className="text-xs text-red-500 mt-0.5">{fieldErrors.name.message}</p>}
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Monto</label>
-          <input {...register(`income_sources.${index}.amount`)} type="number" min="0" step="0.01" placeholder="15000" className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          <label className={labelClass}>Monto por ocurrencia</label>
+          <input {...register(`income_sources.${index}.amount`)} type="number" min="0" step="0.01" placeholder="15000" className={inputClass} />
           {fieldErrors?.amount && <p className="text-xs text-red-500 mt-0.5">{fieldErrors.amount.message}</p>}
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Frecuencia</label>
-          <select {...register(`income_sources.${index}.frequency`)} className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30">
+          <label className={labelClass}>Frecuencia</label>
+          <select {...register(`income_sources.${index}.frequency`)} className={inputClass}>
             <option value="monthly">Mensual</option>
             <option value="quarterly">Trimestral</option>
             <option value="quadrimestral">Cuatrimestral</option>
@@ -74,29 +113,37 @@ function IncomeSourceRow({
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Mes inicio</label>
-          <input {...register(`income_sources.${index}.start_month`)} type="number" min="1" placeholder="1" className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          <label className={labelClass}>Primer pago</label>
+          <input {...register(`income_sources.${index}.start_month`)} type="month" min="2000-01" className={inputClass} />
+          <p className="text-[11px] text-gray-400 mt-0.5">Mes del primer pago</p>
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Mes fin</label>
-          <input {...register(`income_sources.${index}.end_month`)} type="number" min="1" placeholder="60" className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          <label className={labelClass}>Ultimo pago (opcional)</label>
+          <input {...register(`income_sources.${index}.end_month`)} type="month" min="2000-01" className={inputClass} />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Crecimiento anual %</label>
-          <input {...register(`income_sources.${index}.growth_rate`)} type="number" min="0" step="0.1" placeholder="3.0" className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          <label className={labelClass}>Crecimiento anual %</label>
+          <input {...register(`income_sources.${index}.growth_rate`)} type="number" min="0" step="0.1" placeholder="3.0" className={inputClass} />
         </div>
       </div>
+      {startDate && (
+        <p className="text-[10px] text-gray-400 flex items-center gap-1">
+          <CalendarDays className="h-3 w-3" />
+          Mes 1 = {new Date(startDate).toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}. Deja vacio para pagos desde el inicio.
+        </p>
+      )}
     </div>
   )
 }
 
 function ExpenseRow({
-  index, register, errors: fieldErrors, onRemove,
+  index, register, errors: fieldErrors, onRemove, startDate,
 }: {
   index: number
   register: any
   errors: any
   onRemove: () => void
+  startDate?: string
 }) {
   return (
     <div className="p-4 rounded-xl bg-red-50/50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/20 space-y-3 relative">
@@ -105,18 +152,18 @@ function ExpenseRow({
       </button>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pr-8">
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Nombre</label>
-          <input {...register(`expenses.${index}.name`)} placeholder="Renta" className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          <label className={labelClass}>Nombre</label>
+          <input {...register(`expenses.${index}.name`)} placeholder="Renta" className={inputClass} />
           {fieldErrors?.name && <p className="text-xs text-red-500 mt-0.5">{fieldErrors.name.message}</p>}
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Monto</label>
-          <input {...register(`expenses.${index}.amount`)} type="number" min="0" step="0.01" placeholder="8000" className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          <label className={labelClass}>Monto por ocurrencia</label>
+          <input {...register(`expenses.${index}.amount`)} type="number" min="0" step="0.01" placeholder="8000" className={inputClass} />
           {fieldErrors?.amount && <p className="text-xs text-red-500 mt-0.5">{fieldErrors.amount.message}</p>}
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Frecuencia</label>
-          <select {...register(`expenses.${index}.frequency`)} className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30">
+          <label className={labelClass}>Frecuencia</label>
+          <select {...register(`expenses.${index}.frequency`)} className={inputClass}>
             <option value="monthly">Mensual</option>
             <option value="quarterly">Trimestral</option>
             <option value="quadrimestral">Cuatrimestral</option>
@@ -127,33 +174,47 @@ function ExpenseRow({
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Mes inicio</label>
-          <input {...register(`expenses.${index}.start_month`)} type="number" min="1" placeholder="1" className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          <label className={labelClass}>Primer pago</label>
+          <input {...register(`expenses.${index}.start_month`)} type="month" min="2000-01" className={inputClass} />
+          <p className="text-[11px] text-gray-400 mt-0.5">Mes del primer pago</p>
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Mes fin</label>
-          <input {...register(`expenses.${index}.end_month`)} type="number" min="1" placeholder="60" className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          <label className={labelClass}>Ultimo pago (opcional)</label>
+          <input {...register(`expenses.${index}.end_month`)} type="month" min="2000-01" className={inputClass} />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Incremento anual %</label>
-          <input {...register(`expenses.${index}.growth_rate`)} type="number" min="0" step="0.1" placeholder="3.0" className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          <label className={labelClass}>Incremento anual %</label>
+          <input {...register(`expenses.${index}.growth_rate`)} type="number" min="0" step="0.1" placeholder="3.0" className={inputClass} />
         </div>
       </div>
+      {startDate && (
+        <p className="text-[10px] text-gray-400 flex items-center gap-1">
+          <CalendarDays className="h-3 w-3" />
+          Mes 1 = {new Date(startDate).toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}. Deja vacio para gastos desde el inicio.
+        </p>
+      )}
     </div>
   )
 }
 
-  interface SimulationFormProps {
-  goalId: string
-  goalName: string
-  defaultContribution?: string
-  defaultInterestRate?: string
-  onSuccess: (result: SimulationResponse) => void
+export interface SimulationFormHandle {
+  save: () => Promise<void>
+  isLoading: () => boolean
 }
 
-export default function SimulationForm({
-  goalId, goalName, defaultContribution, defaultInterestRate, onSuccess,
-}: SimulationFormProps) {
+interface SimulationFormProps {
+  goalId: string
+  goalName: string
+  goalStartDate?: string
+  defaultContribution?: string
+  defaultInterestRate?: string
+  onPreview: (result: SimulationResponse) => void
+  onSaved: (result: SimulationResponse) => void
+}
+
+function SimulationForm({
+  goalId, goalName, goalStartDate, defaultContribution, defaultInterestRate, onPreview, onSaved,
+}: SimulationFormProps, ref: React.Ref<SimulationFormHandle>) {
   const createSimulation = useCreateSimulation(goalId)
 
   const form = useForm<FormData>({
@@ -185,7 +246,6 @@ export default function SimulationForm({
     advanced: false,
   })
 
-  // Load from existing records
   const [loadingSource, setLoadingSource] = useState<'income' | 'expense' | null>(null)
   const [existingRecords, setExistingRecords] = useState<any[]>([])
   const [showExistingSelector, setShowExistingSelector] = useState<'income' | 'expense' | null>(null)
@@ -214,12 +274,13 @@ export default function SimulationForm({
 
   const addFromExisting = useCallback((record: any, type: 'income' | 'expense') => {
     const append_fn = type === 'income' ? incomeSources.append : expenses.append
+    const nowMonth = currentMonthInput()
     if (type === 'income') {
       append_fn({
         name: record.name || '',
         amount: String(Number(record.expected_amount) || 0),
-        frequency: record.frequency === 'monthly' || record.frequency === 'quarterly' || record.frequency === 'quadrimestral' || record.frequency === 'yearly' || record.frequency === 'one_time' ? record.frequency : 'monthly',
-        start_month: '',
+        frequency: ['monthly', 'quarterly', 'quadrimestral', 'yearly', 'one_time'].includes(record.frequency) ? record.frequency : 'monthly',
+        start_month: nowMonth,
         end_month: '',
         growth_rate: '',
       } as any)
@@ -228,7 +289,7 @@ export default function SimulationForm({
         name: record.name || '',
         amount: String(Number(record.default_amount) || 0),
         frequency: 'monthly',
-        start_month: '',
+        start_month: nowMonth,
         end_month: '',
         growth_rate: '',
       } as any)
@@ -245,49 +306,70 @@ export default function SimulationForm({
     setSections((prev) => ({ ...prev, [key]: !prev[key] }))
   }
 
-  const monthlyContribution = watch('monthly_contribution')
-  const enableMonteCarlo = watch('enable_monte_carlo')
-  const incomeSourceValues = watch('income_sources')
-  const totalMonthlyIncome = (incomeSourceValues || [])
-    .filter((s: any) => s.frequency === 'monthly')
-    .reduce((sum: number, s: any) => sum + (Number(s.amount) || 0), 0)
+  const buildPayload = (data: FormData, preview: boolean): CreateSimulationRequest => ({
+    name: data.name,
+    monthly_contribution: data.monthly_contribution,
+    lump_sum: data.lump_sum || null,
+    lump_sum_date: data.lump_sum_date || null,
+    interest_rate: data.interest_rate || null,
+    increase_pct: data.increase_pct || null,
+    inflation_rate: data.inflation_rate || null,
+    enable_monte_carlo: data.enable_monte_carlo,
+    income_sources: (data.income_sources || []).map((s) => ({
+      name: s.name,
+      amount: Number(s.amount),
+      frequency: s.frequency,
+      start_month: toRelativeMonth(s.start_month || '', goalStartDate),
+      end_month: toRelativeMonth(s.end_month || '', goalStartDate),
+      growth_rate: s.growth_rate ? Number(s.growth_rate) : undefined,
+    })),
+    expenses: (data.expenses || []).map((e) => ({
+      name: e.name,
+      amount: Number(e.amount),
+      frequency: e.frequency,
+      start_month: toRelativeMonth(e.start_month || '', goalStartDate),
+      end_month: toRelativeMonth(e.end_month || '', goalStartDate),
+      growth_rate: e.growth_rate ? Number(e.growth_rate) : undefined,
+    })),
+    notes: data.notes || null,
+    preview,
+  })
 
   const onSubmit = async (data: FormData) => {
-    const payload = {
-      name: data.name,
-      monthly_contribution: data.monthly_contribution,
-      lump_sum: data.lump_sum || null,
-      lump_sum_date: data.lump_sum_date || null,
-      interest_rate: data.interest_rate || null,
-      increase_pct: data.increase_pct || null,
-      inflation_rate: data.inflation_rate || null,
-      enable_monte_carlo: data.enable_monte_carlo,
-      income_sources: (data.income_sources || []).map((s) => ({
-        name: s.name,
-        amount: Number(s.amount),
-        frequency: s.frequency,
-        start_month: s.start_month ? Number(s.start_month) : undefined,
-        end_month: s.end_month ? Number(s.end_month) : undefined,
-        growth_rate: s.growth_rate ? Number(s.growth_rate) : undefined,
-      })),
-      expenses: (data.expenses || []).map((e) => ({
-        name: e.name,
-        amount: Number(e.amount),
-        frequency: e.frequency,
-        start_month: e.start_month ? Number(e.start_month) : undefined,
-        end_month: e.end_month ? Number(e.end_month) : undefined,
-        growth_rate: e.growth_rate ? Number(e.growth_rate) : undefined,
-      })),
-      notes: data.notes || null,
-    }
-
     try {
+      const payload = buildPayload(data, true)
       const result = await createSimulation.mutateAsync(payload as any)
-      onSuccess(result.data)
+      onPreview(result.data)
     } catch {
       // error handled by mutation
     }
   }
+
+  const save = async () => {
+    const data = form.getValues()
+    try {
+      const payload = buildPayload(data, false)
+      const result = await createSimulation.mutateAsync(payload as any)
+      onSaved(result.data)
+    } catch {
+      // error handled by mutation
+    }
+  }
+
+  useImperativeHandle(ref, () => ({
+    save,
+    isLoading: () => createSimulation.isPending,
+  }))
+
+  const monthlyContribution = watch('monthly_contribution')
+  const enableMonteCarlo = watch('enable_monte_carlo')
+  const incomeSourceValues = watch('income_sources') as any[] | undefined
+  const expenseSourceValues = watch('expenses') as any[] | undefined
+  const totalMonthlyIncome = (incomeSourceValues || [])
+    .reduce((sum, s) => sum + monthlyEquivalent(Number(s.amount) || 0, s.frequency), 0)
+  const totalMonthlyExpense = (expenseSourceValues || [])
+    .reduce((sum, e) => sum + monthlyEquivalent(Number(e.amount) || 0, e.frequency), 0)
+  const capacity = (Number(monthlyContribution) || 0) + totalMonthlyIncome - totalMonthlyExpense
 
   const sectionBtn = (key: keyof typeof sections, label: string, icon: React.ReactNode, isOpen: boolean) => (
     <button
@@ -313,6 +395,19 @@ export default function SimulationForm({
           <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Simular: {goalName}</h4>
           <p className="text-xs text-gray-500 dark:text-gray-400">Proyecta diferentes escenarios para tu meta</p>
         </div>
+      </div>
+
+      {/* Capacidad resumen */}
+      <div className={cn(
+        'rounded-xl border p-3 transition-colors',
+        capacity >= 0 ? 'border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10' : 'border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/5',
+      )}>
+        <p className={cn('text-xs font-medium', capacity >= 0 ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-600 dark:text-red-400')}>
+          <span className="font-semibold">Capacidad de ahorro:</span> {formatCurrency(capacity)}/mes
+        </p>
+        <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+          {formatCurrency(Number(monthlyContribution) || 0)} aportacion + {formatCurrency(totalMonthlyIncome)} ingresos - {formatCurrency(totalMonthlyExpense)} gastos
+        </p>
       </div>
 
       {/* BASIC */}
@@ -342,8 +437,8 @@ export default function SimulationForm({
                 <input {...register('lump_sum')} type="number" step="0.01" min="0" placeholder="50000" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500/30 transition-all text-sm" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Mes del deposito</label>
-                <input {...register('lump_sum_date')} type="number" min="1" placeholder="1" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500/30 transition-all text-sm" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Fecha del deposito</label>
+                <input {...register('lump_sum_date')} type="month" min="2000-01" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500/30 transition-all text-sm" />
               </div>
             </div>
           </div>
@@ -356,7 +451,7 @@ export default function SimulationForm({
         {sections.income && (
           <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Agrega fuentes de ingreso futuro como salarios, bonus, freelance, etc. Estos ingresos incrementaran tu capacidad de ahorro.
+              Agrega fuentes de ingreso futuro como salarios, bonus, freelance, etc. El monto es por ocurrencia: si tu bono anual es 31,525, escribe 31,525 y selecciona frecuencia Anual.
             </p>
             {incomeSources.fields.map((field, idx) => (
               <IncomeSourceRow
@@ -365,12 +460,13 @@ export default function SimulationForm({
                 register={register}
                 errors={(errors as any)?.income_sources?.[idx]}
                 onRemove={() => incomeSources.remove(idx)}
+                startDate={goalStartDate}
               />
             ))}
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => incomeSources.append({ name: '', amount: '', frequency: 'monthly', start_month: '', end_month: '', growth_rate: '' } as any)}
+                onClick={() => incomeSources.append({ name: '', amount: '', frequency: 'monthly', start_month: currentMonthInput(), end_month: '', growth_rate: '' } as any)}
                 className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10 rounded-xl hover:bg-violet-100 dark:hover:bg-violet-500/20 transition-colors"
               >
                 <Plus className="h-3.5 w-3.5" />
@@ -386,16 +482,6 @@ export default function SimulationForm({
                 Cargar desde fuentes de ingreso
               </button>
             </div>
-            {totalMonthlyIncome > 0 && (
-              <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
-                <p className="text-xs text-emerald-700 dark:text-emerald-300">
-                  <span className="font-semibold">Ingreso mensual total: ${totalMonthlyIncome.toLocaleString('es-MX')}</span>
-                  {monthlyContribution && Number(monthlyContribution) > 0 && (
-                    <> — Capacidad total de ahorro: ${(totalMonthlyIncome + Number(monthlyContribution)).toLocaleString('es-MX')}/mes</>
-                  )}
-                </p>
-              </div>
-            )}
           </div>
         )}
       </div>
@@ -428,7 +514,7 @@ export default function SimulationForm({
         {sections.expenses && (
           <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Proyecta gastos futuros que reduciran tu capacidad de ahorro (renta, colegiatura, etc.).
+              Proyecta gastos futuros que reduciran tu capacidad de ahorro (renta, colegiatura, etc.). El monto es por ocurrencia.
             </p>
             {expenses.fields.map((field, idx) => (
               <ExpenseRow
@@ -437,12 +523,13 @@ export default function SimulationForm({
                 register={register}
                 errors={(errors as any)?.expenses?.[idx]}
                 onRemove={() => expenses.remove(idx)}
+                startDate={goalStartDate}
               />
             ))}
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => expenses.append({ name: '', amount: '', frequency: 'monthly', start_month: '', end_month: '', growth_rate: '' } as any)}
+                onClick={() => expenses.append({ name: '', amount: '', frequency: 'monthly', start_month: currentMonthInput(), end_month: '', growth_rate: '' } as any)}
                 className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 rounded-xl hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors"
               >
                 <Plus className="h-3.5 w-3.5" />
@@ -499,9 +586,9 @@ export default function SimulationForm({
         className="w-full inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl hover:from-violet-600 hover:to-purple-700 shadow-lg shadow-violet-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
       >
         {createSimulation.isPending ? (
-          <><svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Simulando...</>
+          <><Loader2 className="h-4 w-4 animate-spin" />Calculando...</>
         ) : (
-          <><TrendingUp className="h-4 w-4" />Ejecutar Simulacion</>
+          <><Play className="h-4 w-4" />Calcular Simulacion</>
         )}
       </button>
 
@@ -551,8 +638,7 @@ export default function SimulationForm({
                         {rec.name}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {showExistingSelector === 'income' ? (rec.frequency || '') : ''}
-                        {showExistingSelector === 'expense' ? 'Gasto recurrente' : ''}
+                        {showExistingSelector === 'income' ? (FREQUENCY_LABELS[rec.frequency] || '') : 'Gasto recurrente'}
                       </p>
                     </div>
                     <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 ml-4 shrink-0">
@@ -577,3 +663,5 @@ export default function SimulationForm({
     </form>
   )
 }
+
+export default forwardRef(SimulationForm)

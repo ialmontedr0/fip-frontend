@@ -190,7 +190,7 @@ export default function CardBillListPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="relative flex items-center justify-between"
+        className="relative flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center"
       >
         <p className="text-sm text-gray-500 dark:text-gray-400">
           {unpaidBills.length > 0 && `Pago minimo total: ${formatCurrency(totalMinPay, card?.currency_code)}`}

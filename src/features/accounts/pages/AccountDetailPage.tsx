@@ -131,13 +131,13 @@ export default function AccountDetailPage() {
       <div className="pointer-events-none absolute -right-16 top-40 h-48 w-48 rounded-full bg-gradient-to-br from-sky-200/10 to-emerald-200/10 blur-3xl dark:from-sky-500/5 dark:to-emerald-500/5" />
 
       {/* Header */}
-      <div className="flex items-center justify-between animate-fade-in">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between animate-fade-in">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate('/accounts')} className="rounded-xl p-2.5 hover:bg-white/50 dark:hover:bg-gray-800/50 transition-colors">
             <ArrowLeft className="h-5 w-5 text-gray-500" />
           </button>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{account.name}</h1>
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white truncate">{account.name}</h1>
             <p className="text-sm text-gray-500">Detalle de la cuenta</p>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import IncomeForm from '../components/IncomeForm'
+import IncomeNav from '../components/IncomeNav'
 import { useCreateIncome } from '../hooks/useIncomes'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui'
@@ -19,6 +20,8 @@ export default function IncomeCreatePage() {
 
   return (
     <div className="space-y-6">
+      <IncomeNav />
+
       {/* Header */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 p-6 text-white">
         <div className="relative flex items-center gap-4">

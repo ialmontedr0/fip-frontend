@@ -35,7 +35,7 @@ export const GOAL_TYPE_CONFIG: Record<GoalType, {
     gradient: 'from-emerald-400 to-emerald-600',
     description: 'Invertir para crecimiento financiero',
   },
-  emergency: {
+  emergency_fund: {
     label: 'Emergencia', icon: Shield,
     color: 'text-amber-600 dark:text-amber-400',
     bgColor: 'bg-amber-100 dark:bg-amber-500/10',

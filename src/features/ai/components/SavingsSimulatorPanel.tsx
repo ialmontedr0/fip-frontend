@@ -116,7 +116,7 @@ function SavingsSimulatorPanel() {
 
       {result && (
         <>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-emerald-200/50 dark:border-emerald-700/50 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/30 dark:to-green-900/30 p-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
               <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 mb-1.5">
                 <PiggyBank className="h-3.5 w-3.5" />

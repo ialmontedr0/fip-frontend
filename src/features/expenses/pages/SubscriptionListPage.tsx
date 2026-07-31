@@ -47,7 +47,7 @@ export default function SubscriptionListPage() {
       <ExpenseNav />
 
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-600 p-6 text-white">
-        <div className="relative flex items-center justify-between">
+        <div className="relative flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm">
               <Repeat className="h-6 w-6" />
@@ -57,7 +57,7 @@ export default function SubscriptionListPage() {
               <p className="text-indigo-100/80 text-sm">Controla tus suscripciones activas</p>
             </div>
           </div>
-          <Button onClick={() => setFormOpen(true)} className="bg-white text-indigo-700 hover:bg-white/90 border-0 rounded-xl shadow-lg shadow-black/10">
+          <Button onClick={() => setFormOpen(true)} className="bg-white text-indigo-700 hover:bg-white/90 border-0 rounded-xl shadow-lg shadow-black/10 w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" /> Nueva Suscripcion
           </Button>
         </div>

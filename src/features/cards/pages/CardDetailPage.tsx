@@ -952,8 +952,8 @@ function AlertsTab({ cardId }: { cardId: string }) {
           <span className="text-xs text-gray-400">|</span>
           <p className="text-sm text-gray-500 dark:text-gray-400">{alerts.filter((a) => !a.is_read).length} no leidas</p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1 items-center">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap gap-1 items-center">
             <select
               value={filters.severity || ''}
               onChange={(e) => setFilters({ ...filters, severity: e.target.value as CardAlertsFilters['severity'] || undefined })}

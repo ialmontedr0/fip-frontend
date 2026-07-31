@@ -198,7 +198,7 @@ function AutomationDetailPanel({ ruleId, onClose, onEdit }: AutomationDetailPane
               </div>
               <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estadisticas</span>
             </div>
-            <div className="ml-11 grid grid-cols-3 gap-4">
+            <div className="ml-11 grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="rounded-xl bg-gray-50/50 dark:bg-gray-800/50 p-3 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800">
                 <span className="text-xs text-gray-500 dark:text-gray-400">Ejecuciones</span>
                 <p className="text-lg font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">{rule.execution_count}</p>

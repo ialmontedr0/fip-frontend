@@ -37,7 +37,7 @@ function SeasonalOpportunitiesCard({ seasonal, className }: SeasonalOpportunitie
         <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Oportunidades Estacionales</span>
       </div>
 
-      <div className="grid grid-cols-6 gap-2 mb-5">
+      <div className="grid grid-cols-2 gap-2 mb-5 sm:grid-cols-3 lg:grid-cols-6">
         {entries.map(([monthNum, data]) => {
           const idx = parseInt(monthNum) - 1
           const savingsLevel = data.vs_average_pct < -15 ? 'high' : data.vs_average_pct < -5 ? 'medium' : 'low'

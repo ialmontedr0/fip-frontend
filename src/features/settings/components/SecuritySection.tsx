@@ -50,10 +50,10 @@ export default function SecuritySection() {
 
       {/* MFA Section */}
       <div className="rounded-2xl border border-gray-200/80 dark:border-gray-700/60 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
+          <div className="flex items-center gap-3 min-w-0">
             <div className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-xl',
+              'flex h-10 w-10 items-center justify-center rounded-xl shrink-0',
               profile?.mfa_enabled
                 ? 'bg-gradient-to-br from-emerald-500/20 to-green-500/20'
                 : 'bg-gradient-to-br from-gray-500/20 to-gray-400/20',
@@ -63,7 +63,7 @@ export default function SecuritySection() {
                 profile?.mfa_enabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400',
               )} />
             </div>
-            <div>
+            <div className="min-w-0">
               <h3 className="text-sm font-bold text-gray-900 dark:text-white">
                 Autenticaci&oacute;n en Dos Factores
               </h3>
@@ -92,7 +92,7 @@ export default function SecuritySection() {
               Para deshabilitar MFA, ingresa un c&oacute;digo de 6 d&iacute;gitos desde tu app TOTP.
             </p>
             {showDisableConfirm ? (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Input
                   value={mfaDisableCode}
                   onChange={(e) => setMfaDisableCode(e.target.value.replace(/\D/g, '').slice(0, 6))}

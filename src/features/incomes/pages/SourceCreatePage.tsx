@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import IncomeSourceForm from '../components/IncomeSourceForm'
+import IncomeNav from '../components/IncomeNav'
 import { useCreateSource } from '../hooks/useSources'
 import { ArrowLeft, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui'
@@ -17,6 +18,8 @@ export default function SourceCreatePage() {
 
   return (
     <div className="space-y-6">
+      <IncomeNav />
+
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-700 p-6 text-white">
         <div className="relative flex items-center gap-4">
           <Button

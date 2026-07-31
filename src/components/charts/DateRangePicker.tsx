@@ -109,8 +109,9 @@ function DateRangePicker({
       {isOpen && (
         <div
           className={cn(
-            'absolute right-0 z-50 mt-2 w-72 rounded-lg border border-gray-200 bg-white p-4 shadow-lg',
+            'absolute z-50 mt-2 w-72 rounded-lg border border-gray-200 bg-white p-4 shadow-lg',
             'dark:border-gray-700 dark:bg-gray-800',
+            'left-0 sm:left-auto sm:right-0',
             'animate-fade-in',
           )}
         >

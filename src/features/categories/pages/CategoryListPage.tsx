@@ -34,7 +34,7 @@ export default function CategoryListPage() {
       <div className="pointer-events-none absolute -left-32 -top-20 h-72 w-72 rounded-full bg-gradient-to-br from-violet-200/30 to-fuchsia-200/20 blur-3xl dark:from-violet-500/10 dark:to-fuchsia-500/5" />
       <div className="pointer-events-none absolute -right-20 top-40 h-56 w-56 rounded-full bg-gradient-to-br from-amber-200/20 to-rose-200/20 blur-3xl dark:from-amber-500/5 dark:to-rose-500/5" />
 
-      <div className="flex items-center justify-between animate-fade-in">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between animate-fade-in">
         <div>
           <div className="flex items-center gap-3">
             <div className="relative">
@@ -52,7 +52,7 @@ export default function CategoryListPage() {
             <Sparkles className="mr-1.5 h-4 w-4" />
             Probar IA
           </Button>
-          <Button onClick={() => navigate('/categories/new')}>
+          <Button onClick={() => navigate('/categories/new')} size="sm">
             <Plus className="mr-2 h-4 w-4" />
             Nueva Categoria
           </Button>

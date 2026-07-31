@@ -8,7 +8,7 @@ interface BudgetTypeSelectorProps {
 
 export default function BudgetTypeSelector({ value, onChange }: BudgetTypeSelectorProps) {
   return (
-    <div className="grid grid-cols-3 gap-3" role="radiogroup" aria-label="Tipo de presupuesto">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3" role="radiogroup" aria-label="Tipo de presupuesto">
       {BUDGET_TYPE_OPTIONS.map((opt) => {
         const Icon = opt.icon
         const isSelected = value === opt.value

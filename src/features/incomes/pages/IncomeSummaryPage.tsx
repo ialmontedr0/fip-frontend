@@ -8,6 +8,7 @@ import ForecastCard from '../components/ForecastCard'
 import BySourceChart from '../components/BySourceChart'
 import ByCategoryChart from '../components/ByCategoryChart'
 import { PERIOD_OPTIONS } from '../constants'
+import IncomeNav from '../components/IncomeNav'
 import { ArrowLeft, BarChart3 } from 'lucide-react'
 
 function getDateRange(period: string): { date_from: string; date_to: string } {
@@ -50,9 +51,11 @@ export default function IncomeSummaryPage() {
 
   return (
     <div className="space-y-6">
+      <IncomeNav />
+
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 p-6 text-white">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-        <div className="relative flex items-center justify-between">
+        <div className="relative flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"

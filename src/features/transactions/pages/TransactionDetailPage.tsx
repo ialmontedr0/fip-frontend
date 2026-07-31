@@ -84,17 +84,17 @@ export default function TransactionDetailPage() {
       </div>
 
       <div className="relative max-w-3xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-4 min-w-0">
             <button
               onClick={() => navigate('/transactions')}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/70 dark:bg-gray-800/70 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/70 dark:bg-gray-800/70 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
             >
               <ArrowLeft className="h-5 w-5 text-gray-600 dark:text-gray-300" />
             </button>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 truncate">
                   {transaction.description}
                 </h1>
                 <TransactionStatusBadge status={transaction.status} size="md" />
@@ -107,7 +107,7 @@ export default function TransactionDetailPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <TransactionQuickActions transaction={transaction} />
             <button
               onClick={() => navigate(`/transactions/${transaction.id}/edit`)}
@@ -127,7 +127,7 @@ export default function TransactionDetailPage() {
         <div className="rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-sm overflow-hidden">
           <div className={cn('h-2 bg-gradient-to-r', typeConfig?.gradient || 'from-gray-400 to-gray-600')} />
           <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 mb-6">
               <div className="flex items-center gap-3">
                 <div className={cn(
                   'flex h-14 w-14 items-center justify-center rounded-2xl',

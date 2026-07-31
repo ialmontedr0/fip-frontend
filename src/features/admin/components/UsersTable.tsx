@@ -150,7 +150,7 @@ export default function UsersTable() {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-gray-400 dark:text-gray-500">
           {data?.total ?? 0} usuario(s) — P\u00e1gina {currentPage} de {totalPages || 1}
         </p>

@@ -138,7 +138,7 @@ export default function AuditLogViewer() {
         </table>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-gray-400 dark:text-gray-500">
           {data?.total ?? 0} log(s) — P&aacute;gina {currentPage} de {totalPages || 1}
         </p>

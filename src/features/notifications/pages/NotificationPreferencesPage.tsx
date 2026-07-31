@@ -136,7 +136,7 @@ export default function NotificationPreferencesPage() {
       {/* Header */}
       <div className="mb-8">
         <div className="absolute -top-4 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-xl shadow-purple-500/30">
               <Bell className="h-7 w-7 text-white drop-shadow-sm" />

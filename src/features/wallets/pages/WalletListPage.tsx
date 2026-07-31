@@ -36,7 +36,7 @@ export default function WalletListPage() {
       <div className="pointer-events-none absolute -right-20 top-40 h-56 w-56 rounded-full bg-gradient-to-br from-fuchsia-200/20 to-sky-200/20 blur-3xl dark:from-fuchsia-500/5 dark:to-sky-500/5" />
 
       {/* Header */}
-      <div className="flex items-center justify-between animate-fade-in">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between animate-fade-in">
         <div>
           <div className="flex items-center gap-3">
             <div className="relative">
@@ -49,7 +49,7 @@ export default function WalletListPage() {
             Agrupa tus cuentas en wallets financieros
           </p>
         </div>
-        <Button onClick={() => navigate('/wallets/new')}>
+        <Button onClick={() => navigate('/wallets/new')} className="self-start sm:self-auto">
           <Plus className="mr-2 h-4 w-4" />
           Nuevo Wallet
         </Button>

@@ -254,7 +254,7 @@ export default function TransactionForm({ defaultValues, onSubmit, isLoading, is
         <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Tipo de Transaccion
         </label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {TYPE_OPTIONS.map((opt) => {
             const Icon = opt.icon
             const isSelected = transactionType === opt.value

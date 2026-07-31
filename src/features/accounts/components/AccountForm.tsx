@@ -69,7 +69,7 @@ export default function AccountForm({ defaultValues, onSubmit, isSubmitting, mod
         <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Tipo de Cuenta
         </label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {(Object.entries(AT) as [AccountType, typeof AT[AccountType]][]).map(([type, config]) => {
             const Icon = config.icon
             const isSelected = selectedType === type
