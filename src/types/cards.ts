@@ -206,6 +206,7 @@ export interface UtilizationHistoryResponse {
 
 export interface SpendingCategoryEntry {
   category_id: string | null
+  category_name: string | null
   total: string
   transaction_count: number
 }

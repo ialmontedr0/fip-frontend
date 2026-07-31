@@ -302,6 +302,7 @@ export interface TransactionFilters {
   category_id?: string
   subcategory_id?: string
   account_id?: string
+  credit_card_id?: string
   tag?: string
   min_amount?: number
   max_amount?: number

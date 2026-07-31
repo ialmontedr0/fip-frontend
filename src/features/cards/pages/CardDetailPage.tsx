@@ -17,6 +17,7 @@ import { useBillList, useCreateBill, useGenerateStatement } from '../hooks/useBi
 import { useSpendingLimitList, useCreateSpendingLimit, useUpdateSpendingLimit, useDeleteSpendingLimit } from '../hooks/useLimits'
 import { useCardAlerts, useMarkAlertRead, useCheckAlerts, useDismissAlert } from '../hooks/useAlerts'
 import { useUtilizationHistory, useSpendingByCategory } from '../hooks/useCards'
+import { useTransactions } from '@/features/transactions/hooks/useTransactions'
 import CardNetworkBadge from '../components/CardNetworkBadge'
 import UtilizationGauge from '../components/UtilizationGauge'
 import { Modal, Button, Skeleton, EmptyState } from '@/components/ui'
@@ -26,8 +27,9 @@ import type {
   SpendingByCategoryResponse, BillResponse, SpendingLimitResponse,
   CardAlertsFilters, CardAlertResponse,
 } from '@/types/cards'
+import type { TransactionListItem } from '@/types/transactions'
 
-type Tab = 'overview' | 'bills' | 'limits' | 'history' | 'spending' | 'alerts'
+type Tab = 'overview' | 'bills' | 'limits' | 'history' | 'spending' | 'payments' | 'alerts'
 
 const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
   { key: 'overview', label: 'Resumen', icon: Info },
@@ -35,6 +37,7 @@ const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
   { key: 'limits', label: 'Limites', icon: Wallet },
   { key: 'history', label: 'Historial', icon: History },
   { key: 'spending', label: 'Gastos', icon: PieChart },
+  { key: 'payments', label: 'Pagos', icon: DollarSign },
   { key: 'alerts', label: 'Alertas', icon: Bell },
 ]
 
@@ -689,6 +692,8 @@ function HistoryTab({ cardId, currencyCode }: { cardId: string; currencyCode: st
 function SpendingTab({ cardId, currencyCode }: { cardId: string; currencyCode: string }) {
   const { data, isLoading } = useSpendingByCategory(cardId)
   const spending = data as SpendingByCategoryResponse | undefined
+  const { data: txData, isLoading: txLoading } = useTransactions({ credit_card_id: cardId, page_size: 50 })
+  const transactions = (txData?.transactions || []) as TransactionListItem[]
 
   return (
     <motion.div
@@ -729,7 +734,7 @@ function SpendingTab({ cardId, currencyCode }: { cardId: string; currencyCode: s
                         stroke="white"
                         strokeWidth="2"
                       >
-                        <title>{cat.category_id || 'Sin categoria'}: {formatCurrency(value, currencyCode)}</title>
+                        <title>{cat.category_name || cat.category_id || 'Sin categoria'}: {formatCurrency(value, currencyCode)}</title>
                       </path>
                     )
                   })
@@ -756,7 +761,7 @@ function SpendingTab({ cardId, currencyCode }: { cardId: string; currencyCode: s
                 >
                   <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: colors[i % colors.length] }} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{cat.category_id || 'Sin categoria'}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{cat.category_name || cat.category_id || 'Sin categoria'}</p>
                     <p className="text-xs text-gray-500">{cat.transaction_count} transaccion{cat.transaction_count !== 1 ? 'es' : ''}</p>
                   </div>
                   <div className="text-right">
@@ -773,6 +778,133 @@ function SpendingTab({ cardId, currencyCode }: { cardId: string; currencyCode: s
           <EmptyState
             title="No hay gastos en este periodo"
             description="Los gastos categorizados apareceran aqui cuando realices transacciones con esta tarjeta"
+          />
+        </motion.div>
+      )}
+      <motion.div variants={itemVariants} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-sm p-6 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500" />
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4">Transacciones recientes</h3>
+        {txLoading ? (
+          <Skeleton className="h-40 rounded-xl" />
+        ) : transactions.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 dark:border-gray-700/50">
+                  <th className="text-left py-2 text-gray-500 font-medium">Fecha</th>
+                  <th className="text-left py-2 text-gray-500 font-medium">Descripcion</th>
+                  <th className="text-right py-2 text-gray-500 font-medium">Monto</th>
+                </tr>
+              </thead>
+              <tbody>
+                {transactions.slice(0, 20).map((tx) => (
+                  <tr
+                    key={tx.id}
+                    className="border-b border-gray-50 dark:border-gray-700/20 hover:bg-gray-50/50 dark:hover:bg-gray-700/20 transition-colors"
+                  >
+                    <td className="py-2 text-gray-500 whitespace-nowrap">{tx.effective_date ? new Date(tx.effective_date).toLocaleDateString() : '—'}</td>
+                    <td className="py-2 text-gray-900 dark:text-gray-100 truncate max-w-[200px]">{tx.description}</td>
+                    <td className="py-2 text-right font-semibold text-gray-900 dark:text-gray-100">
+                      {tx.transaction_type === 'expense' ? '-' : '+'}
+                      {formatCurrency(parseFloat(tx.amount), currencyCode)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500">No hay transacciones registradas para esta tarjeta</p>
+        )}
+      </motion.div>
+    </motion.div>
+  )
+}
+
+function PaymentsTab({ cardId, currencyCode }: { cardId: string; currencyCode: string }) {
+  const { data, isLoading } = useBillList(cardId)
+  const bills = (data?.bills || []) as BillResponse[]
+  const payments = bills
+    .filter((b) => b.paid_at)
+    .sort((a, b) => new Date(b.paid_at!).getTime() - new Date(a.paid_at!).getTime())
+
+  const totalPaid = payments.reduce((sum, b) => sum + parseFloat(b.amount_paid), 0)
+
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-4"
+    >
+      <motion.div variants={itemVariants} className="flex items-center justify-between flex-wrap gap-2">
+        <p className="text-sm text-gray-500 dark:text-gray-400">{payments.length} pago{payments.length !== 1 ? 's' : ''}</p>
+        {payments.length > 0 && (
+          <span className="text-sm font-semibold text-emerald-600">
+            Total pagado: {formatCurrency(totalPaid, currencyCode)}
+          </span>
+        )}
+      </motion.div>
+      {isLoading ? (
+        <Skeleton className="h-64 rounded-2xl" />
+      ) : payments.length > 0 ? (
+        <motion.div variants={itemVariants} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-sm p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 dark:border-gray-700/50">
+                  <th className="text-left py-2 text-gray-500 font-medium">Fecha de pago</th>
+                  <th className="text-left py-2 text-gray-500 font-medium">Estado de cuenta</th>
+                  <th className="text-left py-2 text-gray-500 font-medium">Vencimiento</th>
+                  <th className="text-right py-2 text-gray-500 font-medium">Total</th>
+                  <th className="text-right py-2 text-gray-500 font-medium">Pagado</th>
+                  <th className="text-right py-2 text-gray-500 font-medium">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {payments.map((bill) => (
+                  <motion.tr
+                    key={bill.id}
+                    variants={itemVariants}
+                    className="border-b border-gray-50 dark:border-gray-700/20 hover:bg-gray-50/50 dark:hover:bg-gray-700/20 transition-colors"
+                  >
+                    <td className="py-2 text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                      {bill.paid_at ? new Date(bill.paid_at).toLocaleDateString() : '—'}
+                    </td>
+                    <td className="py-2 text-gray-500 whitespace-nowrap">
+                      {new Date(bill.statement_date).toLocaleDateString()}
+                    </td>
+                    <td className="py-2 text-gray-500 whitespace-nowrap">
+                      {new Date(bill.due_date).toLocaleDateString()}
+                    </td>
+                    <td className="py-2 text-right text-gray-900 dark:text-gray-100">
+                      {formatCurrency(parseFloat(bill.total_amount), currencyCode)}
+                    </td>
+                    <td className="py-2 text-right font-semibold text-emerald-600">
+                      {formatCurrency(parseFloat(bill.amount_paid), currencyCode)}
+                    </td>
+                    <td className="py-2 text-right">
+                      <span className={cn(
+                        'inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium',
+                        bill.payment_status === 'paid'
+                          ? 'bg-emerald-100 text-emerald-600'
+                          : 'bg-amber-100 text-amber-600',
+                      )}>
+                        {bill.payment_status === 'paid' ? 'Pagado' : 'Parcial'}
+                      </span>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+      ) : (
+        <motion.div variants={itemVariants}>
+          <EmptyState
+            title="No hay pagos registrados"
+            description="Los pagos de tus facturas apareceran aqui cuando los registres"
           />
         </motion.div>
       )}
@@ -1081,6 +1213,7 @@ export default function CardDetailPage() {
           {activeTab === 'limits' && <LimitsTab cardId={card.id} currencyCode={card.currency_code} />}
           {activeTab === 'history' && <HistoryTab cardId={card.id} currencyCode={card.currency_code} />}
           {activeTab === 'spending' && <SpendingTab cardId={card.id} currencyCode={card.currency_code} />}
+          {activeTab === 'payments' && <PaymentsTab cardId={card.id} currencyCode={card.currency_code} />}
           {activeTab === 'alerts' && <AlertsTab cardId={card.id} />}
         </motion.div>
       </AnimatePresence>

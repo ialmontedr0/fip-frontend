@@ -10,15 +10,38 @@ import { useState } from 'react'
 import { cn, formatCurrency } from '@/lib/utils'
 import { PiggyBank, RefreshCw, Sparkles } from 'lucide-react'
 
+const STORAGE_KEY = 'fip-savings-optimization'
+
+function loadSaved(): SavingsOptimizeResponse | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    return JSON.parse(raw) as SavingsOptimizeResponse
+  } catch {
+    return null
+  }
+}
+
+function saveResult(data: SavingsOptimizeResponse) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  } catch {
+    // storage unavailable
+  }
+}
+
 function SavingsOptimizerDashboard() {
   const mutation = useOptimizeSavings()
-  const [data, setData] = useState<SavingsOptimizeResponse | null>(null)
+  const [data, setData] = useState<SavingsOptimizeResponse | null>(loadSaved)
   const [error, setError] = useState<string | null>(null)
 
   const handleOptimize = () => {
     setError(null)
     mutation.mutate(undefined, {
-      onSuccess: (result) => setData(result),
+      onSuccess: (result) => {
+        setData(result)
+        saveResult(result)
+      },
       onError: (err) => setError(err instanceof Error ? err.message : 'Error al optimizar'),
     })
   }

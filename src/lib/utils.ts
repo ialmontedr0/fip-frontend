@@ -63,3 +63,11 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
     timeoutId = setTimeout(() => fn(...args), delay)
   }
 }
+
+export function responsiveGrid(count: number): string {
+  if (count <= 0) return 'grid grid-cols-1 gap-4'
+  if (count === 1) return 'grid grid-cols-1 max-w-2xl gap-4'
+  if (count === 2) return 'grid grid-cols-1 sm:grid-cols-2 max-w-4xl gap-4'
+  if (count === 3) return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'
+  return 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'
+}

@@ -97,6 +97,32 @@ export function useDeleteNotification() {
   })
 }
 
+export function useMarkAllRead() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => notificationsApi.markAllRead(),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: notificationKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: notificationKeys.stats() })
+      toast.success(`${res.data.count} notificaciones marcadas como leídas`)
+    },
+    onError: () => toast.error('Error al marcar notificaciones'),
+  })
+}
+
+export function useDeleteRead() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => notificationsApi.deleteRead(),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: notificationKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: notificationKeys.stats() })
+      toast.success(`${res.data.count} notificaciones leídas eliminadas`)
+    },
+    onError: () => toast.error('Error al eliminar notificaciones'),
+  })
+}
+
 export function useUpdatePreferences() {
   const queryClient = useQueryClient()
   return useMutation({

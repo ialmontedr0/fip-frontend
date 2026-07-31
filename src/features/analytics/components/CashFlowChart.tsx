@@ -55,7 +55,7 @@ export default function CashFlowChart({ cashFlow, loading, error }: Props) {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)] animate-pulse" />
+            <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Flujo de Caja
             </h3>
@@ -84,11 +84,15 @@ export default function CashFlowChart({ cashFlow, loading, error }: Props) {
       <div className="mb-4 flex gap-4 text-xs">
         <div className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-sm bg-[#22c55e] shadow-[0_0_6px_rgba(34,197,94,0.4)]" />
-          <span className="font-medium text-gray-500 dark:text-gray-400">Ingresos</span>
+          <span className="font-medium text-gray-500 dark:text-gray-400">Ingresos (verde)</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-sm bg-[#ef4444] shadow-[0_0_6px_rgba(239,68,68,0.4)]" />
-          <span className="font-medium text-gray-500 dark:text-gray-400">Gastos</span>
+          <span className="font-medium text-gray-500 dark:text-gray-400">Gastos (rojo)</span>
+        </div>
+        <div className="hidden sm:flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#22c55e] ring-2 ring-white dark:ring-gray-900" />
+          <span className="font-medium text-gray-500 dark:text-gray-400">Puntos: valor mensual</span>
         </div>
       </div>
 
@@ -100,8 +104,8 @@ export default function CashFlowChart({ cashFlow, loading, error }: Props) {
           strokeWidth={2.5}
           fill="url(#gradient-#22c55e)"
           name="Ingresos"
-          dot={false}
-          activeDot={{ r: 5, fill: '#22c55e', strokeWidth: 0 }}
+          dot={{ r: 3.5, fill: '#22c55e', strokeWidth: 0 }}
+          activeDot={{ r: 6, fill: '#22c55e', strokeWidth: 2, stroke: '#ffffff' }}
         />
         <Area
           type="monotone"
@@ -110,8 +114,8 @@ export default function CashFlowChart({ cashFlow, loading, error }: Props) {
           strokeWidth={2.5}
           fill="url(#gradient-#ef4444)"
           name="Gastos"
-          dot={false}
-          activeDot={{ r: 5, fill: '#ef4444', strokeWidth: 0 }}
+          dot={{ r: 3.5, fill: '#ef4444', strokeWidth: 0 }}
+          activeDot={{ r: 6, fill: '#ef4444', strokeWidth: 2, stroke: '#ffffff' }}
         />
       </FIPAreaChart>
 

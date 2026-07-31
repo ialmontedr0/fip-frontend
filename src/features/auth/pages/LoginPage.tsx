@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { useLogin } from '../hooks/useAuth'
@@ -15,6 +17,7 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 function LoginPage() {
   const loginMutation = useLogin()
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
     register,
@@ -38,13 +41,25 @@ function LoginPage() {
         {...register('email')}
       />
 
-      <Input
-        label="Contrasena"
-        type="password"
-        placeholder="********"
-        error={errors.password?.message}
-        {...register('password')}
-      />
+      <div className="relative">
+        <Input
+          label="Contrasena"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="********"
+          error={errors.password?.message}
+          {...register('password')}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword((prev) => !prev)}
+          className="absolute right-3 top-[2.15rem] flex h-6 w-6 items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          aria-label={showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'}
+          aria-pressed={showPassword}
+          tabIndex={-1}
+        >
+          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
 
       <div className="flex items-center justify-end">
         <Link

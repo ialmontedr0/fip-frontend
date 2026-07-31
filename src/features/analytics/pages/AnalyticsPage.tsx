@@ -95,7 +95,7 @@ function AnalyticsPage() {
       </div>
 
       {/* Sticky header */}
-      <div className="sticky top-0 z-30 -mx-6 -mt-6 border-b border-gray-100 bg-white/80 px-6 pb-0 pt-6 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-950/80">
+      <div className="sticky top-0 z-30 -mx-4 -mt-4 border-b border-gray-100 bg-white/80 px-4 pb-0 pt-4 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-950/80 sm:-mx-6 sm:-mt-6 sm:px-6 sm:pt-6">
         <div className="flex flex-col gap-4 pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-3">

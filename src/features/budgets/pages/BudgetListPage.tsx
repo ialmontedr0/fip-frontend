@@ -5,6 +5,7 @@ import BudgetCard from '../components/BudgetCard'
 import BudgetFilters from '../components/BudgetFilters'
 import BudgetEmptyState from '../components/BudgetEmptyState'
 import { useBudgets } from '../hooks/useBudgets'
+import { responsiveGrid } from '@/lib/utils'
 import type { BudgetFilters as BudgetFiltersType } from '@/types/budgets'
 
 function SkeletonGrid() {
@@ -102,7 +103,7 @@ export default function BudgetListPage() {
             presupuesto
             {data.total !== 1 ? 's' : ''}
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className={responsiveGrid(data.budgets.length)}>
             {data.budgets.map((budget) => (
               <BudgetCard key={budget.id} budget={budget} />
             ))}

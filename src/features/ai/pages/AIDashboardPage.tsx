@@ -10,6 +10,7 @@ import { ErrorMessage } from '@/components/ui'
 import { formatCurrency } from '@/lib/utils'
 import { Lightbulb, PiggyBank } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { RECOMMENDATION_TYPE_LABELS } from '../components/valueMaps'
 
 function AIDashboardPage() {
   const navigate = useNavigate()
@@ -94,7 +95,7 @@ function AIDashboardPage() {
       <RecentInsightsFeed
         recommendations={recHistory?.recommendations?.map((r) => ({
           type: 'history',
-          title: r.predicted_value,
+          title: RECOMMENDATION_TYPE_LABELS[r.predicted_value] || r.predicted_value,
           description: r.reason,
           priority: 'medium' as const,
           estimated_savings: 0,

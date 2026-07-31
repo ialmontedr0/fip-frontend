@@ -5,6 +5,7 @@ import {
   ArrowUpDown, CircleDot, CheckCircle2, AlertTriangle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { responsiveGrid } from '@/lib/utils'
 import { useGoals, useGoalSummary } from '../hooks/useGoals'
 import GoalCard from '../components/GoalCard'
 import GoalTable from '../components/GoalTable'
@@ -260,7 +261,7 @@ export default function GoalListPage() {
               </p>
             )}
             {viewMode === 'grid' ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className={cn(responsiveGrid(filteredAndSorted.length))}>
                 {filteredAndSorted.map((goal, idx) => (
                   <GoalCard key={goal.id} goal={goal} index={idx} />
                 ))}

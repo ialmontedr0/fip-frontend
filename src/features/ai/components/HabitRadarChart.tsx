@@ -52,7 +52,7 @@ function HabitRadarChart({ habits, categoryNames = {}, className }: HabitRadarCh
     })
   })
 
-  const dataPoints = categories.map(([, freq], i) => getPoint(i, freq.frequency_score))
+  const dataPoints = categories.map(([, freq], i) => getPoint(i, freq.frequency_score * 100))
 
   const getName = (id: string) => categoryNames[id] || id
 
@@ -128,7 +128,7 @@ function HabitRadarChart({ habits, categoryNames = {}, className }: HabitRadarCh
           <div key={id} className="group flex items-center gap-2 cursor-default transition-all duration-200 hover:-translate-y-0.5">
             <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 shadow-sm transition-transform duration-200 group-hover:scale-150" />
             <span className="text-xs text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-200">{getName(id)}</span>
-            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-200">{freq.frequency_score}</span>
+            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-200">{Math.round(freq.frequency_score * 100)}%</span>
           </div>
         ))}
       </div>

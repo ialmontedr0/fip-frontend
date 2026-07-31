@@ -32,6 +32,18 @@ export function bulkMarkRead(data: BulkMarkReadRequest) {
   return api.post<BulkMarkReadResponse>('/notifications/bulk-read', data)
 }
 
+export function markAllRead() {
+  return api.post<BulkMarkReadResponse>('/notifications/read-all')
+}
+
+export function deleteRead() {
+  return api.delete<BulkMarkReadResponse>('/notifications/read')
+}
+
+export function bulkDelete(data: BulkMarkReadRequest) {
+  return api.post<BulkMarkReadResponse>('/notifications/bulk-delete', data)
+}
+
 export function getNotificationStats() {
   return api.get<NotificationStatsResponse>('/notifications/stats')
 }

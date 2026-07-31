@@ -147,7 +147,9 @@ export default function NotificationItem({
         <div
           className={cn(
             'flex items-center gap-1 transition-all duration-300 shrink-0',
-            showActions ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none',
+            showActions
+              ? 'opacity-100 translate-x-0 lg:opacity-100'
+              : 'opacity-100 translate-x-0 lg:opacity-0 lg:translate-x-4 lg:pointer-events-none',
           )}
         >
           {!notification.is_read && (

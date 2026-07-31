@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { cn } from '@/lib/utils'
-import { Bell, CheckCheck, Filter, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
-import { useNotifications, useNotificationStats, useMarkRead, useBulkMarkRead, useDeleteNotification } from '../hooks/useNotifications'
+import { Bell, CheckCheck, Trash2, Filter, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
+import { useNotifications, useNotificationStats, useMarkRead, useMarkAllRead, useDeleteNotification, useDeleteRead } from '../hooks/useNotifications'
 import NotificationItem from '../components/NotificationItem'
 import NotificationStats from '../components/NotificationStats'
 import NotificationFilters from '../components/NotificationFilters'
@@ -29,13 +29,15 @@ export default function NotificationsPage() {
   const { data: notifData, isLoading } = useNotifications(queryParams)
   const { data: stats } = useNotificationStats()
   const markRead = useMarkRead()
-  const bulkMarkRead = useBulkMarkRead()
+  const markAllRead = useMarkAllRead()
   const deleteNotif = useDeleteNotification()
+  const deleteRead = useDeleteRead()
 
   const notifications = notifData?.notifications ?? []
   const total = notifData?.total ?? 0
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
-  const unreadIds = notifications.filter((n) => !n.is_read).map((n) => n.id)
+  const hasUnread = (stats?.unread ?? 0) > 0
+  const hasRead = (stats?.total ?? 0) > (stats?.unread ?? 0)
 
   const clearFilters = useCallback(() => {
     setTypeFilter('')
@@ -59,7 +61,7 @@ export default function NotificationsPage() {
         {/* Gradient accent line */}
         <div className="absolute -top-4 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-xl shadow-purple-500/30">
@@ -80,7 +82,7 @@ export default function NotificationsPage() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={cn(
@@ -93,9 +95,20 @@ export default function NotificationsPage() {
               <Filter className="h-3.5 w-3.5" />
               Filtros
             </button>
-            {unreadIds.length > 0 && (
+            {hasRead && (
               <button
-                onClick={() => bulkMarkRead.mutate(unreadIds)}
+                onClick={() => deleteRead.mutate()}
+                disabled={deleteRead.isPending}
+                className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider bg-white dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/60 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Borrar leidas
+              </button>
+            )}
+            {hasUnread && (
+              <button
+                onClick={() => markAllRead.mutate()}
+                disabled={markAllRead.isPending}
                 className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider bg-white dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/60 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-500/10 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
               >
                 <CheckCheck className="h-3.5 w-3.5" />
