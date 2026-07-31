@@ -171,9 +171,7 @@ function Sidebar({ mobile, onClose }: SidebarProps) {
       {/* Logo */}
       <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary-600 flex items-center justify-center">
-            <span className="text-white font-bold text-sm">F</span>
-          </div>
+          <img src="/favicon.svg" alt="FIP" className="h-8 w-8 rounded-lg" />
           {sidebarOpen && (
             <span className="text-lg font-bold text-gray-900 dark:text-white">FIP</span>
           )}
