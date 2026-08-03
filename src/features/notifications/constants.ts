@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import {
   ArrowRightLeft, PieChart, AlertTriangle, Flag, Target,
   CreditCard, CalendarClock, Bot, ShieldAlert, Bell, Megaphone,
-  Mail, Send, MessageCircle, Webhook,
+  Mail, Send, MessageCircle, Webhook, Archive,
 } from 'lucide-react'
 import type { NotificationType, NotificationChannel } from '@/types/notifications'
 
@@ -30,6 +30,11 @@ export const NOTIFICATION_TYPE_CONFIG: Record<NotificationType, NotificationType
     type: 'budget_alert', label: 'Alerta de Presupuesto', icon: AlertTriangle,
     color: 'text-amber-600 dark:text-amber-400', gradient: 'from-amber-400 to-amber-600',
     description: 'Alertas generales de presupuesto',
+  },
+  budget_closed: {
+    type: 'budget_closed', label: 'Presupuesto Cerrado', icon: Archive,
+    color: 'text-teal-600 dark:text-teal-400', gradient: 'from-teal-400 to-teal-600',
+    description: 'Presupuestos cuyo período terminó',
   },
   goal_completed: {
     type: 'goal_completed', label: 'Meta Completada', icon: Flag,

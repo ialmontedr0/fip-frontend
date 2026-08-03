@@ -27,6 +27,8 @@ export interface UpdateBudgetRequest {
   name?: string
   description?: string | null
   amount?: string | number
+  start_date?: string | null
+  end_date?: string | null
   alert_threshold?: number
   alert_enabled?: boolean
   auto_adjust?: boolean

@@ -5,42 +5,136 @@ import RequireAuth from '@/components/layout/RequireAuth'
 import RequireAdmin from '@/components/layout/RequireAdmin'
 import { SuspenseWrapper } from '@/components/layout/RouteHelpers'
 import {
-  LoginPage, RegisterPage, MFAChallengePage,
-  RequestResetPage, ResetPasswordPage, VerifyEmailPage,
-  DashboardPage, AnalyticsPage, SettingsPage,
-  AccountListPage, AccountCreatePage, AccountDetailPage,
-  WalletListPage, WalletCreatePage, WalletDetailPage, WalletLiquidityPage,
-  CategoryListPage, CategoryCreatePage, CategoryDetailPage,
-  TransactionListPage, TransactionCreatePage, TransactionDetailPage, TransactionEditPage,
-  RecurringListPage, RecurringCreatePage, RecurringDetailPage,
-  IncomeListPage, IncomeCreatePage, IncomeDetailPage, IncomeEditPage, IncomeSummaryPage,
-  SourceListPage, SourceCreatePage, SourceEditPage,
-  ScheduleListPage, ScheduleCreatePage,
-  RecurringDetectionPage, IrregularDetectionPage,
-  ExpenseListPage, ExpenseCreatePage, ExpenseDetailPage, ExpenseEditPage,
-  ExpenseDashboardPage, TemplateListPage, ServiceListPage, SubscriptionListPage,
-  CreditCardListPage, BillListPage, SplitExpensePage, DuplicateListPage, RecurringCandidatePage,
-  BudgetListPage, BudgetCreatePage, BudgetEditPage, BudgetDetailPage,
-  BudgetSummaryPage, BudgetAlertsPage,
-  GoalListPage, GoalCreatePage, GoalDetailPage, GoalEditPage,
-  GoalSummaryPage, GoalSimulationPage, GoalSimulationListPage,
+  LoginPage,
+  RegisterPage,
+  MFAChallengePage,
+  RequestResetPage,
+  ResetPasswordPage,
+  VerifyEmailPage,
+  DashboardPage,
+  AnalyticsPage,
+  SettingsPage,
+  AccountListPage,
+  AccountCreatePage,
+  AccountDetailPage,
+  WalletListPage,
+  WalletCreatePage,
+  WalletDetailPage,
+  WalletLiquidityPage,
+  CategoryListPage,
+  CategoryCreatePage,
+  CategoryDetailPage,
+  TransactionListPage,
+  TransactionCreatePage,
+  TransactionDetailPage,
+  TransactionEditPage,
+  RecurringListPage,
+  RecurringCreatePage,
+  RecurringDetailPage,
+  IncomeListPage,
+  IncomeCreatePage,
+  IncomeDetailPage,
+  IncomeEditPage,
+  IncomeSummaryPage,
+  SourceListPage,
+  SourceCreatePage,
+  SourceEditPage,
+  ScheduleListPage,
+  ScheduleCreatePage,
+  RecurringDetectionPage,
+  IrregularDetectionPage,
+  ExpenseListPage,
+  ExpenseCreatePage,
+  ExpenseDetailPage,
+  ExpenseEditPage,
+  ExpenseDashboardPage,
+  TemplateListPage,
+  ServiceListPage,
+  SubscriptionListPage,
+  CreditCardListPage,
+  BillListPage,
+  SplitExpensePage,
+  DuplicateListPage,
+  RecurringCandidatePage,
+  BudgetListPage,
+  BudgetCreatePage,
+  BudgetEditPage,
+  BudgetDetailPage,
+  BudgetSummaryPage,
+  BudgetAlertsPage,
+  GoalListPage,
+  GoalCreatePage,
+  GoalDetailPage,
+  GoalEditPage,
+  GoalSummaryPage,
+  GoalSimulationPage,
+  GoalSimulationListPage,
   GoalSimulationDetailPage,
-  CardListPage, CardCreatePage, CardEditPage, CardDetailPage,
-  CardBillListPage, CardBillPayPage, CardSpendingLimitsPage, CardAlertsPage,
-  CreditPurchaseListPage, CreditPurchaseCreatePage, CreditPurchaseDetailPage, CreditPurchaseSimulatorPage,
-  LoanListPage, LoanCreatePage, LoanDetailPage,
-  LoanEditPage, LoanAmortizationPage, LoanPaymentPage,
-  LoanPaymentHistoryPage, LoanSimulatorPage,
-  AIDashboardPage, AIClassifyPage, AIPredictPage,
-  AIAnomaliesPage, AIRecommendationsPage, AIHabitsPage,
-  AIRisksPage, AISavingsPage, AISavingsSimulatorPage, AIModelsPage,
-  AutomationListPage, AutomationCreatePage, AutomationDetailPage,
-  NotificationsPage, NotificationPreferencesPage,
-  ImportPage, ExportPage,
-  ProfilePage, SecurityPage, PreferencesPage,
+  CardListPage,
+  CardCreatePage,
+  CardEditPage,
+  CardDetailPage,
+  CardBillListPage,
+  CardBillPayPage,
+  CardSpendingLimitsPage,
+  CardAlertsPage,
+  CreditPurchaseListPage,
+  CreditPurchaseCreatePage,
+  CreditPurchaseDetailPage,
+  CreditPurchaseSimulatorPage,
+  LoanListPage,
+  LoanCreatePage,
+  LoanDetailPage,
+  LoanEditPage,
+  LoanAmortizationPage,
+  LoanPaymentPage,
+  LoanPaymentHistoryPage,
+  LoanSimulatorPage,
+  TaxDashboardPage,
+  TaxCategoriesPage,
+  TaxDeductionsPage,
+  TaxDeductionCreatePage,
+  TaxDeductionEditPage,
+  InsuranceListPage,
+  InsuranceCreatePage,
+  InsuranceEditPage,
+  InsuranceDetailPage,
+  InsurancePremiumCreatePage,
+  InvestmentsPage,
+  AssetCreatePage,
+  AssetDetailPage,
+  PortfolioCreatePage,
+  PortfolioDetailPage,
+  ReceiptScanPage,
+  AIDashboardPage,
+  AIClassifyPage,
+  AIPredictPage,
+  AIAnomaliesPage,
+  AIRecommendationsPage,
+  AIHabitsPage,
+  AIRisksPage,
+  AISavingsPage,
+  AISavingsSimulatorPage,
+  AIModelsPage,
+  AutomationListPage,
+  AutomationCreatePage,
+  AutomationDetailPage,
+  NotificationsPage,
+  NotificationPreferencesPage,
+  ImportPage,
+  ExportPage,
+  ProfilePage,
+  SecurityPage,
+  PreferencesPage,
   SearchPage,
-  AdminDashboardPage, AdminUsersPage, AdminUserDetailPage, AdminRolesPage,
-  AdminPermissionsPage, AdminAuditLogsPage, AdminStatsPage,
+  AdminDashboardPage,
+  AdminUsersPage,
+  AdminUserDetailPage,
+  AdminRolesPage,
+  AdminPermissionsPage,
+  AdminAuditLogsPage,
+  AdminStatsPage,
+  ChatPage,
 } from './lazy'
 
 export const router = createBrowserRouter([
@@ -206,6 +300,14 @@ export const router = createBrowserRouter([
               </SuspenseWrapper>
             ),
           },
+          {
+            path: '/transactions/scan',
+            element: (
+              <SuspenseWrapper>
+                <ReceiptScanPage />
+              </SuspenseWrapper>
+            ),
+          },
           // Recurring
           {
             path: '/transactions/recurring',
@@ -256,248 +358,623 @@ export const router = createBrowserRouter([
               </SuspenseWrapper>
             ),
           },
+          {
+            path: '/chat',
+            element: (
+              <SuspenseWrapper>
+                <ChatPage />
+              </SuspenseWrapper>
+            )
+          },
+          {
+            path: '/chat/:id',
+            element: (
+              <SuspenseWrapper>
+                <ChatPage />
+              </SuspenseWrapper>
+            )
+          },
           // Incomes
           {
             path: '/incomes',
-            element: (<SuspenseWrapper><IncomeListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <IncomeListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/new',
-            element: (<SuspenseWrapper><IncomeCreatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <IncomeCreatePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/:id',
-            element: (<SuspenseWrapper><IncomeDetailPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <IncomeDetailPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/:id/edit',
-            element: (<SuspenseWrapper><IncomeEditPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <IncomeEditPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/summary',
-            element: (<SuspenseWrapper><IncomeSummaryPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <IncomeSummaryPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/sources',
-            element: (<SuspenseWrapper><SourceListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <SourceListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/sources/new',
-            element: (<SuspenseWrapper><SourceCreatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <SourceCreatePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/sources/:id/edit',
-            element: (<SuspenseWrapper><SourceEditPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <SourceEditPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/schedule',
-            element: (<SuspenseWrapper><ScheduleListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <ScheduleListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/schedule/new',
-            element: (<SuspenseWrapper><ScheduleCreatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <ScheduleCreatePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/recurring',
-            element: (<SuspenseWrapper><RecurringDetectionPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <RecurringDetectionPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/incomes/irregular',
-            element: (<SuspenseWrapper><IrregularDetectionPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <IrregularDetectionPage />
+              </SuspenseWrapper>
+            ),
           },
           // Expenses
           {
             path: '/expenses',
-            element: (<SuspenseWrapper><ExpenseListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <ExpenseListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/new',
-            element: (<SuspenseWrapper><ExpenseCreatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <ExpenseCreatePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/:id',
-            element: (<SuspenseWrapper><ExpenseDetailPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <ExpenseDetailPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/:id/edit',
-            element: (<SuspenseWrapper><ExpenseEditPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <ExpenseEditPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/summary',
-            element: (<SuspenseWrapper><ExpenseDashboardPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <ExpenseDashboardPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/templates',
-            element: (<SuspenseWrapper><TemplateListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <TemplateListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/services',
-            element: (<SuspenseWrapper><ServiceListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <ServiceListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/subscriptions',
-            element: (<SuspenseWrapper><SubscriptionListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <SubscriptionListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/cards',
-            element: (<SuspenseWrapper><CreditCardListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CreditCardListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/cards/:cardId/bills',
-            element: (<SuspenseWrapper><BillListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <BillListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/split',
-            element: (<SuspenseWrapper><SplitExpensePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <SplitExpensePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/duplicates',
-            element: (<SuspenseWrapper><DuplicateListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <DuplicateListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/expenses/recurring',
-            element: (<SuspenseWrapper><RecurringCandidatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <RecurringCandidatePage />
+              </SuspenseWrapper>
+            ),
           },
           // Goals
           {
             path: '/goals',
-            element: (<SuspenseWrapper><GoalListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <GoalListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/goals/summary',
-            element: (<SuspenseWrapper><GoalSummaryPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <GoalSummaryPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/goals/new',
-            element: (<SuspenseWrapper><GoalCreatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <GoalCreatePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/goals/:id',
-            element: (<SuspenseWrapper><GoalDetailPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <GoalDetailPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/goals/:id/edit',
-            element: (<SuspenseWrapper><GoalEditPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <GoalEditPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/goals/:id/simulate',
-            element: (<SuspenseWrapper><GoalSimulationPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <GoalSimulationPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/goals/:id/simulations',
-            element: (<SuspenseWrapper><GoalSimulationListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <GoalSimulationListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/goals/:id/simulations/:simId',
-            element: (<SuspenseWrapper><GoalSimulationDetailPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <GoalSimulationDetailPage />
+              </SuspenseWrapper>
+            ),
           },
           // Budgets
           {
             path: '/budgets',
-            element: (<SuspenseWrapper><BudgetListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <BudgetListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/budgets/new',
-            element: (<SuspenseWrapper><BudgetCreatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <BudgetCreatePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/budgets/:id',
-            element: (<SuspenseWrapper><BudgetDetailPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <BudgetDetailPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/budgets/:id/edit',
-            element: (<SuspenseWrapper><BudgetEditPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <BudgetEditPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/budgets/summary',
-            element: (<SuspenseWrapper><BudgetSummaryPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <BudgetSummaryPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/budgets/alerts',
-            element: (<SuspenseWrapper><BudgetAlertsPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <BudgetAlertsPage />
+              </SuspenseWrapper>
+            ),
           },
           // Cards
           {
             path: '/cards',
-            element: (<SuspenseWrapper><CardListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CardListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/cards/new',
-            element: (<SuspenseWrapper><CardCreatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CardCreatePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/cards/:id',
-            element: (<SuspenseWrapper><CardDetailPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CardDetailPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/cards/:id/edit',
-            element: (<SuspenseWrapper><CardEditPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CardEditPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/cards/:id/bills',
-            element: (<SuspenseWrapper><CardBillListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CardBillListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/cards/:id/bills/:billId/pay',
-            element: (<SuspenseWrapper><CardBillPayPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CardBillPayPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/cards/:id/limits',
-            element: (<SuspenseWrapper><CardSpendingLimitsPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CardSpendingLimitsPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/cards/alerts',
-            element: (<SuspenseWrapper><CardAlertsPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CardAlertsPage />
+              </SuspenseWrapper>
+            ),
           },
           // Credit Purchases
           {
             path: '/credit-purchases',
-            element: (<SuspenseWrapper><CreditPurchaseListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CreditPurchaseListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/credit-purchases/new',
-            element: (<SuspenseWrapper><CreditPurchaseCreatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CreditPurchaseCreatePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/credit-purchases/simulator',
-            element: (<SuspenseWrapper><CreditPurchaseSimulatorPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CreditPurchaseSimulatorPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/credit-purchases/:id',
-            element: (<SuspenseWrapper><CreditPurchaseDetailPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <CreditPurchaseDetailPage />
+              </SuspenseWrapper>
+            ),
           },
           // Loans
           {
             path: '/loans',
-            element: (<SuspenseWrapper><LoanListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <LoanListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/loans/new',
-            element: (<SuspenseWrapper><LoanCreatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <LoanCreatePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/loans/simulator',
-            element: (<SuspenseWrapper><LoanSimulatorPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <LoanSimulatorPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/loans/:id',
-            element: (<SuspenseWrapper><LoanDetailPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <LoanDetailPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/loans/:id/edit',
-            element: (<SuspenseWrapper><LoanEditPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <LoanEditPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/loans/:id/amortization',
-            element: (<SuspenseWrapper><LoanAmortizationPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <LoanAmortizationPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/loans/:id/pay',
-            element: (<SuspenseWrapper><LoanPaymentPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <LoanPaymentPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/loans/:id/payments',
-            element: (<SuspenseWrapper><LoanPaymentHistoryPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <LoanPaymentHistoryPage />
+              </SuspenseWrapper>
+            ),
+          },
+          // Taxes
+          {
+            path: '/taxes',
+            element: (
+              <SuspenseWrapper>
+                <TaxDashboardPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/taxes/categories',
+            element: (
+              <SuspenseWrapper>
+                <TaxCategoriesPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/taxes/deductions',
+            element: (
+              <SuspenseWrapper>
+                <TaxDeductionsPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/taxes/deductions/new',
+            element: (
+              <SuspenseWrapper>
+                <TaxDeductionCreatePage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/taxes/deductions/:id/edit',
+            element: (
+              <SuspenseWrapper>
+                <TaxDeductionEditPage />
+              </SuspenseWrapper>
+            ),
+          },
+          // Insurance
+          {
+            path: '/insurance',
+            element: (
+              <SuspenseWrapper>
+                <InsuranceListPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/insurance/new',
+            element: (
+              <SuspenseWrapper>
+                <InsuranceCreatePage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/insurance/:id',
+            element: (
+              <SuspenseWrapper>
+                <InsuranceDetailPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/insurance/:id/edit',
+            element: (
+              <SuspenseWrapper>
+                <InsuranceEditPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/insurance/:id/premiums/new',
+            element: (
+              <SuspenseWrapper>
+                <InsurancePremiumCreatePage />
+              </SuspenseWrapper>
+            ),
+          },
+          // Investments
+          {
+            path: '/investments',
+            element: (
+              <SuspenseWrapper>
+                <InvestmentsPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/investments/assets/new',
+            element: (
+              <SuspenseWrapper>
+                <AssetCreatePage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/investments/assets/:id',
+            element: (
+              <SuspenseWrapper>
+                <AssetDetailPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/investments/portfolios/new',
+            element: (
+              <SuspenseWrapper>
+                <PortfolioCreatePage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/investments/portfolios/:id',
+            element: (
+              <SuspenseWrapper>
+                <PortfolioDetailPage />
+              </SuspenseWrapper>
+            ),
           },
           // Analytics
           {
@@ -515,56 +992,108 @@ export const router = createBrowserRouter([
           },
           {
             path: '/ai/dashboard',
-            element: (<SuspenseWrapper><AIDashboardPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AIDashboardPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/ai/classify',
-            element: (<SuspenseWrapper><AIClassifyPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AIClassifyPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/ai/predict',
-            element: (<SuspenseWrapper><AIPredictPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AIPredictPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/ai/anomalies',
-            element: (<SuspenseWrapper><AIAnomaliesPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AIAnomaliesPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/ai/recommendations',
-            element: (<SuspenseWrapper><AIRecommendationsPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AIRecommendationsPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/ai/habits',
-            element: (<SuspenseWrapper><AIHabitsPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AIHabitsPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/ai/risks',
-            element: (<SuspenseWrapper><AIRisksPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AIRisksPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/ai/savings',
-            element: (<SuspenseWrapper><AISavingsPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AISavingsPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/ai/savings/simulate',
-            element: (<SuspenseWrapper><AISavingsSimulatorPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AISavingsSimulatorPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/ai/models',
-            element: (<SuspenseWrapper><AIModelsPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AIModelsPage />
+              </SuspenseWrapper>
+            ),
           },
           // Automations
           {
             path: '/automations',
-            element: (<SuspenseWrapper><AutomationListPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AutomationListPage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/automations/new',
-            element: (<SuspenseWrapper><AutomationCreatePage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AutomationCreatePage />
+              </SuspenseWrapper>
+            ),
           },
           {
             path: '/automations/:id',
-            element: (<SuspenseWrapper><AutomationDetailPage /></SuspenseWrapper>),
+            element: (
+              <SuspenseWrapper>
+                <AutomationDetailPage />
+              </SuspenseWrapper>
+            ),
           },
           // Notifications
           {

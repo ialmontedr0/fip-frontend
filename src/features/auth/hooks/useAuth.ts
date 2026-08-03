@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { AxiosError } from 'axios'
 import { useAuthStore } from '@/stores/auth-store'
 import {
   loginApi, registerApi, verifyMFAApi, logoutApi,
@@ -31,8 +32,9 @@ export function useLogin() {
         navigate('/dashboard')
       }
     },
-    onError: () => {
-      toast.error('Credenciales invalidas. Intenta de nuevo.')
+    onError: (error: unknown) => {
+      const data = (error as AxiosError<{ error?: { message?: string } }>)?.response?.data
+      toast.error(data?.error?.message || 'Credenciales invalidas. Intenta de nuevo.')
     },
   })
 }

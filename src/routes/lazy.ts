@@ -29,6 +29,9 @@ export const CategoryListPage = lazy(() => import('@/features/categories/pages/C
 export const CategoryCreatePage = lazy(() => import('@/features/categories/pages/CategoryCreatePage'))
 export const CategoryDetailPage = lazy(() => import('@/features/categories/pages/CategoryDetailPage'))
 
+// Chat
+export const ChatPage = lazy(() => import('@/features/chat/pages/ChatPage'))
+
 // Transactions
 export const TransactionListPage = lazy(() => import('@/features/transactions/pages/TransactionListPage'))
 export const TransactionCreatePage = lazy(() => import('@/features/transactions/pages/TransactionCreatePage'))
@@ -102,6 +105,30 @@ export const LoanAmortizationPage = lazy(() => import('@/features/loans/pages/Lo
 export const LoanPaymentPage = lazy(() => import('@/features/loans/pages/LoanPaymentPage'))
 export const LoanPaymentHistoryPage = lazy(() => import('@/features/loans/pages/LoanPaymentHistoryPage'))
 export const LoanSimulatorPage = lazy(() => import('@/features/loans/pages/LoanSimulatorPage'))
+
+// Taxes
+export const TaxDashboardPage = lazy(() => import('@/features/taxes/pages/TaxDashboardPage'))
+export const TaxCategoriesPage = lazy(() => import('@/features/taxes/pages/TaxCategoriesPage'))
+export const TaxDeductionsPage = lazy(() => import('@/features/taxes/pages/TaxDeductionsPage'))
+export const TaxDeductionCreatePage = lazy(() => import('@/features/taxes/pages/TaxDeductionCreatePage'))
+export const TaxDeductionEditPage = lazy(() => import('@/features/taxes/pages/TaxDeductionEditPage'))
+
+// Insurance
+export const InsuranceListPage = lazy(() => import('@/features/insurance/pages/InsuranceListPage'))
+export const InsuranceCreatePage = lazy(() => import('@/features/insurance/pages/InsuranceCreatePage'))
+export const InsuranceEditPage = lazy(() => import('@/features/insurance/pages/InsuranceEditPage'))
+export const InsuranceDetailPage = lazy(() => import('@/features/insurance/pages/InsuranceDetailPage'))
+export const InsurancePremiumCreatePage = lazy(() => import('@/features/insurance/pages/InsurancePremiumCreatePage'))
+
+// Investments
+export const InvestmentsPage = lazy(() => import('@/features/investments/pages/InvestmentsPage'))
+export const AssetCreatePage = lazy(() => import('@/features/investments/pages/AssetCreatePage'))
+export const AssetDetailPage = lazy(() => import('@/features/investments/pages/AssetDetailPage'))
+export const PortfolioCreatePage = lazy(() => import('@/features/investments/pages/PortfolioCreatePage'))
+export const PortfolioDetailPage = lazy(() => import('@/features/investments/pages/PortfolioDetailPage'))
+
+// OCR (Receipt Scanner)
+export const ReceiptScanPage = lazy(() => import('@/features/ocr/pages/ReceiptScanPage'))
 
 // Goals
 export const GoalListPage = lazy(() => import('@/features/goals/pages/GoalListPage'))

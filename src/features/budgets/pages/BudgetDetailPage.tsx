@@ -34,6 +34,16 @@ function getTypeLabel(type: string) {
   return map[type] || type
 }
 
+function formatDate(value: string) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+function isExpired(budget: { end_date: string }) {
+  return new Date(budget.end_date) < new Date(new Date().toDateString())
+}
+
 function DetailPageSkeleton() {
   return (
     <div className="animate-pulse space-y-6">
@@ -149,6 +159,10 @@ export default function BudgetDetailPage() {
                 {getTypeLabel(budget.budget_type)}
                 {' · '}
                 {getPeriodLabel(budget.period)}
+                {' · '}
+                <span className={isExpired(budget) ? 'text-red-500 dark:text-red-400 font-medium' : ''}>
+                  {formatDate(budget.start_date)} → {formatDate(budget.end_date)}
+                </span>
                 {budget.description && ` · ${budget.description}`}
               </p>
             </div>
@@ -268,6 +282,14 @@ export default function BudgetDetailPage() {
               <span className="text-sm text-gray-600 dark:text-gray-400">Umbral de alerta</span>
               <span className={`text-sm font-bold ${budget.alert_threshold <= 60 ? 'text-emerald-500' : budget.alert_threshold <= 80 ? 'text-amber-500' : 'text-red-500'}`}>
                 {budget.alert_threshold}%
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Vencimiento</span>
+              <span className={`text-sm font-bold ${isExpired(budget) ? 'text-red-500 dark:text-red-400' : 'text-gray-900 dark:text-gray-100'}`}>
+                {formatDate(budget.end_date)}
+                {isExpired(budget) && ' · cerrado'}
               </span>
             </div>
 

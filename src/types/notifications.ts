@@ -2,6 +2,7 @@ export type NotificationType =
   | 'transaction_alert'
   | 'budget_warning'
   | 'budget_alert'
+  | 'budget_closed'
   | 'goal_completed'
   | 'goal_milestone'
   | 'bill_due'

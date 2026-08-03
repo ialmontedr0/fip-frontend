@@ -14,6 +14,8 @@ import {
   PiggyBank,
   CreditCard,
   Landmark,
+  Receipt,
+  ShieldCheck,
   ShoppingCart,
   BarChart3,
   Brain,
@@ -31,6 +33,8 @@ import {
   Lightbulb,
   Activity,
   Cpu,
+  ScanLine,
+  PieChart,
 } from 'lucide-react'
 
 type NavItem = { name: string; href: string; icon: React.ComponentType<{ className?: string }> }
@@ -59,6 +63,7 @@ function useNavigation(): NavSection[] {
         { name: 'Cuentas', href: '/accounts', icon: Wallet },
         { name: 'Wallets', href: '/wallets', icon: PiggyBank },
         { name: 'Transacciones', href: '/transactions', icon: ArrowLeftRight },
+        { name: 'Escanear Recibo', href: '/transactions/scan', icon: ScanLine },
         { name: 'Categorias', href: '/categories', icon: Tags },
       ],
     },
@@ -76,6 +81,9 @@ function useNavigation(): NavSection[] {
         { name: 'Presupuestos', href: '/budgets', icon: PiggyBank },
         { name: 'Tarjetas', href: '/cards', icon: CreditCard },
         { name: 'Prestamos', href: '/loans', icon: Landmark },
+        { name: 'Seguros', href: '/insurance', icon: ShieldCheck },
+        { name: 'Inversiones', href: '/investments', icon: PieChart },
+        { name: 'Impuestos', href: '/taxes', icon: Receipt },
         { name: 'Compras a Credito', href: '/credit-purchases', icon: ShoppingCart },
       ],
     },
@@ -87,6 +95,7 @@ function useNavigation(): NavSection[] {
           name: 'IA', icon: Brain,
           children: [
             { name: 'Dashboard', href: '/ai/dashboard', icon: LayoutDashboard },
+            { name: 'Chat', href: '/chat', icon: Bot },
             { name: 'Clasificar', href: '/ai/classify', icon: Tags },
             { name: 'Predecir', href: '/ai/predict', icon: TrendingUp },
             { name: 'Anomalias', href: '/ai/anomalies', icon: AlertTriangle },

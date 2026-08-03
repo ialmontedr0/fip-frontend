@@ -36,7 +36,7 @@ export function refreshTokenApi(refresh_token: string) {
 }
 
 export function logoutApi() {
-  return api.post<{ message: string }>('/auth/logout')
+  return api.post<{ message: string }>('/auth/logout-all')
 }
 
 export function requestPasswordResetApi(data: RequestPasswordResetRequest) {
