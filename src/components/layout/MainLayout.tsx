@@ -5,6 +5,7 @@ import Header from './Header'
 import PageTransition from '@/components/ui/PageTransition'
 import { ErrorBoundary } from './ErrorBoundary'
 import { useUIStore } from '@/stores/ui-store'
+import OnboardingFlow from '@/features/onboarding/components/OnboardingFlow'
 
 function MainLayout() {
   const { mobileSidebarOpen, setMobileSidebarOpen } = useUIStore()
@@ -12,6 +13,8 @@ function MainLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
+      <OnboardingFlow />
+
       {/* Sidebar desktop */}
       <Sidebar />
 
