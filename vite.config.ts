@@ -1,63 +1,53 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
-import { visualizer } from 'rollup-plugin-visualizer'
-import VitePluginSitemap from 'vite-plugin-sitemap'
-import { sentryVitePlugin } from '@sentry/vite-plugin'
+/// <reference types="vitest/config" />
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
+import VitePluginSitemap from 'vite-plugin-sitemap';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
+import { fileURLToPath } from 'node:url';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { playwright } from '@vitest/browser-playwright';
+const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
+// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-  plugins: [
-    react(),
-    // Opcional: analisis de bundle
-    visualizer({ open: true, filename: 'dist/stats.html', gzipSize: true, brotliSize: true }),
-    VitePluginSitemap({
-      hostname: 'https://app.midominio.com',
-      dynamicRoutes: [
-        '/login',
-        '/register',
-        '/dashboard',
-        '/accounts',
-        '/transactions',
-        '/categories',
-        '/incomes',
-        '/expenses',
-        '/budgets',
-        '/goals',
-        '/cards',
-        '/loans',
-        '/analytics',
-        '/ai',
-        '/automations',
-        '/notifications',
-        '/settings',
-      ],
-      exclude: ['/admin'],
-    }),
-    sentryVitePlugin({
-      org: 'mi-org-en-sentry',
-      project: 'fip-frontend',
-      authToken: process.env.SENTRY_AUTH_TOKEN, // en Vercel env vars
-      telemetry: false,
-    }),
-  ],
-
+  plugins: [react(),
+  // Opcional: analisis de bundle
+  visualizer({
+    open: true,
+    filename: 'dist/stats.html',
+    gzipSize: true,
+    brotliSize: true
+  }), VitePluginSitemap({
+    hostname: 'https://app.midominio.com',
+    dynamicRoutes: ['/login', '/register', '/dashboard', '/accounts', '/transactions', '/categories', '/incomes', '/expenses', '/budgets', '/goals', '/cards', '/loans', '/analytics', '/ai', '/automations', '/notifications', '/settings'],
+    exclude: ['/admin']
+  }), sentryVitePlugin({
+    org: 'mi-org-en-sentry',
+    project: 'fip-frontend',
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+    // en Vercel env vars
+    telemetry: false
+  })],
   resolve: {
-    alias: { '@': path.resolve(__dirname, './src') },
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
   },
-
   server: {
     port: 5173,
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
-        changeOrigin: true,
-      },
-    },
+        changeOrigin: true
+      }
+    }
   },
-
   build: {
     outDir: 'dist',
-    sourcemap: true, // pon true si usas Sentry source maps
+    sourcemap: true,
+    // pon true si usas Sentry source maps
 
     // Vite 8 usa Rolldown (Rust) por defecto, config via rolldownOptions
     // Code splitting manual (Rolldown usa funcion, no objeto)
@@ -76,9 +66,32 @@ export default defineConfig({
 
     chunkSizeWarningLimit: 300,
     target: 'es2020',
-    minify: 'oxc', // oxc es el default en Vite 8 (Rust-based, muy rapido)
+    minify: 'oxc',
+    // oxc es el default en Vite 8 (Rust-based, muy rapido)
     cssMinify: 'lightningcss',
     assetsInlineLimit: 4096,
-    cssCodeSplit: true,
+    cssCodeSplit: true
   },
-})
+  test: {
+    projects: [{
+      extends: true,
+      plugins: [
+      // The plugin will run tests for the stories defined in your Storybook config
+      // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
+      storybookTest({
+        configDir: path.join(dirname, '.storybook')
+      })],
+      test: {
+        name: 'storybook',
+        browser: {
+          enabled: true,
+          headless: true,
+          provider: playwright({}),
+          instances: [{
+            browser: 'chromium'
+          }]
+        }
+      }
+    }]
+  }
+});

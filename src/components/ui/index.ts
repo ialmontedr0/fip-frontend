@@ -5,7 +5,16 @@ export { default as Card, CardHeader, CardTitle, CardContent } from './Card'
 export { badgeVariants } from './badge-variants'
 export { default as Badge } from './Badge'
 export { default as Skeleton } from './Skeleton'
-export { TableSkeleton, CardSkeleton, ChartSkeleton, FormSkeleton, KPISkeleton, ProfileSkeleton, PageSkeleton, ListSkeleton } from './SkeletonVariants'
+export {
+  TableSkeleton,
+  CardSkeleton,
+  ChartSkeleton,
+  FormSkeleton,
+  KPISkeleton,
+  ProfileSkeleton,
+  PageSkeleton,
+  ListSkeleton,
+} from './SkeletonVariants'
 export { default as Modal } from './Modal'
 export { default as Spinner } from './Spinner'
 export { default as Avatar } from './Avatar'
@@ -16,3 +25,7 @@ export { default as ConfirmDialog } from './ConfirmDialog'
 export { undoToast, successToast, errorToast } from './UndoSnackbar'
 export { default as SEOHead } from './SEOHead'
 export { default as PageTransition } from './PageTransition'
+export { default as Select } from './Select'
+export { default as DataTable } from './DataTable'
+export { default as Tabs } from './Tabs'
+export { default as Tooltip } from './Tooltip'
