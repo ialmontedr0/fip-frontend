@@ -1,4 +1,5 @@
 import { PiggyBank, TrendingUp, AlertTriangle, Bell } from 'lucide-react'
+import { formatAmount } from '@/lib/currency'
 import type { BudgetSummaryResponse } from '@/types/budgets'
 
 interface BudgetSummaryCardsProps {
@@ -8,7 +9,7 @@ interface BudgetSummaryCardsProps {
 
 function formatCurrency(value: string | number) {
   const num = typeof value === 'string' ? Number(value) : value
-  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
+  return formatAmount(num)
 }
 
 function SkeletonCard() {

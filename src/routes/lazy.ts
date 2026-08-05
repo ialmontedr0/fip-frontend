@@ -164,6 +164,9 @@ export const NotificationPreferencesPage = lazy(() => import('@/features/notific
 // Search
 export const SearchPage = lazy(() => import('@/features/search/pages/SearchPage'))
 
+// Plaid
+export const PlaidItemsPage = lazy(() => import('@/features/plaid/pages/PlaidItemsPage'))
+
 // Imports & Exports
 export const ImportPage = lazy(() => import('@/features/imports/pages/ImportPage'))
 export const ExportPage = lazy(() => import('@/features/exports/pages/ExportPage'))

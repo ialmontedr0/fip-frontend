@@ -3,6 +3,7 @@ import { PiggyBank, MoreHorizontal, Edit3, Trash2, RefreshCw, Eye } from 'lucide
 import { useState, useCallback } from 'react'
 import BudgetProgressBar from './BudgetProgressBar'
 import { STATUS_CONFIG } from '../constants'
+import { formatAmount } from '@/lib/currency'
 import type { BudgetResponse, BudgetStatus } from '@/types/budgets'
 import { useDeleteBudget, useRefreshBudget } from '../hooks/useBudgets'
 
@@ -11,9 +12,8 @@ interface BudgetCardProps {
   onDeleted?: () => void
 }
 
-function formatCurrency(value: string) {
-  const num = Number(value)
-  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
+function formatCurrency(value: string, currency?: string) {
+  return formatAmount(Number(value), currency)
 }
 
 function getPeriodLabel(period: string) {
@@ -142,7 +142,7 @@ export default function BudgetCard({ budget }: BudgetCardProps) {
             {budget.status === 'exceeded' && '● '}
             {config.label}
           </span>
-          <span>{formatCurrency(budget.spent)} gastado</span>
+          <span>{formatCurrency(budget.spent, budget.currency)} gastado</span>
         </div>
 
         <div className="mt-3 flex items-center gap-3 flex-wrap">

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import {
   ArrowLeft, Edit3, Trash2, Repeat,
   Building2, Calendar, Clock, Tag, FileText,
@@ -101,7 +101,7 @@ export default function TransactionDetailPage() {
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {transaction.effective_date
-                  ? new Date(transaction.effective_date).toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+                  ? formatISODate(transaction.effective_date, 'long')
                   : 'Sin fecha'}
               </p>
             </div>
@@ -150,7 +150,7 @@ export default function TransactionDetailPage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               <InfoItem icon={Building2} label="Cuenta" value={accountDisplay} />
-              <InfoItem icon={Calendar} label="Fecha" value={transaction.effective_date ? new Date(transaction.effective_date).toLocaleDateString('es-DO') : '—'} />
+              <InfoItem icon={Calendar} label="Fecha" value={transaction.effective_date ? formatISODate(transaction.effective_date) : '—'} />
               <InfoItem icon={Clock} label="Creado" value={transaction.created_at ? new Date(transaction.created_at).toLocaleDateString('es-DO') : '—'} />
               <InfoItem icon={Tag} label="Origen" value={sourceDisplay} />
             </div>

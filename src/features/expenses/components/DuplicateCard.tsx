@@ -1,4 +1,4 @@
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import { Copy, Trash2, CheckCircle, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui'
 import type { DuplicatesResponse } from '@/types/expenses'
@@ -44,7 +44,7 @@ export default function DuplicateCard({ group, onKeepOne, onDeleteAll, className
           <div>
             <p className="text-xs font-medium text-gray-700 dark:text-gray-300">{group.description || 'Sin descripcion'}</p>
             <p className="text-[10px] text-gray-400">
-              {new Date(group.effective_date).toLocaleDateString('es-DO')}
+              {formatISODate(group.effective_date)}
             </p>
           </div>
           <span className="text-xs font-semibold text-red-600 dark:text-red-400">

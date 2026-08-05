@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { differenceInDays, parseISO } from 'date-fns'
 import { TrendingUp, TrendingDown, AlertTriangle, CalendarDays, DollarSign, Clock } from 'lucide-react'
+import { formatAmount } from '@/lib/currency'
 import type { BudgetResponse } from '@/types/budgets'
 
 interface BurnRateIndicatorProps {
@@ -8,7 +9,7 @@ interface BurnRateIndicatorProps {
 }
 
 function formatCurrency(value: number) {
-  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value)
+  return formatAmount(value)
 }
 
 export default function BurnRateIndicator({ budget }: BurnRateIndicatorProps) {

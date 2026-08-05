@@ -4,7 +4,7 @@ import {
   Plus, Target, List, LayoutGrid, Search, SlidersHorizontal,
   ArrowUpDown, CircleDot, CheckCircle2, AlertTriangle,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, parseISODate } from '@/lib/utils'
 import { responsiveGrid } from '@/lib/utils'
 import { useGoals, useGoalSummary } from '../hooks/useGoals'
 import GoalCard from '../components/GoalCard'
@@ -56,7 +56,7 @@ export default function GoalListPage() {
         case 'progress': return b.pct_complete - a.pct_complete
         case 'target': return Number(b.target_amount) - Number(a.target_amount)
         case 'deadline':
-          return new Date(a.target_date).getTime() - new Date(b.target_date).getTime()
+          return parseISODate(a.target_date).getTime() - parseISODate(b.target_date).getTime()
         default: return 0
       }
     })

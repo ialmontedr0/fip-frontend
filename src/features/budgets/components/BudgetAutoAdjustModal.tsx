@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { X, Loader2, TrendingUp, AlertTriangle, CheckCircle2, Sliders } from 'lucide-react'
 import { useAutoAdjustBudget } from '../hooks/useBudgets'
+import { formatAmount } from '@/lib/currency'
 import type { AutoAdjustResponse } from '@/types/budgets'
 
 interface BudgetAutoAdjustModalProps {
@@ -13,7 +14,7 @@ interface BudgetAutoAdjustModalProps {
 
 function formatCurrency(value: string | number) {
   const num = typeof value === 'string' ? Number(value) : value
-  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
+  return formatAmount(num)
 }
 
 export default function BudgetAutoAdjustModal({

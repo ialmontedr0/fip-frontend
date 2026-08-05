@@ -1,6 +1,7 @@
 import { MoreHorizontal, Eye, EyeOff, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { ALERT_SEVERITY_CONFIG, ALERT_TYPE_LABELS } from '../constants'
+import { formatAmount } from '@/lib/currency'
 import type { AlertResponse, AlertSeverity } from '@/types/budgets'
 
 interface BudgetAlertCardProps {
@@ -11,8 +12,7 @@ interface BudgetAlertCardProps {
 
 function formatCurrency(value: string | null | undefined) {
   if (!value) return ''
-  const num = Number(value)
-  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
+  return formatAmount(Number(value))
 }
 
 function formatDate(dateStr: string | null | undefined) {

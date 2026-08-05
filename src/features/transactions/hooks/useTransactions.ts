@@ -1,9 +1,10 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import * as transactionsApi from '../api/transactions'
+import { useOptimisticMutation } from '@/hooks/useOptimisticMutation'
 import type {
   CreateTransactionRequest, UpdateTransactionRequest, AddTagsRequest,
-  TransactionFilters, ListTransactionsResponse,
+  TransactionFilters, ListTransactionsResponse, TransactionListItem,
 } from '@/types/transactions'
 
 export const transactionKeys = {
@@ -98,10 +99,21 @@ export function useUpdateTransaction() {
 
 export function useDeleteTransaction() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return useOptimisticMutation({
     mutationFn: (id: string) => transactionsApi.deleteTransaction(id),
+    keys: [transactionKeys.lists(), transactionKeys.infinite()],
+    optimisticUpdate: (id, _ctx) => {
+      void _ctx
+      const removeFromList = (old: unknown): unknown => {
+        if (!old || typeof old !== 'object' || !('transactions' in old)) return old
+        const data = old as { transactions: TransactionListItem[]; total: number }
+        const transactions = data.transactions.filter((tx) => tx.id !== id)
+        return { ...data, transactions, total: Math.max(0, data.total - 1) }
+      }
+      queryClient.setQueriesData<unknown>({ queryKey: transactionKeys.lists() }, removeFromList)
+      queryClient.setQueriesData<unknown>({ queryKey: transactionKeys.infinite() }, removeFromList)
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: transactionKeys.lists() })
       queryClient.invalidateQueries({ queryKey: transactionKeys.summary() })
       queryClient.invalidateQueries({ queryKey: ['accounts'] })
       toast.success('Transaccion eliminada exitosamente')

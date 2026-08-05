@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Calculator, ArrowLeft } from 'lucide-react'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatISODate } from '@/lib/utils'
 import { useSimulateCreditPurchase } from '../hooks/useCreditPurchases'
 import { INSTALLMENT_FREQUENCIES } from '@/types/creditPurchases'
 import { FREQUENCY_LABELS } from '../constants'
@@ -168,7 +168,7 @@ export default function CreditPurchaseSimulatorPage() {
                         <tr key={inst.installment_number} className="border-b border-gray-50 dark:border-gray-700/30">
                           <td className="py-2 px-2 text-gray-900 dark:text-gray-100">{inst.installment_number}</td>
                           <td className="py-2 px-2 text-gray-600 dark:text-gray-400">
-                            {new Date(inst.due_date).toLocaleDateString('es-DO', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            {formatISODate(inst.due_date)}
                           </td>
                           <td className="py-2 px-2 text-right font-medium text-gray-900 dark:text-gray-100">{formatCurrency(inst.amount)}</td>
                           <td className="py-2 px-2 text-right text-gray-600 dark:text-gray-400">{formatCurrency(inst.principal_portion)}</td>

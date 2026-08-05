@@ -8,7 +8,7 @@ import { useGoal } from '../hooks/useGoals'
 import { useSimulations, useDeleteSimulation } from '../hooks/useSimulations'
 import { formatCurrency } from '../constants'
 import type { SimulationListItem } from '@/types/goals'
-import { cn } from '@/lib/utils'
+import { cn, formatISODate } from '@/lib/utils'
 
 function SimulationCard({ simulation, goalId, isBest }: { simulation: SimulationListItem; goalId: string; isBest: boolean }) {
   const [expanded, setExpanded] = useState(false)
@@ -59,7 +59,7 @@ function SimulationCard({ simulation, goalId, isBest }: { simulation: Simulation
         <div className="flex items-center gap-2">
           {simulation.predicted_completion_date && (
             <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline">
-              {new Date(simulation.predicted_completion_date).toLocaleDateString('es-MX', { year: 'numeric', month: 'short' })}
+              {formatISODate(simulation.predicted_completion_date, 'short', 'es-MX')}
             </span>
           )}
           {prob != null && (
@@ -122,7 +122,7 @@ function SimulationCard({ simulation, goalId, isBest }: { simulation: Simulation
               <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-1">Completada</p>
               <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                 {simulation.predicted_completion_date
-                  ? new Date(simulation.predicted_completion_date).toLocaleDateString('es-MX', { year: 'numeric', month: 'short' })
+                  ? formatISODate(simulation.predicted_completion_date, 'short', 'es-MX')
                   : '—'}
               </p>
             </div>

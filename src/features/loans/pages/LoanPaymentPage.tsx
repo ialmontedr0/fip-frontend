@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 import { useLoan } from '../hooks/useLoans'
 import { useMakePayment } from '../hooks/usePayments'
 import { LOAN_PAYMENT_METHODS } from '@/types/loans'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatISODate } from '@/lib/utils'
 import type { LoanPaymentMethod, MakePaymentRequest } from '@/types/loans'
 
 const PAYMENT_METHOD_ICONS: Record<string, React.ElementType> = {
@@ -149,7 +149,7 @@ export default function LoanPaymentPage() {
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Proximo Pago</p>
             <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
               {loan.next_payment_date
-                ? new Date(loan.next_payment_date).toLocaleDateString('es-DO', { year: 'numeric', month: 'short', day: 'numeric' })
+                ? formatISODate(loan.next_payment_date)
                 : '—'}
             </p>
           </div>

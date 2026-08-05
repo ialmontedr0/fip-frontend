@@ -1,4 +1,5 @@
 import { STATUS_CONFIG } from '../constants'
+import { formatAmount } from '@/lib/currency'
 import type { BudgetStatus } from '@/types/budgets'
 
 interface BudgetProgressBarProps {
@@ -13,8 +14,7 @@ interface BudgetProgressBarProps {
 }
 
 function formatCurrency(value: string) {
-  const num = Number(value)
-  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
+  return formatAmount(Number(value))
 }
 
 const heightMap = { sm: 'h-2', md: 'h-3', lg: 'h-4' }

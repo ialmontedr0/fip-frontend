@@ -6,7 +6,7 @@ import {
   CreditCard, Trash2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatISODate } from '@/lib/utils'
 import { useCreditPurchase, useDeleteCreditPurchase } from '../hooks/useCreditPurchases'
 import StatusBadge from '../components/StatusBadge'
 import InstallmentTable from '../components/InstallmentTable'
@@ -162,7 +162,7 @@ export default function CreditPurchaseDetailPage() {
         <StatCard icon={DollarSign} label={`Cuota ${FREQUENCY_LABELS[purchase.installment_frequency] || purchase.installment_frequency}`} value={formatCurrency(purchase.installment_amount)} color="text-emerald-600 dark:text-emerald-400" />
         <StatCard icon={TrendingUp} label="Interes Total" value={formatCurrency(purchase.total_interest)} color="text-red-600 dark:text-red-400" />
         <StatCard icon={DollarSign} label="Total Pagado" value={formatCurrency(purchase.total_paid)} color="text-emerald-600 dark:text-emerald-400" />
-        <StatCard icon={Calendar} label="Compra" value={new Date(purchase.purchase_date).toLocaleDateString('es-DO', { day: '2-digit', month: 'short', year: 'numeric' })} color="text-gray-900 dark:text-gray-100" />
+        <StatCard icon={Calendar} label="Compra" value={formatISODate(purchase.purchase_date)} color="text-gray-900 dark:text-gray-100" />
       </div>
 
       <div className="bg-white dark:bg-gray-800/80 rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-sm p-6">

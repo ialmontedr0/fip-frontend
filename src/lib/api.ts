@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/stores/auth-store'
+import { useCurrencyStore } from '@/stores/currency-store'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1'
 
@@ -15,8 +16,12 @@ const api = axios.create({
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = useAuthStore.getState().accessToken
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`
+    const currency = useCurrencyStore.getState().currency
+    if (config.headers) {
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+      config.headers['X-Currency'] = currency
     }
     return config
   },

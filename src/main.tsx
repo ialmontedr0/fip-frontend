@@ -1,8 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import * as Sentry from '@sentry/react'
+import { registerSW } from 'virtual:pwa-register'
 import App from './App'
 import './index.css'
+
+const updateSW = registerSW({
+  onNeedRefresh() {
+    const reload = window.confirm('Nueva versión disponible. ¿Recargar?')
+    if (reload) updateSW(true)
+  },
+  onOfflineReady() {
+    console.log('App lista para uso offline')
+  },
+})
 
 const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN
 const ENV = import.meta.env.VITE_SENTRY_ENVIRONMENT || 'development'

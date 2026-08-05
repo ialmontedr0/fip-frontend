@@ -127,6 +127,7 @@ import {
   SecurityPage,
   PreferencesPage,
   SearchPage,
+  PlaidItemsPage,
   AdminDashboardPage,
   AdminUsersPage,
   AdminUserDetailPage,
@@ -1136,6 +1137,15 @@ export const router = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <SearchPage />
+              </SuspenseWrapper>
+            ),
+          },
+          // Plaid
+          {
+            path: '/plaid',
+            element: (
+              <SuspenseWrapper>
+                <PlaidItemsPage />
               </SuspenseWrapper>
             ),
           },

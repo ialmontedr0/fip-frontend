@@ -1,6 +1,6 @@
 import { CheckCircle2, Circle } from 'lucide-react'
 import type { CreditPurchaseInstallment } from '@/types/creditPurchases'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatISODate } from '@/lib/utils'
 import InstallmentStatusBadge from './InstallmentStatusBadge'
 import { useMarkInstallmentPaid } from '../hooks/useCreditPurchases'
 
@@ -38,7 +38,7 @@ export default function InstallmentTable({
             >
               <td className="py-3 px-2 text-gray-900 dark:text-gray-100 font-medium">{inst.installment_number}</td>
               <td className="py-3 px-2 text-gray-600 dark:text-gray-400">
-                {new Date(inst.due_date).toLocaleDateString('es-DO', { day: '2-digit', month: 'short', year: 'numeric' })}
+                {formatISODate(inst.due_date)}
               </td>
               <td className="py-3 px-2 text-right font-medium text-gray-900 dark:text-gray-100">{formatCurrency(inst.amount)}</td>
               <td className="py-3 px-2 text-right text-gray-600 dark:text-gray-400">{formatCurrency(inst.principal_portion)}</td>

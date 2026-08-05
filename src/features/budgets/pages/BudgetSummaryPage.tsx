@@ -4,11 +4,12 @@ import BudgetSummaryCards from '../components/BudgetSummaryCards'
 import BudgetCard from '../components/BudgetCard'
 import { useBudgetSummary, useBudgets } from '../hooks/useBudgets'
 import { STATUS_CONFIG } from '../constants'
+import { formatAmount } from '@/lib/currency'
 import type { BudgetStatus } from '@/types/budgets'
 
 function formatCurrency(value: string | number) {
   const num = typeof value === 'string' ? Number(value) : value
-  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
+  return formatAmount(num)
 }
 
 export default function BudgetSummaryPage() {

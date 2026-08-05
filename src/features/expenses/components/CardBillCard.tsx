@@ -1,4 +1,4 @@
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate, parseISODate } from '@/lib/utils'
 import { PAYMENT_STATUS_CONFIG } from '../constants'
 import { FileText, CheckCircle, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui'
@@ -13,7 +13,7 @@ interface Props {
 
 export default function CardBillCard({ bill, onPay, currencyCode, className }: Props) {
   const statusConfig = PAYMENT_STATUS_CONFIG[bill.payment_status] || PAYMENT_STATUS_CONFIG.pending
-  const isOverdue = bill.payment_status === 'pending' && bill.due_date && new Date(bill.due_date) < new Date()
+  const isOverdue = bill.payment_status === 'pending' && bill.due_date && parseISODate(bill.due_date) < new Date()
 
   return (
     <div className={cn(
@@ -34,12 +34,12 @@ export default function CardBillCard({ bill, onPay, currencyCode, className }: P
           <div>
             <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
               {bill.statement_date
-                ? `Estado de Cuenta - ${new Date(bill.statement_date).toLocaleDateString('es-DO', { month: 'long', year: 'numeric' })}`
+                ? `Estado de Cuenta - ${formatISODate(bill.statement_date, 'long')}`
                 : 'Estado de Cuenta'}
             </p>
             {bill.due_date && (
               <p className="text-[11px] text-gray-400">
-                Vence: {new Date(bill.due_date).toLocaleDateString('es-DO')}
+                Vence: {formatISODate(bill.due_date)}
                 {isOverdue && <span className="text-red-500 font-medium ml-1">(Vencida)</span>}
               </p>
             )}

@@ -21,7 +21,7 @@ export function formatDate(
   date: string | Date,
   format: 'short' | 'long' | 'relative' = 'short',
 ): string {
-  const d = typeof date === 'string' ? new Date(date) : date
+  const d = typeof date === 'string' ? parseISODate(date) : date
   if (format === 'relative') {
     const diff = Date.now() - d.getTime()
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
@@ -50,6 +50,28 @@ export function formatRelativeTime(dateStr: string | Date | null | undefined): s
   if (days < 7) return `hace ${days}d`
   return d.toLocaleDateString('es-DO', {
     day: 'numeric', month: 'short',
+  })
+}
+
+export function parseISODate(dateStr: string): Date {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr)
+  if (match) {
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12)
+  }
+  return new Date(dateStr)
+}
+
+export function formatISODate(
+  date: string | Date | null | undefined,
+  format: 'short' | 'long' = 'short',
+  locale: string = 'es-DO',
+): string {
+  if (date === null || date === undefined) return '—'
+  const d = typeof date === 'string' ? parseISODate(date) : date
+  return d.toLocaleDateString(locale, {
+    year: 'numeric',
+    month: format === 'long' ? 'long' : 'short',
+    day: 'numeric',
   })
 }
 

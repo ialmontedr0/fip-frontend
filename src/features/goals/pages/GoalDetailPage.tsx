@@ -14,7 +14,7 @@ import PrioritySelector from '../components/PrioritySelector'
 import ProgressBar from '../components/ProgressBar'
 import AutoContributeToggle from '../components/AutoContributeToggle'
 import { formatCurrency, GOAL_TYPE_CONFIG } from '../constants'
-import { cn } from '@/lib/utils'
+import { cn, formatISODate } from '@/lib/utils'
 import type { GoalType, GoalProgress, GoalPrediction, GoalMilestone } from '@/types/goals'
 
 type Tab = 'overview' | 'timeline' | 'simulations'
@@ -357,7 +357,7 @@ export default function GoalDetailPage() {
                     <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Completada</p>
                     <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                       {prediction.predicted_completion_date
-                        ? new Date(prediction.predicted_completion_date).toLocaleDateString('es-MX', { year: 'numeric', month: 'short' })
+                        ? formatISODate(prediction.predicted_completion_date, 'short', 'es-MX')
                         : '—'}
                     </p>
                   </div>
@@ -431,9 +431,9 @@ export default function GoalDetailPage() {
                 <DetailRow icon={PiggyBank} label="Objetivo" value={formatCurrency(goal.target_amount)} />
                 <DetailRow icon={DollarSign} label="Actual" value={formatCurrency(goal.current_amount)} />
                 {goal.monthly_contribution && <DetailRow icon={TrendingUp} label="Contribucion/mes" value={formatCurrency(goal.monthly_contribution)} />}
-                <DetailRow icon={Calendar} label="Inicio" value={new Date(goal.start_date).toLocaleDateString('es-MX')} />
-                <DetailRow icon={Calendar} label="Completar" value={new Date(goal.target_date).toLocaleDateString('es-MX')} />
-                {goal.completed_date && <DetailRow icon={CheckCircle2} label="Completada" value={new Date(goal.completed_date).toLocaleDateString('es-MX')} />}
+                <DetailRow icon={Calendar} label="Inicio" value={formatISODate(goal.start_date, 'short', 'es-MX')} />
+                <DetailRow icon={Calendar} label="Completar" value={formatISODate(goal.target_date, 'short', 'es-MX')} />
+                {goal.completed_date && <DetailRow icon={CheckCircle2} label="Completada" value={formatISODate(goal.completed_date, 'short', 'es-MX')} />}
                 {goal.interest_rate && <DetailRow icon={TrendingUp} label="Interes" value={`${goal.interest_rate}%`} />}
               </div>
             </div>

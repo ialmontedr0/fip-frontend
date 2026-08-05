@@ -7,6 +7,7 @@ export type AlertSeverity = 'info' | 'warning' | 'critical'
 export interface CreateBudgetRequest {
   name: string
   amount: string
+  currency_code?: string
   budget_type?: BudgetType
   period?: BudgetPeriod
   start_date?: string | null
@@ -55,6 +56,7 @@ export interface BudgetResponse {
   description: string | null
   budget_type: string
   amount: string
+  currency: string
   spent: string
   remaining: string
   period: string

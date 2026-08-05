@@ -3,6 +3,7 @@ import { useExpense, useDeleteExpense } from '../hooks/useExpenses'
 import { useAccount } from '@/features/accounts/hooks/useAccounts'
 import { useCategory } from '@/features/categories/hooks/useCategories'
 import { Button, Skeleton } from '@/components/ui'
+import { formatISODate } from '@/lib/utils'
 import { ArrowLeft, Edit3, Trash2, Calendar, DollarSign, Tag, FileText, AlertCircle, TrendingDown } from 'lucide-react'
 import PriorityBadge from '../components/PriorityBadge'
 import { formatCurrency } from '@/lib/utils'
@@ -71,7 +72,7 @@ export default function ExpenseDetailPage() {
               </div>
               <div className="min-w-0">
                 <h1 className="text-xl font-bold truncate">{expense.description}</h1>
-                <p className="text-rose-100/80 text-sm">{expense.effective_date ? new Date(expense.effective_date).toLocaleDateString('es-DO') : ''}</p>
+                <p className="text-rose-100/80 text-sm">{expense.effective_date ? formatISODate(expense.effective_date) : ''}</p>
               </div>
             </div>
           </div>
@@ -110,7 +111,7 @@ export default function ExpenseDetailPage() {
                 <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Fecha</p>
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{expense.effective_date ? new Date(expense.effective_date).toLocaleDateString('es-DO') : ''}</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{expense.effective_date ? formatISODate(expense.effective_date) : ''}</span>
                 </div>
               </div>
               <div>

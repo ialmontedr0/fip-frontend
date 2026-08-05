@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import IncomeTypeBadge from './IncomeTypeBadge'
 import IncomeStatusBadge from './IncomeStatusBadge'
 import StabilityBadge from './StabilityBadge'
@@ -69,7 +69,7 @@ export default function IncomeTable({ incomes, className, selectedIds, onSelect,
                 <p className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-[200px]">{income.description}</p>
               </td>
               <td className="px-4 py-3 text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                {income.effective_date ? new Date(income.effective_date).toLocaleDateString('es-DO') : '-'}
+                {income.effective_date ? formatISODate(income.effective_date) : '-'}
               </td>
               <td className="px-4 py-3">
                 <IncomeTypeBadge type={income.income_type} size="sm" />

@@ -12,7 +12,7 @@ import ProgressBar from './ProgressBar'
 import { useDeleteGoal, useRefreshGoal } from '../hooks/useGoals'
 import { formatCurrency, GOAL_TYPE_CONFIG } from '../constants'
 import type { GoalListItem, GoalType } from '@/types/goals'
-import { cn } from '@/lib/utils'
+import { cn, formatISODate } from '@/lib/utils'
 
 interface GoalCardProps {
   goal: GoalListItem
@@ -167,7 +167,7 @@ export default function GoalCard({ goal, index = 0 }: GoalCardProps) {
         {goal.predicted_completion_date && (
           <p className="mt-3 text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1">
             <Zap className="h-3 w-3" />
-            Completada estimada: {new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', { year: 'numeric', month: 'short' })}
+            Completada estimada: {formatISODate(goal.predicted_completion_date, 'short', 'es-MX')}
           </p>
         )}
 

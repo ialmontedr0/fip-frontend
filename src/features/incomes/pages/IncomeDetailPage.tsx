@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatISODate } from '@/lib/utils'
 import { Button, Card, CardContent, Skeleton } from '@/components/ui'
 import { useIncome, useDeleteIncome } from '../hooks/useIncomes'
 import { useAccount } from '@/features/accounts/hooks/useAccounts'
@@ -59,7 +59,7 @@ export default function IncomeDetailPage() {
 
   const detailItems = [
     { label: 'Cuenta', value: accountDisplay, icon: Building2 },
-    { label: 'Fecha Efectiva', value: income.effective_date ? new Date(income.effective_date).toLocaleDateString('es-DO', { day: 'numeric', month: 'long', year: 'numeric' }) : '-', icon: Calendar },
+    { label: 'Fecha Efectiva', value: income.effective_date ? formatISODate(income.effective_date, 'long') : '-', icon: Calendar },
     { label: 'Categoria', value: categoryDisplay, icon: Hash },
     { label: 'Fuente', value: income.income_source_name || 'Sin fuente', icon: TrendingUp },
     { label: 'Frecuencia', value: income.frequency || 'No recurrente', icon: RepeatIcon },

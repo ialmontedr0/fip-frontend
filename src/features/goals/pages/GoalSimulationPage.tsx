@@ -11,7 +11,7 @@ import ProjectionChart from '../components/ProjectionChart'
 import MonteCarloChart from '../components/MonteCarloChart'
 import RecommendationCard from '../components/RecommendationCard'
 import { formatCurrency } from '../constants'
-import { cn } from '@/lib/utils'
+import { cn, formatISODate } from '@/lib/utils'
 import type { LucideIcon } from 'lucide-react'
 import type { SimulationResponse } from '@/types/goals'
 const FREQUENCY_LABELS: Record<string, string> = {
@@ -266,7 +266,7 @@ export default function GoalSimulationPage() {
           <div className="bg-white dark:bg-gray-800/80 rounded-xl border border-gray-100 dark:border-gray-700/50 p-4 hover:shadow-md transition-shadow">
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Fecha Limite</p>
             <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-              {new Date(goal.target_date).toLocaleDateString('es-MX', { year: 'numeric', month: 'short' })}
+              {formatISODate(goal.target_date, 'short', 'es-MX')}
             </p>
           </div>
         </div>
@@ -344,7 +344,7 @@ export default function GoalSimulationPage() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   <ResultCard icon={Calendar} label="Completada" value={
                     result.predicted_completion_date
-                      ? new Date(result.predicted_completion_date).toLocaleDateString('es-MX', { year: 'numeric', month: 'short' })
+                      ? formatISODate(result.predicted_completion_date, 'short', 'es-MX')
                       : '—'
                   } color="text-violet-500" />
                   <ResultCard icon={CheckCircle2} label="Probabilidad" value={

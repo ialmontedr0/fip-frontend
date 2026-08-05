@@ -3,7 +3,7 @@ import { CalendarClock, AlertCircle, ChevronRight } from 'lucide-react'
 import type { UpcomingPayment } from '@/types/analytics'
 import { Badge, Skeleton } from '@/components/ui'
 import { ErrorMessage, EmptyState } from '@/components/ui'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, parseISODate } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
 interface Props {
@@ -40,7 +40,7 @@ export default function UpcomingPaymentsWidget({ payments, loading, error }: Pro
         dueSoonMap.set(p.name, false)
         continue
       }
-      const diff = new Date(p.due_date).getTime() - now
+      const diff = parseISODate(p.due_date).getTime() - now
       const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
       dueSoonMap.set(p.name, days >= 0 && days <= 7)
     }
@@ -90,7 +90,7 @@ export default function UpcomingPaymentsWidget({ payments, loading, error }: Pro
       <div className="space-y-2">
         {payments.map((payment, index) => {
           const dueSoon = dueSoonMap.get(payment.name) ?? false
-          const isOverdue = payment.due_date ? new Date(payment.due_date).getTime() < now : false
+          const isOverdue = payment.due_date ? parseISODate(payment.due_date).getTime() < now : false
 
           return (
             <div

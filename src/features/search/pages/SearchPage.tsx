@@ -1,8 +1,9 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { Search as SearchIcon, ArrowLeft, ArrowRight, Loader2, LayoutDashboard, Wallet, Banknote, BarChart3, Target, PiggyBank, Repeat, CreditCard, HandCoins, Settings, Bell, Shield, Bot, GanttChartSquare, FileUp, FileDown, TrendingUp, TrendingDown, Tags, BookOpen } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
+import { searchTransactions, type SearchResult } from '../api/search'
 
 const PAGE_INDEX = [
   { label: 'Dashboard', href: '/dashboard', keywords: ['dashboard', 'inicio', 'resumen', 'home'], icon: 'LayoutDashboard', category: 'General' },
@@ -65,6 +66,46 @@ interface SearchResultGroup {
   items: Array<{ label: string; href: string; subtitle: string; type?: string }>
 }
 
+interface NamedEntity {
+  id: string
+  name?: string
+  description?: string
+}
+
+interface MonetaryEntity extends NamedEntity {
+  amount?: string | number
+  effective_date?: string | null
+}
+
+interface AccountSearchItem extends NamedEntity {
+  balance?: string | number
+  account_type?: string
+}
+
+interface WalletSearchItem extends NamedEntity {
+  total_balance?: string | number
+}
+
+interface GoalSearchItem extends NamedEntity {
+  progress_percentage?: string | number
+  current_amount?: string | number
+  target_amount?: string | number
+}
+
+interface BudgetSearchItem extends NamedEntity {
+  spent?: string | number
+  limit?: string | number
+}
+
+interface LoanSearchItem extends NamedEntity {
+  current_balance?: string | number
+}
+
+interface CategorySearchItem extends NamedEntity {
+  type?: string
+  category_type?: string
+}
+
 const ICON_MAP: Record<string, typeof LayoutDashboard> = {
   LayoutDashboard, Wallet, Banknote, BarChart3, Target, PiggyBank, Repeat,
   CreditCard, HandCoins, Settings, Bell, Shield, Bot,   GanttChartSquare,
@@ -82,11 +123,15 @@ export default function SearchPage() {
   const q = searchParams.get('q') || ''
   const [query, setQuery] = useState(q)
 
+  // Mantén el input sincronizado cuando cambia el query param (navegación externa)
+  if (q !== query && document.activeElement?.tagName !== 'INPUT') {
+    setQuery(q)
+  }
+
   const { data: txResults, isLoading: txLoading } = useQuery({
     queryKey: ['search', 'transactions', q],
-    queryFn: () =>
-      api.get('/transactions', { params: { limit: 5, search: q } }).then(r => r.data?.transactions || r.data || []),
-    enabled: q.length > 0,
+    queryFn: () => searchTransactions(q, 10),
+    enabled: q.length >= 2,
   })
 
   const { data: incomeResults, isLoading: incomeLoading } = useQuery({
@@ -164,11 +209,11 @@ export default function SearchPage() {
       groups.push(...Object.values(byCategory))
     }
 
-    if (txResults && Array.isArray(txResults)) {
-      const txItems = txResults.map((tx: any) => ({
+    if (txResults && Array.isArray(txResults.results)) {
+      const txItems = txResults.results.map((tx: SearchResult) => ({
         label: tx.description || 'Transaccion',
         href: `/transactions/${tx.id}`,
-        subtitle: `$${tx.amount} — ${tx.effective_date || ''}`,
+        subtitle: `${tx.amount} — ${tx.effective_date || ''}`,
         type: 'Transaccion',
       }))
       if (txItems.length > 0) {
@@ -177,10 +222,10 @@ export default function SearchPage() {
     }
 
     if (incomeResults && Array.isArray(incomeResults)) {
-      const incItems = incomeResults.map((inc: any) => ({
+      const incItems = (incomeResults as MonetaryEntity[]).map((inc) => ({
         label: inc.description || 'Ingreso',
         href: `/incomes/${inc.id}`,
-        subtitle: `$${inc.amount} — ${inc.effective_date || ''}`,
+        subtitle: `${inc.amount ?? ''} — ${inc.effective_date ?? ''}`,
         type: 'Ingreso',
       }))
       if (incItems.length > 0) {
@@ -189,10 +234,10 @@ export default function SearchPage() {
     }
 
     if (expenseResults && Array.isArray(expenseResults)) {
-      const expItems = expenseResults.map((exp: any) => ({
+      const expItems = (expenseResults as MonetaryEntity[]).map((exp) => ({
         label: exp.description || 'Gasto',
         href: `/expenses/${exp.id}`,
-        subtitle: `$${exp.amount} — ${exp.effective_date || ''}`,
+        subtitle: `${exp.amount ?? ''} — ${exp.effective_date ?? ''}`,
         type: 'Gasto',
       }))
       if (expItems.length > 0) {
@@ -201,12 +246,12 @@ export default function SearchPage() {
     }
 
     if (loanResults && Array.isArray(loanResults)) {
-      const loanItems = loanResults
-        .filter((l: any) => matchQuery(l.name || '', q))
-        .map((l: any) => ({
-          label: l.name,
+      const loanItems = (loanResults as LoanSearchItem[])
+        .filter((l) => matchQuery(l.name || '', q))
+        .map((l) => ({
+          label: l.name || 'Prestamo',
           href: `/loans/${l.id}`,
-          subtitle: `Balance: $${l.current_balance || '0'}`,
+          subtitle: `Balance: $${l.current_balance ?? '0'}`,
           type: 'Prestamo',
         }))
       if (loanItems.length > 0) {
@@ -215,12 +260,12 @@ export default function SearchPage() {
     }
 
     if (accountResults && Array.isArray(accountResults)) {
-      const accItems = accountResults
-        .filter((a: any) => matchQuery(a.name || a.description || '', q))
-        .map((a: any) => ({
-          label: a.name,
+      const accItems = (accountResults as AccountSearchItem[])
+        .filter((a) => matchQuery(a.name || a.description || '', q))
+        .map((a) => ({
+          label: a.name || '',
           href: `/accounts/${a.id}`,
-          subtitle: `Balance: $${a.balance || '0'} — ${a.account_type || ''}`,
+          subtitle: `Balance: $${a.balance ?? '0'} — ${a.account_type ?? ''}`,
           type: 'Cuenta',
         }))
       if (accItems.length > 0) {
@@ -229,12 +274,12 @@ export default function SearchPage() {
     }
 
     if (walletResults && Array.isArray(walletResults)) {
-      const wItems = walletResults
-        .filter((w: any) => matchQuery(w.name || '', q))
-        .map((w: any) => ({
-          label: w.name,
+      const wItems = (walletResults as WalletSearchItem[])
+        .filter((w) => matchQuery(w.name || '', q))
+        .map((w) => ({
+          label: w.name || '',
           href: `/wallets/${w.id}`,
-          subtitle: `Total: $${w.total_balance || '0'}`,
+          subtitle: `Total: $${w.total_balance ?? '0'}`,
           type: 'Cartera',
         }))
       if (wItems.length > 0) {
@@ -243,12 +288,12 @@ export default function SearchPage() {
     }
 
     if (goalResults && Array.isArray(goalResults)) {
-      const gItems = goalResults
-        .filter((g: any) => matchQuery(g.name || g.description || '', q))
-        .map((g: any) => ({
-          label: g.name,
+      const gItems = (goalResults as GoalSearchItem[])
+        .filter((g) => matchQuery(g.name || g.description || '', q))
+        .map((g) => ({
+          label: g.name || '',
           href: `/goals/${g.id}`,
-          subtitle: `Progreso: ${g.progress_percentage || '0'}% — $${g.current_amount || '0'} de $${g.target_amount || '0'}`,
+          subtitle: `Progreso: ${g.progress_percentage ?? '0'}% — $${g.current_amount ?? '0'} de $${g.target_amount ?? '0'}`,
           type: 'Meta',
         }))
       if (gItems.length > 0) {
@@ -257,12 +302,12 @@ export default function SearchPage() {
     }
 
     if (budgetResults && Array.isArray(budgetResults)) {
-      const bItems = budgetResults
-        .filter((b: any) => matchQuery(b.name || b.description || '', q))
-        .map((b: any) => ({
-          label: b.name,
+      const bItems = (budgetResults as BudgetSearchItem[])
+        .filter((b) => matchQuery(b.name || b.description || '', q))
+        .map((b) => ({
+          label: b.name || '',
           href: `/budgets/${b.id}`,
-          subtitle: `$${b.spent || '0'} de $${b.limit || '0'}`,
+          subtitle: `$${b.spent ?? '0'} de $${b.limit ?? '0'}`,
           type: 'Presupuesto',
         }))
       if (bItems.length > 0) {
@@ -271,10 +316,10 @@ export default function SearchPage() {
     }
 
     if (categoryResults && Array.isArray(categoryResults)) {
-      const cItems = categoryResults
-        .filter((c: any) => matchQuery(c.name || c.description || '', q))
-        .map((c: any) => ({
-          label: c.name,
+      const cItems = (categoryResults as CategorySearchItem[])
+        .filter((c) => matchQuery(c.name || c.description || '', q))
+        .map((c) => ({
+          label: c.name || '',
           href: `/categories/${c.id}`,
           subtitle: c.type || c.category_type || '',
           type: 'Categoria',
@@ -286,10 +331,6 @@ export default function SearchPage() {
 
     return groups
   }, [q, txResults, incomeResults, expenseResults, loanResults, accountResults, walletResults, goalResults, budgetResults, categoryResults])
-
-  useEffect(() => {
-    setQuery(q)
-  }, [q])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

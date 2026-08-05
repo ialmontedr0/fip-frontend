@@ -11,7 +11,7 @@ import ProjectionChart from '../components/ProjectionChart'
 import MonteCarloChart from '../components/MonteCarloChart'
 import RecommendationCard from '../components/RecommendationCard'
 import { formatCurrency } from '../constants'
-import { cn } from '@/lib/utils'
+import { cn, formatISODate } from '@/lib/utils'
 
 function ResultCard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color?: string }) {
   return (
@@ -214,7 +214,7 @@ export default function GoalSimulationDetailPage() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 animate-fade-in" style={{ animationDelay: '0.05s', animationFillMode: 'both' }}>
           <ResultCard icon={Calendar} label="Completada" value={
             result.predicted_completion_date
-              ? new Date(result.predicted_completion_date).toLocaleDateString('es-MX', { year: 'numeric', month: 'short' })
+              ? formatISODate(result.predicted_completion_date, 'short', 'es-MX')
               : '—'
           } color="text-violet-500" />
           <ResultCard icon={CheckCircle2} label="Probabilidad" value={prob != null ? `${prob.toFixed(0)}%` : '—'} color={prob != null && prob >= 80 ? 'text-emerald-500 text-emerald-500' : prob != null && prob >= 50 ? 'text-amber-500' : 'text-red-500'} />

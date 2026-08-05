@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import PriorityBadge from './PriorityBadge'
 import type { ExpenseResponse } from '@/types/expenses'
 
@@ -34,7 +34,7 @@ export default function ExpenseCard({ expense, className, selected, onSelect }: 
             </p>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
               {expense.effective_date
-                ? new Date(expense.effective_date).toLocaleDateString('es-DO', { day: 'numeric', month: 'short', year: 'numeric' })
+                ? formatISODate(expense.effective_date)
                 : 'Sin fecha'}
             </p>
           </div>

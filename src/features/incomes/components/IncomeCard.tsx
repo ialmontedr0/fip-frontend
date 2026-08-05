@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import IncomeTypeBadge from './IncomeTypeBadge'
 import IncomeStatusBadge from './IncomeStatusBadge'
 import StabilityBadge from './StabilityBadge'
@@ -37,7 +37,7 @@ export default function IncomeCard({ income, className, style, selected, onSelec
               {income.description}
             </p>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-              {income.effective_date ? new Date(income.effective_date).toLocaleDateString('es-DO', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Sin fecha'}
+              {income.effective_date ? formatISODate(income.effective_date) : 'Sin fecha'}
             </p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">

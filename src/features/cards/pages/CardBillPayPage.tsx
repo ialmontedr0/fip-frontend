@@ -2,7 +2,7 @@ import { useState, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, FileText, DollarSign, CreditCard, CheckCircle, Calendar, AlertTriangle } from 'lucide-react'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate, parseISODate } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { useCard } from '../hooks/useCards'
 import { useBillList, usePayBill } from '../hooks/useBills'
@@ -44,7 +44,7 @@ export default function CardBillPayPage() {
   const [paymentMethod, setPaymentMethod] = useState<CardPaymentMethod>('manual')
   const [submitting, setSubmitting] = useState(false)
 
-  const isOverdue = bill?.payment_status === 'pending' && bill?.due_date && new Date(bill.due_date) < new Date()
+  const isOverdue = bill?.payment_status === 'pending' && bill?.due_date && parseISODate(bill.due_date) < new Date()
 
   const quickAmounts = useMemo(() => {
     if (!bill) return []
@@ -133,7 +133,7 @@ export default function CardBillPayPage() {
               Pagar Factura
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {card?.name || 'Tarjeta'} — {bill.statement_date ? new Date(bill.statement_date).toLocaleDateString('es-DO', { month: 'long', year: 'numeric' }) : ''}
+              {card?.name || 'Tarjeta'} — {bill.statement_date ? formatISODate(bill.statement_date, 'long') : ''}
             </p>
           </div>
         </div>
@@ -303,7 +303,7 @@ export default function CardBillPayPage() {
                   Vencimiento
                 </span>
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {bill.due_date ? new Date(bill.due_date).toLocaleDateString('es-DO') : '—'}
+                  {bill.due_date ? formatISODate(bill.due_date) : '—'}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2">

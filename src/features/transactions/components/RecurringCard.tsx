@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import {
   Repeat, Calendar, Clock, Activity,
   ToggleLeft, ToggleRight, Edit3, Trash2,
@@ -75,11 +75,11 @@ export default function RecurringCard({ recurring, onToggleActive, onDelete, cla
         <div className="grid grid-cols-2 gap-3">
           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
             <Calendar className="h-3.5 w-3.5" />
-            <span>Inicio: {new Date(recurring.start_date).toLocaleDateString('es-DO', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+            <span>Inicio: {formatISODate(recurring.start_date)}</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
             <Clock className="h-3.5 w-3.5" />
-            <span>Proxima: {new Date(recurring.next_execution_date).toLocaleDateString('es-DO', { day: '2-digit', month: 'short' })}</span>
+            <span>Proxima: {formatISODate(recurring.next_execution_date)}</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
             <Repeat className="h-3.5 w-3.5" />

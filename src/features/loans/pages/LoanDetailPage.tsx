@@ -17,7 +17,7 @@ import AmortizationChart from '../components/AmortizationChart'
 import AmortizationTable from '../components/AmortizationTable'
 import PaymentCard from '../components/PaymentCard'
 import EarlyPayoffResult from '../components/EarlyPayoffResult'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatISODate } from '@/lib/utils'
 
 type Tab = 'overview' | 'amortization' | 'payments' | 'early-payoff'
 
@@ -220,7 +220,7 @@ export default function LoanDetailPage() {
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Fecha</p>
                   <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                    {new Date(upcoming.next_payment_date).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    {formatISODate(upcoming.next_payment_date, 'long')}
                   </p>
                 </div>
                 <div>

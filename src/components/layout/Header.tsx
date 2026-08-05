@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useState } from 'react'
 import { useAuthStore } from '@/stores/auth-store'
 import { useThemeStore } from '@/stores/theme-store'
 import { useUIStore } from '@/stores/ui-store'
@@ -17,6 +17,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import Dropdown from '@/components/ui/Dropdown'
 import NotificationDrawer from '@/features/notifications/components/NotificationDrawer'
+import GlobalSearch from '@/features/search/components/GlobalSearch'
 import { useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
 
@@ -36,47 +37,15 @@ function useUnreadCount() {
 function Header() {
   const { user, logout } = useAuthStore()
   const { theme, toggleTheme } = useThemeStore()
-  const { setMobileSidebarOpen } = useUIStore()
+  const { setMobileSidebarOpen, searchOpen, setSearchOpen } = useUIStore()
   const { data: unreadCount = 0 } = useUnreadCount()
   const navigate = useNavigate()
 
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const [notifDrawerOpen, setNotifDrawerOpen] = useState(false)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        setSearchOpen((prev) => !prev)
-      }
-      if (e.key === 'Escape') {
-        setSearchOpen(false)
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [])
-
-  useEffect(() => {
-    if (searchOpen && searchInputRef.current) {
-      searchInputRef.current.focus()
-    }
-  }, [searchOpen])
 
   const handleLogout = () => {
     logout()
     navigate('/login')
-  }
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
-      setSearchOpen(false)
-      setSearchQuery('')
-    }
   }
 
   return (
@@ -92,34 +61,20 @@ function Header() {
 
       {/* Global Search */}
       <div className="relative hidden sm:block">
-        {searchOpen ? (
-          <form onSubmit={handleSearchSubmit}>
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onBlur={() => {
-                if (!searchQuery) setSearchOpen(false)
-              }}
-              placeholder="Buscar cuentas, transacciones..."
-              className="w-72 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
-            />
-          </form>
-        ) : (
-          <button
-            onClick={() => setSearchOpen(true)}
-            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-400 hover:text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-500 dark:hover:text-gray-300"
-          >
-            <Search className="h-4 w-4" />
-            <span>Buscar...</span>
-            <kbd className="ml-4 hidden items-center gap-0.5 rounded border border-gray-200 bg-white px-1.5 py-0.5 text-xs text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-500 md:inline-flex">
-              <Command className="h-3 w-3" />
-              K
-            </kbd>
-          </button>
-        )}
+        <button
+          onClick={() => setSearchOpen(true)}
+          className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-400 hover:text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-500 dark:hover:text-gray-300"
+        >
+          <Search className="h-4 w-4" />
+          <span>Buscar...</span>
+          <kbd className="ml-4 hidden items-center gap-0.5 rounded border border-gray-200 bg-white px-1.5 py-0.5 text-xs text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-500 md:inline-flex">
+            <Command className="h-3 w-3" />
+            K
+          </kbd>
+        </button>
       </div>
+
+      <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
 
       {/* Spacer */}
       <div className="flex-1" />

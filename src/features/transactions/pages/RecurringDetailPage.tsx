@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import {
   ArrowLeft, Edit3, Trash2, ToggleLeft, ToggleRight,
   Calendar, Repeat, Clock, Activity, RefreshCw,
@@ -187,7 +187,7 @@ export default function RecurringDetailPage() {
                 <div>
                   <p className="text-[11px] font-medium text-gray-400 uppercase">Inicio</p>
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {new Date(recurring.start_date).toLocaleDateString('es-DO')}
+                    {formatISODate(recurring.start_date)}
                   </p>
                 </div>
               </div>
@@ -196,7 +196,7 @@ export default function RecurringDetailPage() {
                 <div>
                   <p className="text-[11px] font-medium text-gray-400 uppercase">Proxima Ejecucion</p>
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {new Date(recurring.next_execution_date).toLocaleDateString('es-DO')}
+                    {formatISODate(recurring.next_execution_date)}
                   </p>
                 </div>
               </div>
@@ -215,7 +215,7 @@ export default function RecurringDetailPage() {
                   <div>
                     <p className="text-[11px] font-medium text-gray-400 uppercase">Fecha Fin</p>
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {new Date(recurring.end_date).toLocaleDateString('es-DO')}
+                      {formatISODate(recurring.end_date)}
                     </p>
                   </div>
                 </div>

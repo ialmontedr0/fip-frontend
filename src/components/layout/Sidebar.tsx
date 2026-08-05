@@ -62,6 +62,7 @@ function useNavigation(): NavSection[] {
       items: [
         { name: 'Cuentas', href: '/accounts', icon: Wallet },
         { name: 'Wallets', href: '/wallets', icon: PiggyBank },
+        { name: 'Cuentas bancarias', href: '/plaid', icon: Landmark },
         { name: 'Transacciones', href: '/transactions', icon: ArrowLeftRight },
         { name: 'Escanear Recibo', href: '/transactions/scan', icon: ScanLine },
         { name: 'Categorias', href: '/categories', icon: Tags },
@@ -251,7 +252,12 @@ function Sidebar({ mobile, onClose }: SidebarProps) {
   if (mobile) {
     return (
       <div className="fixed inset-0 z-40 flex lg:hidden">
-        <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+        <button
+          type="button"
+          aria-label="Cerrar menu"
+          onClick={onClose}
+          className="fixed inset-0 bg-black/50"
+        />
         <div className="relative flex w-72 max-w-[calc(100vw-3rem)] flex-col bg-white dark:bg-gray-900">
           {content}
         </div>

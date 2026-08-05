@@ -1,4 +1,4 @@
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import { BILLING_FREQUENCY_LABELS } from '../constants'
 import { Repeat, Edit3, Trash2, ExternalLink } from 'lucide-react'
 import type { SubscriptionResponse } from '@/types/expenses'
@@ -75,7 +75,7 @@ export default function SubscriptionCard({ subscription, onEdit, onDelete, class
         {subscription.end_date && (
           <div>
             <span className="text-gray-400">Fin:</span>{' '}
-            <span className="font-medium text-gray-700 dark:text-gray-300">{new Date(subscription.end_date).toLocaleDateString('es-DO')}</span>
+            <span className="font-medium text-gray-700 dark:text-gray-300">{formatISODate(subscription.end_date)}</span>
           </div>
         )}
       </div>

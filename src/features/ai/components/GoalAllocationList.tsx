@@ -1,6 +1,6 @@
 import type { GoalAllocation } from '@/types/ai'
 import { formatCurrency } from '@/lib/utils'
-import { cn } from '@/lib/utils'
+import { cn, formatISODate } from '@/lib/utils'
 import { Target, Calendar, TrendingUp } from 'lucide-react'
 
 interface GoalAllocationListProps {
@@ -72,7 +72,7 @@ function GoalAllocationList({ goalAllocation, className }: GoalAllocationListPro
               <div className="flex items-center justify-between text-[10px] text-gray-400">
                 <span className="flex items-center gap-0.5">
                   <Calendar className="h-3 w-3" />
-                  {goal.target_date ? new Date(goal.target_date).toLocaleDateString('es-DO') : 'Sin fecha'}
+                  {goal.target_date ? formatISODate(goal.target_date) : 'Sin fecha'}
                 </span>
                 <span className="font-medium">{goal.goal_type}</span>
               </div>

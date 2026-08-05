@@ -8,7 +8,7 @@ import {
   History,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatISODate } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import {
   useCard, useDeleteCard, useCardUtilization,
@@ -802,7 +802,7 @@ function SpendingTab({ cardId, currencyCode }: { cardId: string; currencyCode: s
                     key={tx.id}
                     className="border-b border-gray-50 dark:border-gray-700/20 hover:bg-gray-50/50 dark:hover:bg-gray-700/20 transition-colors"
                   >
-                    <td className="py-2 text-gray-500 whitespace-nowrap">{tx.effective_date ? new Date(tx.effective_date).toLocaleDateString() : '—'}</td>
+                    <td className="py-2 text-gray-500 whitespace-nowrap">{tx.effective_date ? formatISODate(tx.effective_date) : '—'}</td>
                     <td className="py-2 text-gray-900 dark:text-gray-100 truncate max-w-[200px]">{tx.description}</td>
                     <td className="py-2 text-right font-semibold text-gray-900 dark:text-gray-100">
                       {tx.transaction_type === 'expense' ? '-' : '+'}
@@ -873,10 +873,10 @@ function PaymentsTab({ cardId, currencyCode }: { cardId: string; currencyCode: s
                       {bill.paid_at ? new Date(bill.paid_at).toLocaleDateString() : '—'}
                     </td>
                     <td className="py-2 text-gray-500 whitespace-nowrap">
-                      {new Date(bill.statement_date).toLocaleDateString()}
+                      {formatISODate(bill.statement_date)}
                     </td>
                     <td className="py-2 text-gray-500 whitespace-nowrap">
-                      {new Date(bill.due_date).toLocaleDateString()}
+                      {formatISODate(bill.due_date)}
                     </td>
                     <td className="py-2 text-right text-gray-900 dark:text-gray-100">
                       {formatCurrency(parseFloat(bill.total_amount), currencyCode)}

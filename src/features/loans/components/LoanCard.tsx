@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Calendar, AlertCircle } from 'lucide-react'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate, parseISODate } from '@/lib/utils'
 import LoanTypeBadge from './LoanTypeBadge'
 import LoanStatusBadge from './LoanStatusBadge'
 import type { LoanListItem } from '@/types/loans'
@@ -17,7 +17,7 @@ export default function LoanCard({ loan, onClick, index = 0 }: LoanCardProps) {
   const color = LOAN_TYPE_COLORS[loan.loan_type] || '#6366f1'
 
   const isNextPaymentSoon = loan.next_payment_date
-    ? (new Date(loan.next_payment_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24) <= 7
+    ? (parseISODate(loan.next_payment_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24) <= 7
     : false
 
   return (
@@ -112,9 +112,7 @@ export default function LoanCard({ loan, onClick, index = 0 }: LoanCardProps) {
             )}
             <span>
               Proximo pago:{' '}
-              {new Date(loan.next_payment_date).toLocaleDateString('es-DO', {
-                year: 'numeric', month: 'short', day: 'numeric',
-              })}
+              {formatISODate(loan.next_payment_date)}
             </span>
           </div>
         )}

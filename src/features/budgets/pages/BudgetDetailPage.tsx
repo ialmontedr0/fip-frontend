@@ -18,10 +18,12 @@ import {
   useBudgetAlerts, useMarkAlertRead, useDismissAlert,
 } from '../hooks/useBudgetAlerts'
 import type { BudgetStatus } from '@/types/budgets'
+import { formatAmount } from '@/lib/currency'
+import { parseISODate } from '@/lib/utils'
 
 function formatCurrency(value: string | number) {
   const num = typeof value === 'string' ? Number(value) : value
-  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
+  return formatAmount(num)
 }
 
 function getPeriodLabel(period: string) {
@@ -35,13 +37,13 @@ function getTypeLabel(type: string) {
 }
 
 function formatDate(value: string) {
-  const date = new Date(value)
+  const date = parseISODate(value)
   if (Number.isNaN(date.getTime())) return value
   return date.toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
 function isExpired(budget: { end_date: string }) {
-  return new Date(budget.end_date) < new Date(new Date().toDateString())
+  return parseISODate(budget.end_date) < new Date(new Date().toDateString())
 }
 
 function DetailPageSkeleton() {

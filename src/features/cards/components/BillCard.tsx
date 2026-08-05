@@ -4,7 +4,7 @@ import { format, isPast } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { Calendar, Wallet, Edit3, Trash2, CreditCard, AlertCircle, CheckCircle2 } from 'lucide-react'
 import BillStatusBadge from './BillStatusBadge'
-import { formatCurrency, cn } from '@/lib/utils'
+import { formatCurrency, cn, parseISODate } from '@/lib/utils'
 import { Button } from '@/components/ui'
 import type { BillResponse } from '@/types/cards'
 
@@ -19,7 +19,7 @@ interface BillCardProps {
 
 export default function BillCard({ bill, currencyCode, onPay, onEdit, onDelete, index = 0 }: BillCardProps) {
   const [isHovered, setIsHovered] = useState(false)
-  const dueDate = new Date(bill.due_date)
+  const dueDate = parseISODate(bill.due_date)
   const isOverdue = isPast(dueDate) && bill.payment_status !== 'paid'
   const totalAmount = parseFloat(bill.total_amount)
   const amountPaid = parseFloat(bill.amount_paid)
@@ -63,7 +63,7 @@ export default function BillCard({ bill, currencyCode, onPay, onEdit, onDelete, 
             <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
               <span className="inline-flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                {format(new Date(bill.statement_date), 'dd MMM', { locale: es })}
+                {format(parseISODate(bill.statement_date), 'dd MMM', { locale: es })}
               </span>
               <span className="text-gray-300 dark:text-gray-600">→</span>
               <span className={cn('inline-flex items-center gap-1', isOverdue && 'text-red-600 dark:text-red-400 font-semibold')}>

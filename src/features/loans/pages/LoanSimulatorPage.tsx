@@ -9,7 +9,7 @@ import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 import { useSimulateLoan } from '../hooks/useLoans'
 import AmortizationChart from '../components/AmortizationChart'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatISODate } from '@/lib/utils'
 import type { SimulateLoanResponse } from '@/types/loans'
 
 function ResultCard({ icon: Icon, label, value, color }: { icon: React.ElementType; label: string; value: React.ReactNode; color?: string }) {
@@ -278,7 +278,7 @@ export default function LoanSimulatorPage() {
                           <tr key={entry.entry_number} className="border-b border-gray-50 dark:border-gray-700/30 hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors">
                             <td className="py-2 px-2 text-gray-900 dark:text-gray-100">{entry.entry_number}</td>
                             <td className="py-2 px-2 text-right text-gray-600 dark:text-gray-400">
-                              {new Date(entry.due_date).toLocaleDateString('es-DO', { month: 'short', year: '2-digit' })}
+                              {formatISODate(entry.due_date)}
                             </td>
                             <td className="py-2 px-2 text-right font-medium text-gray-900 dark:text-gray-100">{formatCurrency(entry.payment_amount)}</td>
                             <td className="py-2 px-2 text-right text-emerald-600 dark:text-emerald-400">{formatCurrency(entry.principal_portion)}</td>

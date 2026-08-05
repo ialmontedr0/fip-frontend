@@ -1,7 +1,6 @@
 import type { AnomalyItem } from '@/types/ai'
 import SeverityBadge from './SeverityBadge'
-import { formatCurrency } from '@/lib/utils'
-import { cn } from '@/lib/utils'
+import { formatCurrency, formatISODate, cn } from '@/lib/utils'
 import { AlertTriangle, Calendar, DollarSign, Gauge } from 'lucide-react'
 
 interface AnomalyCardProps {
@@ -51,7 +50,7 @@ function AnomalyCard({ anomaly, index = 0 }: AnomalyCardProps) {
         {anomaly.effective_date && (
           <div className="flex items-center gap-1.5">
             <Calendar className="h-3 w-3 text-gray-400" />
-            {new Date(anomaly.effective_date).toLocaleDateString('es-DO')}
+            {formatISODate(anomaly.effective_date)}
           </div>
         )}
         {anomaly.anomaly_score != null && (

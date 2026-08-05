@@ -1,4 +1,4 @@
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui'
 import { AlertTriangle, TrendingUp } from 'lucide-react'
 import type { IrregularIncomeResponse } from '@/types/incomes'
@@ -54,7 +54,7 @@ export default function IrregularIncomeList({ data, className }: Props) {
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{item.description}</p>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  {new Date(item.effective_date).toLocaleDateString('es-DO', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  {formatISODate(item.effective_date, 'long')}
                 </p>
               </div>
             </div>

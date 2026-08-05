@@ -1,4 +1,4 @@
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import { ArrowUpDown } from 'lucide-react'
 import { Skeleton } from '@/components/ui'
 import PriorityBadge from './PriorityBadge'
@@ -92,7 +92,7 @@ export default function ExpenseTable({ expenses, onSort, sortBy, isLoading, clas
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  {exp.effective_date ? new Date(exp.effective_date).toLocaleDateString('es-DO') : '—'}
+                  {exp.effective_date ? formatISODate(exp.effective_date) : '—'}
                 </span>
               </div>
               <div className="flex items-center">

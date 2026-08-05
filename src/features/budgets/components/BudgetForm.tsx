@@ -10,6 +10,7 @@ import BudgetStrategySelector from './BudgetStrategySelector'
 import AlertThresholdSlider from './AlertThresholdSlider'
 import RolloverToggle from './RolloverToggle'
 import type { CreateBudgetRequest } from '@/types/budgets'
+import { useCurrencyStore } from '@/stores/currency-store'
 import AccountPicker from '@/features/accounts/components/AccountPicker'
 import CategoryPicker from '@/features/categories/components/CategoryPicker'
 
@@ -78,6 +79,7 @@ export default function BudgetForm({ defaultValues, mode, onSubmit, onCancel, is
     const payload: CreateBudgetRequest = {
       name: String(data.name ?? ''),
       amount: String(data.amount ?? '0'),
+      currency_code: useCurrencyStore.getState().currency,
       budget_type: (data.budget_type as CreateBudgetRequest['budget_type']) ?? 'total',
       period: (data.period as CreateBudgetRequest['period']) ?? 'monthly',
       alert_threshold: Number(data.alert_threshold ?? 80),
@@ -262,7 +264,7 @@ export default function BudgetForm({ defaultValues, mode, onSubmit, onCancel, is
               control={control}
               name="alert_threshold"
               render={({ field }) => (
-                <AlertThresholdSlider value={Number(field.value) ?? 80} onChange={(v) => field.onChange(v)} />
+                <AlertThresholdSlider value={Number(field.value ?? 80)} onChange={(v) => field.onChange(v)} />
               )}
             />
 

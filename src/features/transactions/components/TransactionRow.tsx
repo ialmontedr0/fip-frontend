@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import { TRANSACTION_TYPE_CONFIG } from '../constants'
 import TransactionStatusBadge from './TransactionStatusBadge'
 import type { TransactionListItem } from '@/types/transactions'
@@ -39,7 +39,7 @@ export default function TransactionRow({ transaction, className }: Props) {
         </p>
         <p className="text-xs text-gray-400 dark:text-gray-500">
           {transaction.effective_date
-            ? new Date(transaction.effective_date).toLocaleDateString('es-DO', { day: '2-digit', month: 'short' })
+            ? formatISODate(transaction.effective_date)
             : '—'}
         </p>
       </div>

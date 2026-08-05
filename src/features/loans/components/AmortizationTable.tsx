@@ -1,4 +1,4 @@
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import { CheckCircle2, Loader2 } from 'lucide-react'
 import type { AmortizationEntry } from '@/types/loans'
 
@@ -63,7 +63,7 @@ export default function AmortizationTable({ entries, loading }: AmortizationTabl
                 {entry.entry_number}
               </td>
               <td className="px-4 py-2.5 text-gray-700 dark:text-gray-300 hidden sm:table-cell">
-                {new Date(entry.due_date).toLocaleDateString('es-DO', { day: '2-digit', month: 'short', year: 'numeric' })}
+                {formatISODate(entry.due_date)}
               </td>
               <td className="px-4 py-2.5 text-right font-medium text-gray-900 dark:text-gray-100">
                 {formatCurrency(entry.payment_amount)}

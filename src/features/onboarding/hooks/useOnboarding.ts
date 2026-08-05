@@ -1,22 +1,18 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { ONBOARDING_STEPS, ONBOARDING_STORAGE_KEY, type OnboardingStep } from '../constants'
 
-export type OnboardingStep = 'welcome' | 'create_account' | 'first_transaction' | 'explore_categories' | 'done'
+type OnboardingStepId = OnboardingStep['id']
 
-const ONBOARDING_STEPS: OnboardingStep[] = [
-  'welcome',
-  'create_account',
-  'first_transaction',
-  'explore_categories',
-]
+const STEP_IDS: OnboardingStepId[] = ONBOARDING_STEPS.map((s) => s.id)
 
 interface OnboardingState {
-  currentStep: OnboardingStep
+  currentStep: OnboardingStepId
   isCompleted: boolean
   isDismissed: boolean
-  completedSteps: OnboardingStep[]
-  goToStep: (step: OnboardingStep) => void
-  completeStep: (step: OnboardingStep) => void
+  completedSteps: OnboardingStepId[]
+  goToStep: (step: OnboardingStepId) => void
+  completeStep: (step: OnboardingStepId) => void
   nextStep: () => void
   prevStep: () => void
   skip: () => void
@@ -25,10 +21,10 @@ interface OnboardingState {
 }
 
 const INITIAL_STATE = {
-  currentStep: 'welcome' as OnboardingStep,
+  currentStep: 'accounts' as OnboardingStepId,
   isCompleted: false,
   isDismissed: false,
-  completedSteps: [] as OnboardingStep[],
+  completedSteps: [] as OnboardingStepId[],
 }
 
 export const useOnboarding = create<OnboardingState>()(
@@ -49,19 +45,19 @@ export const useOnboarding = create<OnboardingState>()(
         const { currentStep } = get()
         get().completeStep(currentStep)
 
-        const idx = ONBOARDING_STEPS.indexOf(currentStep)
-        if (idx < ONBOARDING_STEPS.length - 1) {
-          set({ currentStep: ONBOARDING_STEPS[idx + 1] })
+        const idx = STEP_IDS.indexOf(currentStep)
+        if (idx < STEP_IDS.length - 1) {
+          set({ currentStep: STEP_IDS[idx + 1] })
         } else {
-          set({ isCompleted: true, currentStep: 'done' })
+          set({ isCompleted: true, isDismissed: true })
         }
       },
 
       prevStep: () => {
         const { currentStep } = get()
-        const idx = ONBOARDING_STEPS.indexOf(currentStep)
+        const idx = STEP_IDS.indexOf(currentStep)
         if (idx > 0) {
-          set({ currentStep: ONBOARDING_STEPS[idx - 1] })
+          set({ currentStep: STEP_IDS[idx - 1] })
         }
       },
 
@@ -72,7 +68,7 @@ export const useOnboarding = create<OnboardingState>()(
       reset: () => set(INITIAL_STATE),
     }),
     {
-      name: 'fip-onboarding',
+      name: ONBOARDING_STORAGE_KEY,
     },
   ),
 )

@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { Save, RotateCcw, RefreshCw, Sun, Moon, Monitor } from 'lucide-react'
 import { Button, Skeleton } from '@/components/ui'
 import { usePreferences, useUpdatePreferences, useSupportedValues } from '../hooks/useSettings'
+import { useCurrencyStore } from '@/stores/currency-store'
 import LanguageSelect from './LanguageSelect'
 import CurrencySelect from './CurrencySelect'
 import TimezoneSelect from './TimezoneSelect'
@@ -84,6 +85,7 @@ export default function PreferencesForm() {
   const { data: preferences, isLoading: prefsLoading } = usePreferences()
   const { data: supported, isLoading: supportedLoading } = useSupportedValues()
   const updatePreferences = useUpdatePreferences()
+  const setCurrency = useCurrencyStore((s) => s.setCurrency)
 
   const [form, setForm] = useState<UpdatePreferencesRequest>({})
   const [dirty, setDirty] = useState(false)
@@ -181,7 +183,10 @@ export default function PreferencesForm() {
             <label className="block text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Moneda</label>
             <CurrencySelect
               value={form.currency_code || 'DOP'}
-              onChange={(v) => update('currency_code', v)}
+              onChange={(v) => {
+                update('currency_code', v)
+                setCurrency(v as Parameters<typeof setCurrency>[0])
+              }}
               currencies={currencies}
             />
           </div>
