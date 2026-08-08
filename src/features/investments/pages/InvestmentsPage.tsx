@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Plus, TrendingUp, FolderPlus, PieChart, HandCoins } from 'lucide-react'
+import { Plus, TrendingUp, FolderPlus, PieChart, HandCoins, ReceiptText } from 'lucide-react'
 import { useInvestmentSummary, useAssets, usePortfolios } from '../hooks/useInvestments'
 import PortfolioDashboardCards from '../components/PortfolioDashboardCards'
 import AssetCard from '../components/AssetCard'
@@ -42,7 +42,15 @@ export default function InvestmentsPage() {
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => navigate('/investments/accounts-receivable')}
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl hover:from-emerald-600 hover:to-teal-700 shadow-lg shadow-emerald-500/25 transition-all duration-200"
+            >
+              <ReceiptText className="h-4 w-4" />
+              Cuentas por Cobrar
+            </button>
             <button
               type="button"
               onClick={() => navigate('/investments/lent-loans')}

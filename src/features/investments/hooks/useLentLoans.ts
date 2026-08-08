@@ -12,6 +12,7 @@ const keys = {
   list: () => [...keys.all, 'list'] as const,
   detail: (id: string) => [...keys.all, 'detail', id] as const,
   summary: () => [...keys.all, 'summary'] as const,
+  receivables: () => [...keys.all, 'receivables'] as const,
 }
 
 export function useLentLoans(status?: string) {
@@ -36,6 +37,13 @@ export function useLentLoanSummary() {
   })
 }
 
+export function useLentLoanReceivables() {
+  return useQuery({
+    queryKey: keys.receivables(),
+    queryFn: () => lentLoansApi.receivables(),
+  })
+}
+
 export function useSimulateLentLoan() {
   return useMutation({
     mutationFn: (data: SimulateLentLoanRequest) => lentLoansApi.simulate(data),
@@ -49,6 +57,7 @@ export function useCreateLentLoan() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.list() })
       qc.invalidateQueries({ queryKey: keys.summary() })
+      qc.invalidateQueries({ queryKey: keys.receivables() })
       qc.invalidateQueries({ queryKey: ['investments', 'summary'] })
       toast.success('Préstamo otorgado creado')
     },
@@ -64,6 +73,7 @@ export function useRecordLentLoanPayment(id: string) {
       qc.invalidateQueries({ queryKey: keys.detail(id) })
       qc.invalidateQueries({ queryKey: keys.list() })
       qc.invalidateQueries({ queryKey: keys.summary() })
+      qc.invalidateQueries({ queryKey: keys.receivables() })
       qc.invalidateQueries({ queryKey: ['investments', 'summary'] })
       toast.success('Pago recibido registrado')
     },
@@ -78,6 +88,7 @@ export function useDeleteLentLoan() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: keys.list() })
       qc.invalidateQueries({ queryKey: keys.summary() })
+      qc.invalidateQueries({ queryKey: keys.receivables() })
       qc.invalidateQueries({ queryKey: ['investments', 'summary'] })
       toast.success('Préstamo eliminado')
     },

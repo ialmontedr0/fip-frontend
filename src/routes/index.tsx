@@ -109,6 +109,7 @@ import {
   LentLoanSimulatorPage,
   LentLoanCreatePage,
   LentLoanDetailPage,
+  AccountsReceivablePage,
   ReceiptScanPage,
   AIDashboardPage,
   AIClassifyPage,
@@ -988,6 +989,14 @@ export const router = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <LentLoanListPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/investments/accounts-receivable',
+            element: (
+              <SuspenseWrapper>
+                <AccountsReceivablePage />
               </SuspenseWrapper>
             ),
           },

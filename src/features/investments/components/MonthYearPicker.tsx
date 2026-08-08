@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -25,28 +26,42 @@ interface MonthYearPickerProps {
   className?: string
 }
 
+function parseValue(value: string): { year: string; month: string } {
+  const match = value ? value.match(/^(\d{4})-(\d{2})$/) : null
+  return {
+    year: match ? match[1] : '',
+    month: match ? String(parseInt(match[2], 10)) : '',
+  }
+}
+
 export default function MonthYearPicker({ value, onChange, className }: MonthYearPickerProps) {
   const currentYear = new Date().getFullYear()
   const years = Array.from({ length: 21 }, (_, i) => currentYear + i)
 
-  const match = value ? value.match(/^(\d{4})-(\d{2})$/) : null
-  const selectedYear = match ? match[1] : ''
-  const selectedMonth = match ? String(parseInt(match[2], 10)) : ''
+  const [{ year, month }, setSelection] = useState(() => parseValue(value))
 
-  const emit = (year: string, month: string) => {
-    if (year && month) {
-      onChange(`${year}-${String(parseInt(month, 10)).padStart(2, '0')}`)
-    } else {
-      onChange('')
-    }
+  useEffect(() => {
+    setSelection(parseValue(value))
+  }, [value])
+
+  const emit = (next: { year?: string; month?: string }) => {
+    setSelection((prev) => {
+      const selection = { ...prev, ...next }
+      if (selection.year && selection.month) {
+        onChange(`${selection.year}-${String(parseInt(selection.month, 10)).padStart(2, '0')}`)
+      } else {
+        onChange('')
+      }
+      return selection
+    })
   }
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <Calendar className="h-4 w-4 shrink-0 text-gray-400" />
       <select
-        value={selectedMonth}
-        onChange={(e) => emit(selectedYear, e.target.value)}
+        value={month}
+        onChange={(e) => emit({ month: e.target.value })}
         className={selectClass}
       >
         <option value="">Mes</option>
@@ -55,8 +70,8 @@ export default function MonthYearPicker({ value, onChange, className }: MonthYea
         ))}
       </select>
       <select
-        value={selectedYear}
-        onChange={(e) => emit(e.target.value, selectedMonth)}
+        value={year}
+        onChange={(e) => emit({ year: e.target.value })}
         className={cn(selectClass, 'shrink-0')}
       >
         <option value="">Anio</option>

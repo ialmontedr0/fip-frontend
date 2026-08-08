@@ -3,6 +3,7 @@ import type {
   CreateLentLoanRequest,
   LentLoan,
   LentLoanDetail,
+  LentLoanReceivablesResponse,
   LentLoanSummary,
   ListLentLoansResponse,
   RecordLentLoanPaymentRequest,
@@ -23,6 +24,9 @@ export const lentLoansApi = {
   get: (id: string) => api.get<LentLoanDetail>(`/lent-loans/${id}`).then((r) => r.data),
 
   summary: () => api.get<LentLoanSummary>('/lent-loans/summary').then((r) => r.data),
+
+  receivables: () =>
+    api.get<LentLoanReceivablesResponse>('/lent-loans/receivables').then((r) => r.data),
 
   recordPayment: (id: string, data: RecordLentLoanPaymentRequest) =>
     api.post<LentLoan>(`/lent-loans/${id}/payments`, data).then((r) => r.data),

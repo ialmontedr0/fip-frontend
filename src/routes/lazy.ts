@@ -130,6 +130,7 @@ export const LentLoanListPage = lazy(() => import('@/features/investments/pages/
 export const LentLoanSimulatorPage = lazy(() => import('@/features/investments/pages/LentLoanSimulatorPage'))
 export const LentLoanCreatePage = lazy(() => import('@/features/investments/pages/LentLoanCreatePage'))
 export const LentLoanDetailPage = lazy(() => import('@/features/investments/pages/LentLoanDetailPage'))
+export const AccountsReceivablePage = lazy(() => import('@/features/investments/pages/AccountsReceivablePage'))
 
 // OCR (Receipt Scanner)
 export const ReceiptScanPage = lazy(() => import('@/features/ocr/pages/ReceiptScanPage'))

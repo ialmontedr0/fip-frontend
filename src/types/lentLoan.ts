@@ -68,6 +68,22 @@ export interface LentLoanSummary {
   total_interest_expected: number
 }
 
+export interface LentLoanReceivablesSummary {
+  count: number
+  count_overdue: number
+  total_outstanding: number
+  total_overdue: number
+  total_principal: number
+  total_received: number
+  total_interest_expected: number
+}
+
+export interface LentLoanReceivablesResponse {
+  items: LentLoan[]
+  total: number
+  summary: LentLoanReceivablesSummary
+}
+
 export interface SimulateLentLoanRequest {
   principal_amount: number
   annual_interest_rate: number
