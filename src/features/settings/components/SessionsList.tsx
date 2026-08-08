@@ -59,7 +59,7 @@ function SessionRow({ session }: { session: SessionInfo }) {
 
       {!session.is_current && (
         <button
-          onClick={() => logoutSession.mutate({ refresh_token: session.id })}
+          onClick={() => logoutSession.mutate({ session_id: session.id })}
           disabled={logoutSession.isPending}
           className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-40"
           title="Cerrar sesión"

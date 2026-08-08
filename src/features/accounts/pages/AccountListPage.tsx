@@ -4,8 +4,7 @@ import AccountCard, { AccountCardSkeleton } from '../components/AccountCard'
 import AccountSummaryWidget from '../components/AccountSummaryWidget'
 import { ErrorMessage } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd'
-import { Plus, GripVertical, Banknote } from 'lucide-react'
+import { Plus, Banknote } from 'lucide-react'
 import { ACCOUNT_TYPE_CONFIG } from '@/features/accounts/constants'
 import { Button } from '@/components/ui'
 
@@ -25,10 +24,6 @@ export default function AccountListPage() {
   const { data, isLoading, isError, error } = useAccounts(
     activeType ? { account_type: activeType } : undefined,
   )
-
-  const handleDragEnd = (result: DropResult) => {
-    if (!result.destination || !data) return
-  }
 
   return (
     <div className="relative space-y-6 pb-8">
@@ -128,41 +123,11 @@ export default function AccountListPage() {
 
       {/* Account Grid */}
       {!isLoading && !isError && data && data.accounts.length > 0 && (
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="accounts" direction="vertical">
-            {(provided) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-              >
-                {data.accounts.map((account, index) => (
-                  <Draggable key={account.id} draggableId={account.id} index={index}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        className={cn(
-                          'relative',
-                          snapshot.isDragging && 'z-50',
-                        )}
-                      >
-                        <div
-                          {...provided.dragHandleProps}
-                          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
-                        >
-                          <GripVertical className="h-4 w-4 text-gray-400" />
-                        </div>
-                        <AccountCard account={account} index={index} />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {data.accounts.map((account) => (
+            <AccountCard account={account} index={0} />
+          ))}
+        </div>
       )}
     </div>
   )

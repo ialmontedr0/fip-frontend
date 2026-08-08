@@ -24,6 +24,18 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="FIP - Financial Intelligence Platform" />
     <title>FIP - Financial Intelligence Platform</title>
+    <script>
+      ;(function () {
+        try {
+          var raw = localStorage.getItem('fip-theme')
+          var theme = raw ? JSON.parse(raw)?.state?.theme : null
+          if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          if (theme === 'dark') document.documentElement.classList.add('dark')
+        } catch (e) {
+          /* noop */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

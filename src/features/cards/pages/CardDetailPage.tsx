@@ -28,6 +28,7 @@ import type {
   CardAlertsFilters, CardAlertResponse,
 } from '@/types/cards'
 import type { TransactionListItem } from '@/types/transactions'
+import useConfirm from '@/hooks/useConfirm'
 
 type Tab = 'overview' | 'bills' | 'limits' | 'history' | 'spending' | 'payments' | 'alerts'
 
@@ -252,12 +253,19 @@ function SpendingLimitModal({
 function OverviewTab({ card, utilization }: { card: CardResponse; utilization?: CardUtilization }) {
   const navigate = useNavigate()
   const deleteMutation = useDeleteCard()
+  const { confirm, confirmDialog } = useConfirm()
   const generateStatement = useGenerateStatement(card.id)
   const util = utilization || card.utilization
   const pct = util ? parseFloat(util.utilization_percentage) : 0
 
   const handleDelete = async () => {
-    if (!window.confirm(`Eliminar la tarjeta "${card.name}"?`)) return
+    const ok = await confirm({
+      title: 'Eliminar tarjeta',
+      message: `Eliminar la tarjeta "${card.name}"?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
     try {
       await deleteMutation.mutateAsync(card.id)
       toast.success('Tarjeta eliminada')
@@ -373,6 +381,7 @@ function OverviewTab({ card, utilization }: { card: CardResponse; utilization?: 
           </motion.div>
         </div>
       </motion.div>
+      {confirmDialog}
     </motion.div>
   )
 }
@@ -439,13 +448,20 @@ function BillsTab({ cardId, currencyCode }: { cardId: string; currencyCode: stri
 function LimitsTab({ cardId, currencyCode }: { cardId: string; currencyCode: string }) {
   const { data, isLoading } = useSpendingLimitList(cardId)
   const deleteMutation = useDeleteSpendingLimit(cardId)
+  const { confirm, confirmDialog } = useConfirm()
   const [showModal, setShowModal] = useState(false)
   const [editingLimit, setEditingLimit] = useState<SpendingLimitResponse | null>(null)
 
   const limits = (data?.limits || []) as SpendingLimitResponse[]
 
   const handleDelete = async (limitId: string) => {
-    if (!window.confirm('Eliminar este limite de gasto?')) return
+    const ok = await confirm({
+      title: 'Eliminar limite de gasto',
+      message: 'Eliminar este limite de gasto?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
     try {
       await deleteMutation.mutateAsync(limitId)
       toast.success('Limite eliminado')
@@ -555,6 +571,7 @@ function LimitsTab({ cardId, currencyCode }: { cardId: string; currencyCode: str
         initialData={editingLimit}
         limitId={editingLimit?.id}
       />
+      {confirmDialog}
     </motion.div>
   )
 }

@@ -126,6 +126,8 @@ function NavSubmenu({ item, sidebarOpen, mobile, onClose }: { item: { name: stri
       <button
         type="button"
         onClick={() => sidebarOpen && setOpen(!open)}
+        aria-expanded={open}
+        aria-haspopup="true"
         className={cn(
           'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
           'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800',
@@ -156,8 +158,12 @@ function NavSubmenu({ item, sidebarOpen, mobile, onClose }: { item: { name: stri
                   )
                 }
               >
-                <child.icon className="h-4 w-4 flex-shrink-0" />
-                <span>{child.name}</span>
+                {({ isActive }) => (
+                  <>
+                    <child.icon className="h-4 w-4 flex-shrink-0" />
+                    <span aria-current={isActive ? 'page' : undefined}>{child.name}</span>
+                  </>
+                )}
               </NavLink>
             </li>
           ))}
@@ -223,22 +229,26 @@ function Sidebar({ mobile, onClose }: SidebarProps) {
                 }
                 return (
                   <li key={item.name}>
-                    <NavLink
-                      to={item.href}
-                      onClick={mobile ? onClose : undefined}
-                      className={({ isActive }) =>
-                        cn(
-                          'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                          isActive
-                            ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
-                            : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800',
-                          !sidebarOpen && 'justify-center',
-                        )
-                      }
-                    >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
-                      {sidebarOpen && <span>{item.name}</span>}
-                    </NavLink>
+<NavLink
+                        to={item.href}
+                        onClick={mobile ? onClose : undefined}
+                        className={({ isActive }) =>
+                          cn(
+                            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                            isActive
+                              ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
+                              : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800',
+                            !sidebarOpen && 'justify-center',
+                          )
+                        }
+                      >
+                        {({ isActive }) => (
+                          <>
+                            <item.icon className="h-5 w-5 flex-shrink-0" />
+                            {sidebarOpen && <span aria-current={isActive ? 'page' : undefined}>{item.name}</span>}
+                          </>
+                        )}
+                      </NavLink>
                   </li>
                 )
               })}

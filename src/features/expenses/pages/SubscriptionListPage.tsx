@@ -14,10 +14,12 @@ import EmptyExpenseState from '../components/EmptyExpenseState'
 import { Button, Skeleton, Modal } from '@/components/ui'
 import { Repeat, AlertCircle, Plus } from 'lucide-react'
 import type { SubscriptionResponse, CreateSubscriptionRequest } from '@/types/expenses'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function SubscriptionListPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [editingSub, setEditingSub] = useState<SubscriptionResponse | null>(null)
+  const { confirm, confirmDialog } = useConfirm()
 
   const { data: subscriptions, isLoading, isError, refetch } = useSubscriptions()
   const { data: summary, isLoading: summaryLoading } = useSubscriptionSummary()
@@ -25,8 +27,14 @@ export default function SubscriptionListPage() {
   const updateMutation = useUpdateSubscription()
   const deleteMutation = useDeleteSubscription()
 
-  const handleDelete = (id: string) => {
-    if (window.confirm('Eliminar esta suscripcion?')) deleteMutation.mutate(id)
+  const handleDelete = async (id: string) => {
+    const ok = await confirm({
+      title: 'Eliminar suscripcion',
+      message: 'Eliminar esta suscripcion?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (ok) deleteMutation.mutate(id)
   }
 
   const handleCreate = async (data: CreateSubscriptionRequest) => {
@@ -119,6 +127,7 @@ export default function SubscriptionListPage() {
           />
         )}
       </Modal>
+      {confirmDialog}
     </div>
   )
 }

@@ -91,6 +91,18 @@ export function useEnableMFA() {
   })
 }
 
+export function useConfirmMFA() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (code: string) => settingsApi.confirmMFA(code).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: settingsKeys.profile() })
+      toast.success('MFA activado correctamente')
+    },
+    onError: () => toast.error('C\u00f3digo inv\u00e1lido. Intenta de nuevo'),
+  })
+}
+
 export function useDisableMFA() {
   const qc = useQueryClient()
   return useMutation({

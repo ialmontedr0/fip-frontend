@@ -11,6 +11,7 @@ interface DropdownProps {
 function Dropdown({ trigger, children, align = 'left', className }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -22,11 +23,27 @@ function Dropdown({ trigger, children, align = 'left', className }: DropdownProp
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && isOpen) {
+      setIsOpen(false)
+    }
+  }
+
   return (
     <div ref={dropdownRef} className="relative inline-block">
-      <div onClick={() => setIsOpen(!isOpen)}>{trigger}</div>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={handleKeyDown}
+        role="button"
+        tabIndex={0}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+      >
+        {trigger}
+      </div>
       {isOpen && (
         <div
+          ref={menuRef}
           className={cn(
             'absolute z-50 mt-2 min-w-[200px] rounded-lg border border-gray-200 bg-white py-1 shadow-lg',
             'dark:border-gray-700 dark:bg-gray-800',

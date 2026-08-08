@@ -1,4 +1,31 @@
 import { useCurrencyStore } from '@/stores/currency-store'
+import { DEFAULT_CURRENCY, convertAmount } from '@/stores/currency-store'
+import api from '@/lib/api'
+
+export async function loadCurrencyRates(): Promise<Record<string, number>> {
+  try {
+    const { data } = await api.get<{ base: string; rates: Record<string, number> }>(
+      '/currency/rates/base',
+    )
+    const base = data.base ?? DEFAULT_CURRENCY
+    const map = { ...data.rates }
+    map[base] = map[base] ?? 1
+    useCurrencyStore.getState().setRates(map)
+    return map
+  } catch {
+    return {}
+  }
+}
+
+export async function refreshCurrencyRates(): Promise<void> {
+  await loadCurrencyRates()
+}
+
+export function useConverted(amount: number, from: string): number {
+  const currency = useCurrencyStore((s) => s.currency)
+  const rates = useCurrencyStore((s) => s.rates)
+  return convertAmount(amount, from, currency, rates)
+}
 
 export const CURRENCY_SYMBOLS: Record<string, string> = {
   DOP: 'RD$',

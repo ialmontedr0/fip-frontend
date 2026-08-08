@@ -181,7 +181,7 @@ export default function TransactionDetailPage() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-gray-500 dark:text-gray-400">
                   {transaction.ai_category_id && <div><span className="text-gray-400">Categoria AI:</span> {transaction.ai_category_id}</div>}
-                  {transaction.ai_confidence && <div><span className="text-gray-400">Confianza:</span> {parseFloat(transaction.ai_confidence).toFixed(1)}%</div>}
+                  {transaction.ai_confidence !== null && transaction.ai_confidence !== undefined && (() => { const conf = Number(transaction.ai_confidence); return <div><span className="text-gray-400">Confianza:</span> {isFinite(conf) ? `${conf.toFixed(1)}%` : '-'}</div> })()}
                   {transaction.ai_model_version && <div><span className="text-gray-400">Modelo:</span> {transaction.ai_model_version}</div>}
                   {transaction.ai_reason && <div className="col-span-full"><span className="text-gray-400">Razon:</span> {transaction.ai_reason}</div>}
                 </div>

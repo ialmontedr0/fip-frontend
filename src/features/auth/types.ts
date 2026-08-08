@@ -37,10 +37,19 @@ export interface VerifyEmailRequest {
 export interface Session {
   id: string
   device_info: string
+  device_name: string
+  device_type: string
   ip_address: string
   user_agent: string
+  is_current: boolean
+  last_active_at: string | null
   created_at: string | null
   expires_at: string | null
+}
+
+export interface SessionListResponse {
+  sessions: Session[]
+  total: number
 }
 
 export interface AuthResponseData {

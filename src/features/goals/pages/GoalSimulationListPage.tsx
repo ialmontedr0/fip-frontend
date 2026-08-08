@@ -9,12 +9,25 @@ import { useSimulations, useDeleteSimulation } from '../hooks/useSimulations'
 import { formatCurrency } from '../constants'
 import type { SimulationListItem } from '@/types/goals'
 import { cn, formatISODate } from '@/lib/utils'
+import useConfirm from '@/hooks/useConfirm'
 
 function SimulationCard({ simulation, goalId, isBest }: { simulation: SimulationListItem; goalId: string; isBest: boolean }) {
   const [expanded, setExpanded] = useState(false)
   const deleteSim = useDeleteSimulation(goalId)
   const navigate = useNavigate()
+  const { confirm, confirmDialog } = useConfirm()
   const prob = simulation.predicted_probability != null ? simulation.predicted_probability * 100 : null
+
+  const handleDelete = async () => {
+    const ok = await confirm({
+      title: 'Eliminar simulacion',
+      message: `Eliminar simulacion "${simulation.name}"?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
+    await deleteSim.mutateAsync(simulation.id)
+  }
 
   return (
     <div
@@ -87,9 +100,7 @@ function SimulationCard({ simulation, goalId, isBest }: { simulation: Simulation
             type="button"
             onClick={(e) => {
               e.stopPropagation()
-              if (window.confirm(`Eliminar simulacion "${simulation.name}"?`)) {
-                deleteSim.mutateAsync(simulation.id)
-              }
+              handleDelete()
             }}
             className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-400 hover:text-red-500 transition-colors"
           >
@@ -154,6 +165,7 @@ function SimulationCard({ simulation, goalId, isBest }: { simulation: Simulation
           </button>
         </div>
       )}
+      {confirmDialog}
     </div>
   )
 }

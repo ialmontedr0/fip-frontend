@@ -7,12 +7,14 @@ import { formatISODate } from '@/lib/utils'
 import { ArrowLeft, Edit3, Trash2, Calendar, DollarSign, Tag, FileText, AlertCircle, TrendingDown } from 'lucide-react'
 import PriorityBadge from '../components/PriorityBadge'
 import { formatCurrency } from '@/lib/utils'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function ExpenseDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { data: expense, isLoading, isError, refetch } = useExpense(id || '')
   const deleteMutation = useDeleteExpense()
+  const { confirm, confirmDialog } = useConfirm()
 
   const { data: accountData } = useAccount(expense?.account_id || undefined)
   const { data: categoryData } = useCategory(expense?.category_id || undefined)
@@ -48,10 +50,15 @@ export default function ExpenseDetailPage() {
     ? expense.source.charAt(0).toUpperCase() + expense.source.slice(1)
     : '—'
 
-  const handleDelete = () => {
-    if (window.confirm(`Eliminar este gasto?`)) {
-      deleteMutation.mutate(expense.id, { onSuccess: () => navigate('/expenses') })
-    }
+  const handleDelete = async () => {
+    const ok = await confirm({
+      title: 'Eliminar gasto',
+      message: 'Eliminar este gasto?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
+    deleteMutation.mutate(expense.id, { onSuccess: () => navigate('/expenses') })
   }
 
   return (
@@ -171,6 +178,7 @@ export default function ExpenseDetailPage() {
           )}
         </div>
       </div>
+      {confirmDialog}
     </div>
   )
 }

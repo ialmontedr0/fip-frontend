@@ -15,6 +15,7 @@ import { Button, Skeleton, Modal } from '@/components/ui'
 import { formatCurrency } from '@/lib/utils'
 import { CreditCard, Plus, BarChart3 } from 'lucide-react'
 import type { CreditCardResponse, CreateCreditCardRequest } from '@/types/expenses'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function CreditCardListPage() {
   const [formOpen, setFormOpen] = useState(false)
@@ -25,6 +26,7 @@ export default function CreditCardListPage() {
   const createMutation = useCreateCard()
   const updateMutation = useUpdateCard()
   const deleteMutation = useDeleteCard()
+  const { confirm, confirmDialog } = useConfirm()
 
   const handleCreate = async (data: CreateCreditCardRequest) => {
     createMutation.mutate(data, { onSuccess: () => setFormOpen(false) })
@@ -35,8 +37,15 @@ export default function CreditCardListPage() {
     updateMutation.mutate({ id: editingCard.id, data }, { onSuccess: () => setEditingCard(null) })
   }
 
-  const handleDelete = (id: string) => {
-    if (window.confirm('Eliminar esta tarjeta?')) deleteMutation.mutate(id)
+  const handleDelete = async (id: string) => {
+    const ok = await confirm({
+      title: 'Eliminar tarjeta',
+      message: 'Eliminar esta tarjeta?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
+    deleteMutation.mutate(id)
   }
 
   const totalLimit = Number(summary?.total_credit_limit || 0)
@@ -123,6 +132,8 @@ export default function CreditCardListPage() {
           initialData={editingCard ? { name: editingCard.name, credit_limit: editingCard.credit_limit || '', last_four_digits: editingCard.last_four_digits, color: editingCard.color, is_active: editingCard.is_active } : undefined}
         />
       </Modal>
+
+      {confirmDialog}
     </div>
   )
 }

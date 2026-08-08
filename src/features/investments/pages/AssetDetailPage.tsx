@@ -9,6 +9,7 @@ import PriceHistoryChart from '../components/PriceHistoryChart'
 import InvestmentTransactionForm from '../components/InvestmentTransactionForm'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import type { CreateInvestmentTransactionRequest } from '@/types/investment'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function AssetDetailPage() {
   const { id = '' } = useParams()
@@ -23,6 +24,7 @@ export default function AssetDetailPage() {
   const createTx = useCreateInvestmentTransaction(id)
   const addPrice = useAddPricePoint(id)
   const deleteAsset = useDeleteAsset()
+  const { confirm, confirmDialog } = useConfirm()
 
   if (isLoading) {
     return (
@@ -47,7 +49,7 @@ export default function AssetDetailPage() {
   const portfolios = portfoliosData?.portfolios || []
 
   const handleDelete = async () => {
-    if (!window.confirm(`Eliminar el activo "${asset.name}"?`)) return
+    if (!(await confirm({ title: 'Eliminar activo', message: `Eliminar el activo "${asset.name}"?`, confirmLabel: 'Eliminar', destructive: true }))) return
     try {
       await deleteAsset.mutateAsync(asset.id)
       toast.success('Activo eliminado')
@@ -227,6 +229,7 @@ export default function AssetDetailPage() {
           )}
         </div>
       </div>
+      {confirmDialog}
     </div>
   )
 }

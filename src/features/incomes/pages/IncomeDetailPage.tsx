@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
+import useConfirm from '@/hooks/useConfirm'
 import { formatCurrency, formatISODate } from '@/lib/utils'
 import { Button, Card, CardContent, Skeleton } from '@/components/ui'
 import { useIncome, useDeleteIncome } from '../hooks/useIncomes'
@@ -17,17 +18,23 @@ export default function IncomeDetailPage() {
   const navigate = useNavigate()
   const { data: income, isLoading, isError, refetch } = useIncome(id)
   const deleteMutation = useDeleteIncome()
+  const { confirm, confirmDialog } = useConfirm()
 
   const { data: accountData } = useAccount(income?.account_id || undefined)
   const { data: categoryData } = useCategory(income?.category_id || undefined)
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!income) return
-    if (window.confirm(`Eliminar ingreso: ${income.description}?`)) {
-      deleteMutation.mutate(income.id, {
-        onSuccess: () => navigate('/incomes'),
-      })
-    }
+    const ok = await confirm({
+      title: 'Eliminar ingreso',
+      message: `Eliminar ingreso: ${income.description}?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
+    deleteMutation.mutate(income.id, {
+      onSuccess: () => navigate('/incomes'),
+    })
   }
 
   if (isLoading) {
@@ -186,6 +193,8 @@ export default function IncomeDetailPage() {
           </CardContent>
         </Card>
       )}
+
+      {confirmDialog}
     </div>
   )
 }

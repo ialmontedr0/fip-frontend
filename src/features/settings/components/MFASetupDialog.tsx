@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { X, Key, Copy, Check, Loader2, Smartphone } from 'lucide-react'
-import toast from 'react-hot-toast'
-import { useEnableMFA } from '../hooks/useSettings'
+import { useEnableMFA, useConfirmMFA } from '../hooks/useSettings'
 import { Input, Button } from '@/components/ui'
 
 interface MFASetupDialogProps {
@@ -10,6 +9,7 @@ interface MFASetupDialogProps {
 
 export default function MFASetupDialog({ onClose }: MFASetupDialogProps) {
   const enableMFA = useEnableMFA()
+  const confirmMFA = useConfirmMFA()
   const [step, setStep] = useState<'loading' | 'setup' | 'verify'>('loading')
   const [secret, setSecret] = useState('')
   const [qrCode, setQrCode] = useState('')
@@ -31,6 +31,15 @@ export default function MFASetupDialog({ onClose }: MFASetupDialogProps) {
     navigator.clipboard.writeText(secret)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleConfirm = () => {
+    confirmMFA.mutate(code, {
+      onSuccess: () => {
+        setCode('')
+        onClose()
+      },
+    })
   }
 
   return (
@@ -127,11 +136,9 @@ export default function MFASetupDialog({ onClose }: MFASetupDialogProps) {
                   Cancelar
                 </Button>
                 <Button
-                  onClick={() => {
-                    onClose()
-                    toast.success('MFA activado correctamente')
-                  }}
+                  onClick={handleConfirm}
                   disabled={code.length !== 6}
+                  isLoading={confirmMFA.isPending}
                   className="flex-1"
                 >
                   Verificar

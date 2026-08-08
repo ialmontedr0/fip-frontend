@@ -47,7 +47,11 @@ try {
   if (raw) {
     const parsed = JSON.parse(raw)
     applyTheme(parsed?.state?.theme === 'dark' ? 'dark' : 'light')
+  } else {
+    const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+    applyTheme(prefersDark ? 'dark' : 'light')
   }
 } catch {
-  applyTheme('light')
+  const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+  applyTheme(prefersDark ? 'dark' : 'light')
 }

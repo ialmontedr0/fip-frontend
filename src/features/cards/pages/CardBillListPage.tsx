@@ -9,6 +9,7 @@ import { useBillList, useDeleteBill, useCreateBill } from '../hooks/useBills'
 import CardBillCard from '@/features/expenses/components/CardBillCard'
 import { Skeleton, EmptyState } from '@/components/ui'
 import type { BillResponse } from '@/types/cards'
+import useConfirm from '@/hooks/useConfirm'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -35,6 +36,7 @@ export default function CardBillListPage() {
   const [showModal, setShowModal] = useState(false)
   const [formData, setFormData] = useState({ statement_date: '', due_date: '', total_amount: '', minimum_payment: '' })
   const [submitting, setSubmitting] = useState(false)
+  const { confirm, confirmDialog } = useConfirm()
 
   const bills = (billsData?.bills || []) as BillResponse[]
 
@@ -43,7 +45,13 @@ export default function CardBillListPage() {
   const totalMinPay = unpaidBills.reduce((sum, b) => sum + (b.minimum_payment ? parseFloat(b.minimum_payment) : 0), 0)
 
   const handleDelete = async (billId: string) => {
-    if (!window.confirm('Eliminar esta factura?')) return
+    const ok = await confirm({
+      title: 'Eliminar factura',
+      message: 'Eliminar esta factura?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
     try {
       await deleteMutation.mutateAsync(billId)
       toast.success('Factura eliminada')
@@ -330,6 +338,8 @@ export default function CardBillListPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {confirmDialog}
     </div>
   )
 }

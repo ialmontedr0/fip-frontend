@@ -126,6 +126,10 @@ export const AssetCreatePage = lazy(() => import('@/features/investments/pages/A
 export const AssetDetailPage = lazy(() => import('@/features/investments/pages/AssetDetailPage'))
 export const PortfolioCreatePage = lazy(() => import('@/features/investments/pages/PortfolioCreatePage'))
 export const PortfolioDetailPage = lazy(() => import('@/features/investments/pages/PortfolioDetailPage'))
+export const LentLoanListPage = lazy(() => import('@/features/investments/pages/LentLoanListPage'))
+export const LentLoanSimulatorPage = lazy(() => import('@/features/investments/pages/LentLoanSimulatorPage'))
+export const LentLoanCreatePage = lazy(() => import('@/features/investments/pages/LentLoanCreatePage'))
+export const LentLoanDetailPage = lazy(() => import('@/features/investments/pages/LentLoanDetailPage'))
 
 // OCR (Receipt Scanner)
 export const ReceiptScanPage = lazy(() => import('@/features/ocr/pages/ReceiptScanPage'))

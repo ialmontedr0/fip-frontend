@@ -3,7 +3,7 @@ import MainLayout from '@/components/layout/MainLayout'
 import AuthLayout from '@/components/layout/AuthLayout'
 import RequireAuth from '@/components/layout/RequireAuth'
 import RequireAdmin from '@/components/layout/RequireAdmin'
-import { SuspenseWrapper } from '@/components/layout/RouteHelpers'
+import { SuspenseWrapper, RouteError } from '@/components/layout/RouteHelpers'
 import {
   LoginPage,
   RegisterPage,
@@ -105,6 +105,10 @@ import {
   AssetDetailPage,
   PortfolioCreatePage,
   PortfolioDetailPage,
+  LentLoanListPage,
+  LentLoanSimulatorPage,
+  LentLoanCreatePage,
+  LentLoanDetailPage,
   ReceiptScanPage,
   AIDashboardPage,
   AIClassifyPage,
@@ -140,6 +144,7 @@ import {
 
 export const router = createBrowserRouter([
   {
+    errorElement: <RouteError />,
     element: <AuthLayout />,
     children: [
       {
@@ -193,6 +198,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    errorElement: <RouteError />,
     element: <RequireAuth />,
     children: [
       {
@@ -974,6 +980,38 @@ export const router = createBrowserRouter([
             element: (
               <SuspenseWrapper>
                 <PortfolioDetailPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/investments/lent-loans',
+            element: (
+              <SuspenseWrapper>
+                <LentLoanListPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/investments/lent-loans/simulator',
+            element: (
+              <SuspenseWrapper>
+                <LentLoanSimulatorPage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/investments/lent-loans/new',
+            element: (
+              <SuspenseWrapper>
+                <LentLoanCreatePage />
+              </SuspenseWrapper>
+            ),
+          },
+          {
+            path: '/investments/lent-loans/:id',
+            element: (
+              <SuspenseWrapper>
+                <LentLoanDetailPage />
               </SuspenseWrapper>
             ),
           },

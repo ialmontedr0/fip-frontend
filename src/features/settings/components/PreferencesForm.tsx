@@ -4,6 +4,7 @@ import { Save, RotateCcw, RefreshCw, Sun, Moon, Monitor } from 'lucide-react'
 import { Button, Skeleton } from '@/components/ui'
 import { usePreferences, useUpdatePreferences, useSupportedValues } from '../hooks/useSettings'
 import { useCurrencyStore } from '@/stores/currency-store'
+import { loadCurrencyRates } from '@/lib/currency'
 import LanguageSelect from './LanguageSelect'
 import CurrencySelect from './CurrencySelect'
 import TimezoneSelect from './TimezoneSelect'
@@ -186,6 +187,7 @@ export default function PreferencesForm() {
               onChange={(v) => {
                 update('currency_code', v)
                 setCurrency(v as Parameters<typeof setCurrency>[0])
+                loadCurrencyRates()
               }}
               currencies={currencies}
             />

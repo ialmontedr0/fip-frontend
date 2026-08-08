@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { AxiosError } from 'axios'
 import { useAuthStore } from '@/stores/auth-store'
+import { loadCurrencyRates } from '@/lib/currency'
 import {
   loginApi, registerApi, verifyMFAApi, logoutApi,
   requestPasswordResetApi, resetPasswordApi,
@@ -28,9 +29,12 @@ export function useLogin() {
       }
       if (data.user && data.tokens) {
         storeLogin(data.user, data.tokens)
+        loadCurrencyRates()
         toast.success('Inicio de sesion exitoso')
         navigate('/dashboard')
+        return
       }
+      toast.error('Respuesta de inicio de sesion invalida. Intenta de nuevo.')
     },
     onError: (error: unknown) => {
       const data = (error as AxiosError<{ error?: { message?: string } }>)?.response?.data
@@ -48,6 +52,7 @@ export function useRegister() {
     onSuccess: (data) => {
       if (data.user && data.tokens) {
         storeLogin(data.user, data.tokens)
+        loadCurrencyRates()
         toast.success('Registro exitoso. Bienvenido!')
         navigate('/dashboard')
       }
@@ -67,6 +72,7 @@ export function useMFAVerify() {
     onSuccess: (data) => {
       if (data.user && data.tokens) {
         storeLogin(data.user, data.tokens)
+        loadCurrencyRates()
         toast.success('Verificacion exitosa')
         navigate('/dashboard')
       }

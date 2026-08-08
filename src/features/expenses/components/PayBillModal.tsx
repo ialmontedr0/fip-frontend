@@ -43,10 +43,10 @@ import type { CardBillResponse, PayBillRequest } from '@/types/expenses'
         <form onSubmit={handleSubmit(submit)} className="space-y-4">
           <div className="rounded-xl bg-gray-50 dark:bg-gray-700/30 p-3 text-center">
             <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Total a Pagar</p>
-            <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(bill.total_amount, 'DOP')}</p>
+            <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(bill.total_amount)}</p>
             {bill.minimum_payment && (
               <p className="text-xs text-gray-400 mt-1">
-                Pago minimo: {formatCurrency(bill.minimum_payment, 'DOP')}
+                Pago minimo: {formatCurrency(bill.minimum_payment)}
               </p>
             )}
           </div>

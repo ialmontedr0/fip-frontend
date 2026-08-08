@@ -56,14 +56,14 @@ export default function SubscriptionSummaryCard({ summary, isLoading, className 
       <StatCard
         icon={TrendingUp}
         label="Gasto Mensual"
-        value={formatCurrency(summary.monthly_total, 'DOP')}
+        value={formatCurrency(summary.monthly_total)}
         color="#10b981"
       />
       <StatCard
         icon={CalendarDays}
         label="Costo Anual"
-        value={formatCurrency(summary.annual_total, 'DOP')}
-        subvalue={summary.cost_per_day ? `${formatCurrency(summary.cost_per_day, 'DOP')}/dia` : undefined}
+        value={formatCurrency(summary.annual_total)}
+        subvalue={summary.cost_per_day ? `${formatCurrency(summary.cost_per_day)}/dia` : undefined}
         color="#f59e0b"
       />
       <StatCard

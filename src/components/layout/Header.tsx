@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom'
 import Dropdown from '@/components/ui/Dropdown'
 import NotificationDrawer from '@/features/notifications/components/NotificationDrawer'
 import GlobalSearch from '@/features/search/components/GlobalSearch'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
 
 function useUnreadCount() {
@@ -40,11 +40,13 @@ function Header() {
   const { setMobileSidebarOpen, searchOpen, setSearchOpen } = useUIStore()
   const { data: unreadCount = 0 } = useUnreadCount()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const [notifDrawerOpen, setNotifDrawerOpen] = useState(false)
 
   const handleLogout = () => {
     logout()
+    queryClient.clear()
     navigate('/login')
   }
 

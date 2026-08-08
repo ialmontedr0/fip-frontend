@@ -13,6 +13,7 @@ import { useDeleteGoal, useRefreshGoal } from '../hooks/useGoals'
 import { formatCurrency, GOAL_TYPE_CONFIG } from '../constants'
 import type { GoalListItem, GoalType } from '@/types/goals'
 import { cn, formatISODate } from '@/lib/utils'
+import useConfirm from '@/hooks/useConfirm'
 
 interface GoalCardProps {
   goal: GoalListItem
@@ -25,6 +26,7 @@ export default function GoalCard({ goal, index = 0 }: GoalCardProps) {
   const refreshMutation = useRefreshGoal()
   const [menuOpen, setMenuOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const { confirm, confirmDialog } = useConfirm()
 
   const typeConfig = GOAL_TYPE_CONFIG[goal.goal_type as GoalType]
   const TypeIcon = typeConfig?.icon
@@ -32,9 +34,14 @@ export default function GoalCard({ goal, index = 0 }: GoalCardProps) {
   const pct = goal.pct_complete
 
   const handleDelete = useCallback(async () => {
-    if (!window.confirm(`Eliminar "${goal.name}"?`)) return
+    if (!(await confirm({
+      title: 'Eliminar meta',
+      message: `Eliminar "${goal.name}"?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    }))) return
     await deleteMutation.mutateAsync(goal.id)
-  }, [goal.id, goal.name, deleteMutation])
+  }, [goal.id, goal.name, deleteMutation, confirm])
 
   return (
     <div
@@ -196,6 +203,7 @@ export default function GoalCard({ goal, index = 0 }: GoalCardProps) {
           </button>
         </div>
       </div>
+      {confirmDialog}
     </div>
   )
 }

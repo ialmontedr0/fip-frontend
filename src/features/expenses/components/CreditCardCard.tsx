@@ -69,12 +69,12 @@ export default function CreditCardCard({ card, onEdit, onDelete, className }: Pr
         <div className="flex items-center justify-between text-xs text-white/70">
           <div>
             <span className="text-[10px] text-white/50 uppercase tracking-wider">Limite</span>
-            <p className="font-semibold text-white/90">{formatCurrency(card.credit_limit, 'DOP')}</p>
+            <p className="font-semibold text-white/90">{formatCurrency(card.credit_limit)}</p>
           </div>
           {card.available_credit && (
             <div className="text-right">
               <span className="text-[10px] text-white/50 uppercase tracking-wider">Disponible</span>
-              <p className="font-semibold text-white/90">{formatCurrency(card.available_credit, 'DOP')}</p>
+              <p className="font-semibold text-white/90">{formatCurrency(card.available_credit)}</p>
             </div>
           )}
         </div>

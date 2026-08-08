@@ -24,10 +24,11 @@ export async function searchTransactions(q: string, limit = 20) {
     .then((r) => r.data)
 }
 
-export async function searchSuggestions(q: string) {
+export async function searchSuggestions(q: string, signal?: AbortSignal) {
   return api
     .get<{ suggestions: SearchSuggestion[] }>('/search/suggestions', {
       params: { q },
+      signal,
     })
     .then((r) => r.data)
 }

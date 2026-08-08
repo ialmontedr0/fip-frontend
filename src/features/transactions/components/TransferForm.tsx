@@ -266,7 +266,7 @@ export default function TransferForm({ onSubmit, isLoading, className }: Props) 
           <ArrowLeftRight className="h-4 w-4" />
           <span>
             Transferir <strong className="text-gray-600 dark:text-gray-300">
-              {amount ? `$${Number(amount).toFixed(2)}` : '$0.00'}
+              {formatCurrency(amount)}
             </strong>
           </span>
         </div>

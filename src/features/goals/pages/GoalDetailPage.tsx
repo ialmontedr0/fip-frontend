@@ -16,6 +16,7 @@ import AutoContributeToggle from '../components/AutoContributeToggle'
 import { formatCurrency, GOAL_TYPE_CONFIG } from '../constants'
 import { cn, formatISODate } from '@/lib/utils'
 import type { GoalType, GoalProgress, GoalPrediction, GoalMilestone } from '@/types/goals'
+import useConfirm from '@/hooks/useConfirm'
 
 type Tab = 'overview' | 'timeline' | 'simulations'
 
@@ -116,6 +117,7 @@ export default function GoalDetailPage() {
   const [activeTab, setActiveTab] = useState<Tab>('overview')
   const [isScrolled, setIsScrolled] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
+  const { confirm, confirmDialog } = useConfirm()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -160,7 +162,12 @@ export default function GoalDetailPage() {
   const pct = progress?.pct_complete ?? 0
 
   const handleDelete = async () => {
-    if (!window.confirm(`Eliminar la meta "${goal.name}"?`)) return
+    if (!(await confirm({
+      title: 'Eliminar meta',
+      message: `Eliminar la meta "${goal.name}"?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    }))) return
     await deleteMutation.mutateAsync(goal.id)
     navigate('/goals')
   }
@@ -510,6 +517,7 @@ export default function GoalDetailPage() {
           </div>
         </div>
       )}
+      {confirmDialog}
     </div>
   )
 }

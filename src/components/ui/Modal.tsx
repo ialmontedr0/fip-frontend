@@ -33,13 +33,15 @@ function Modal({ isOpen, onClose, title, children, size = 'md', closeOnOverlay =
       document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
 
-      setTimeout(() => dialogRef.current?.focus(), 50)
+      const timer = window.setTimeout(() => dialogRef.current?.focus(), 50)
+      return () => {
+        window.clearTimeout(timer)
+        document.removeEventListener('keydown', handleEscape)
+        document.body.style.overflow = ''
+        previousFocusRef.current?.focus()
+      }
     }
-    return () => {
-      document.removeEventListener('keydown', handleEscape)
-      document.body.style.overflow = ''
-      previousFocusRef.current?.focus()
-    }
+    return undefined
   }, [isOpen, handleEscape])
 
   if (!isOpen) return null

@@ -13,7 +13,7 @@ import UpcomingPaymentsWidget from '../components/UpcomingPaymentsWidget'
 import GoalsProgressWidget from '../components/GoalsProgressWidget'
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary'
 import { Link } from 'react-router-dom'
-import { cn } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import type { RecommendationItem } from '@/types/ai'
 import { Lightbulb, Sparkles, PiggyBank, ArrowRight } from 'lucide-react'
 
@@ -229,7 +229,7 @@ function DashboardPage() {
                       <div className="flex items-center gap-1 mt-2">
                         <PiggyBank className="h-3 w-3 text-emerald-500" />
                         <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                          ${rec.estimated_savings.toLocaleString()}
+                          {formatCurrency(rec.estimated_savings)}
                         </span>
                       </div>
                     )}

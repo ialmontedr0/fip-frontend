@@ -7,7 +7,7 @@ import type {
   ResetPasswordRequest,
   VerifyEmailRequest,
   MFASetupResponse,
-  Session,
+  SessionListResponse,
   AuthResponseData,
 } from '../types'
 
@@ -56,7 +56,7 @@ export function requestEmailVerificationApi() {
 }
 
 export function getSessionsApi() {
-  return api.get<Session[]>('/auth/sessions')
+  return api.get<SessionListResponse>('/auth/sessions')
 }
 
 export function revokeSessionApi(session_id: string) {

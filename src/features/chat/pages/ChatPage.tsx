@@ -14,6 +14,7 @@ import {
 } from '../hooks/useChat'
 import { streamChatMessage } from '../api/chat'
 import type { ChatMessage, ChatSessionDetail } from '@/types/chat'
+import useConfirm from '@/hooks/useConfirm'
 
 interface LocalMessage {
   id: string
@@ -35,6 +36,7 @@ export default function ChatPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
   const seqRef = useRef(0)
+  const { confirm, confirmDialog } = useConfirm()
 
   const sessions = sessionsData?.sessions ?? []
 
@@ -60,7 +62,13 @@ export default function ChatPage() {
   }
 
   const handleDelete = async (sessionId: string) => {
-    if (!window.confirm('Eliminar esta conversación?')) return
+    const ok = await confirm({
+      title: 'Eliminar conversación',
+      message: 'Eliminar esta conversación?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
     await deleteMutation.mutateAsync(sessionId)
     if (sessionId === id) {
       setPending([])
@@ -212,6 +220,8 @@ export default function ChatPage() {
           </>
         )}
       </main>
+
+      {confirmDialog}
     </div>
   )
 }

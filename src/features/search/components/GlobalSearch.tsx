@@ -14,19 +14,25 @@ export default function GlobalSearch({ isOpen, onClose }: Props) {
   const navigate = useNavigate()
 
   useEffect(() => {
+    const ac = new AbortController()
+    let active = true
     const timer = setTimeout(async () => {
       if (!query.trim() || query.trim().length < 2) {
         setSuggestions([])
         return
       }
       try {
-        const data = await searchSuggestions(query.trim())
-        setSuggestions(data.suggestions)
+        const data = await searchSuggestions(query.trim(), ac.signal)
+        if (active && !ac.signal.aborted) setSuggestions(data.suggestions)
       } catch {
-        setSuggestions([])
+        if (active) setSuggestions([])
       }
     }, 250)
-    return () => clearTimeout(timer)
+    return () => {
+      active = false
+      clearTimeout(timer)
+      ac.abort()
+    }
   }, [query])
 
   useEffect(() => {
@@ -54,6 +60,9 @@ export default function GlobalSearch({ isOpen, onClose }: Props) {
       aria-label="Búsqueda global"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') onClose()
       }}
     >
       <div className="w-full max-w-xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4">

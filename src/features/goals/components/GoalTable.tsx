@@ -7,6 +7,7 @@ import PrioritySelector from './PrioritySelector'
 import ProgressBar from './ProgressBar'
 import { formatCurrency } from '../constants'
 import type { GoalListItem } from '@/types/goals'
+import useConfirm from '@/hooks/useConfirm'
 
 interface GoalTableProps {
   goals: GoalListItem[]
@@ -16,6 +17,17 @@ export default function GoalTable({ goals }: GoalTableProps) {
   const navigate = useNavigate()
   const deleteMutation = useDeleteGoal()
   const refreshMutation = useRefreshGoal()
+  const { confirm, confirmDialog } = useConfirm()
+
+  const handleDelete = async (goal: GoalListItem) => {
+    if (!(await confirm({
+      title: 'Eliminar meta',
+      message: `Eliminar "${goal.name}"?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    }))) return
+    await deleteMutation.mutateAsync(goal.id)
+  }
 
   return (
     <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
@@ -80,7 +92,7 @@ export default function GoalTable({ goals }: GoalTableProps) {
                   <button type="button" onClick={() => navigate(`/goals/${goal.id}/simulate`)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors" title="Simular">
                     <TrendingUp className="h-4 w-4" />
                   </button>
-                  <button type="button" onClick={async () => { if (window.confirm(`Eliminar "${goal.name}"?`)) await deleteMutation.mutateAsync(goal.id) }} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar">
+                  <button type="button" onClick={() => handleDelete(goal)} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -89,6 +101,7 @@ export default function GoalTable({ goals }: GoalTableProps) {
           ))}
         </tbody>
       </table>
+      {confirmDialog}
     </div>
   )
 }

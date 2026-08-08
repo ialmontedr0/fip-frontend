@@ -13,6 +13,7 @@ import {
 } from '../hooks/useLimits'
 import { Button, Skeleton, EmptyState, Modal } from '@/components/ui'
 import type { SpendingLimitResponse, CreateSpendingLimitRequest } from '@/types/cards'
+import useConfirm from '@/hooks/useConfirm'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -43,6 +44,7 @@ export default function CardSpendingLimitsPage() {
   const [showModal, setShowModal] = useState(false)
   const [editingLimit, setEditingLimit] = useState<SpendingLimitResponse | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const { confirm, confirmDialog } = useConfirm()
   const [formData, setFormData] = useState({
     limit_type: 'monthly' as string,
     limit_amount: '',
@@ -111,7 +113,13 @@ export default function CardSpendingLimitsPage() {
   }
 
   const handleDelete = async (limitId: string) => {
-    if (!window.confirm('Eliminar este limite de gasto?')) return
+    const ok = await confirm({
+      title: 'Eliminar limite de gasto',
+      message: 'Eliminar este limite de gasto?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
     try {
       await deleteMutation.mutateAsync(limitId)
       toast.success('Limite eliminado')
@@ -427,6 +435,8 @@ export default function CardSpendingLimitsPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {confirmDialog}
     </div>
   )
 }

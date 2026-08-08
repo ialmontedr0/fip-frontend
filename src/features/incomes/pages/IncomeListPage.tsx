@@ -10,6 +10,7 @@ import EmptyIncomeState from '../components/EmptyIncomeState'
 import BatchStatusModal from '../components/BatchStatusModal'
 import { Plus, ChevronLeft, ChevronRight, TrendingUp, RefreshCw, AlertCircle } from 'lucide-react'
 import type { IncomesFilters, IncomeResponse } from '@/types/incomes'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function IncomeListPage() {
   const navigate = useNavigate()
@@ -38,6 +39,7 @@ export default function IncomeListPage() {
   const { data, isLoading, isError, refetch, isFetching } = useIncomes(filters)
   const batchMutation = useBatchUpdateStatus()
   const deleteMutation = useDeleteIncome()
+  const { confirm, confirmDialog } = useConfirm()
 
   const updateFilters = useCallback((newFilters: IncomesFilters) => {
     const params = new URLSearchParams()
@@ -78,8 +80,15 @@ export default function IncomeListPage() {
     )
   }
 
-  const handleDelete = (income: IncomeResponse) => {
-    if (window.confirm(`Eliminar ingreso: ${income.description}?`)) deleteMutation.mutate(income.id)
+  const handleDelete = async (income: IncomeResponse) => {
+    const ok = await confirm({
+      title: 'Eliminar ingreso',
+      message: `Eliminar ingreso: ${income.description}?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
+    deleteMutation.mutate(income.id)
   }
 
   return (
@@ -226,6 +235,7 @@ export default function IncomeListPage() {
         onConfirm={handleBatchUpdate}
         isSubmitting={batchMutation.isPending}
       />
+      {confirmDialog}
     </div>
   )
 }

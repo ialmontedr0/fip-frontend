@@ -5,18 +5,25 @@ import EmptyExpenseState from '../components/EmptyExpenseState'
 import { Button, Skeleton } from '@/components/ui'
 import { Copy, AlertCircle } from 'lucide-react'
 import type { DuplicatesResponse } from '@/types/expenses'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function DuplicateListPage() {
   const { data: duplicates, isLoading, isError, refetch } = useDuplicates()
+  const { confirm, confirmDialog } = useConfirm()
 
   const handleKeepOne = (_keepId: string, _deleteIds: string[]) => {
     // TODO: implement keep one
   }
 
-  const handleDeleteAll = (_ids: string[]) => {
-    if (window.confirm(`Eliminar transacciones duplicadas?`)) {
-      // TODO: implement delete all
-    }
+  const handleDeleteAll = async (_ids: string[]) => {
+    const ok = await confirm({
+      title: 'Eliminar duplicados',
+      message: 'Eliminar transacciones duplicadas?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
+    // TODO: implement delete all
   }
 
   return (
@@ -63,6 +70,8 @@ export default function DuplicateListPage() {
           ))}
         </div>
       )}
+
+      {confirmDialog}
     </div>
   )
 }

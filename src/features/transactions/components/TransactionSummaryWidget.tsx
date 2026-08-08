@@ -57,7 +57,7 @@ export default function TransactionSummaryWidget({ className }: Props) {
     return [
       {
         label: 'Ingresos',
-        value: formatCurrency(parseFloat(data.total_income), 'DOP'),
+        value: formatCurrency(parseFloat(data.total_income)),
         count: data.total_income_count,
         color: 'text-emerald-600 dark:text-emerald-400',
         bgColor: 'bg-emerald-100 dark:bg-emerald-500/10',
@@ -66,7 +66,7 @@ export default function TransactionSummaryWidget({ className }: Props) {
       },
       {
         label: 'Gastos',
-        value: formatCurrency(parseFloat(data.total_expenses), 'DOP'),
+        value: formatCurrency(parseFloat(data.total_expenses)),
         count: data.total_expense_count,
         color: 'text-red-600 dark:text-red-400',
         bgColor: 'bg-red-100 dark:bg-red-500/10',
@@ -75,7 +75,7 @@ export default function TransactionSummaryWidget({ className }: Props) {
       },
       {
         label: 'Flujo Neto',
-        value: formatCurrency(parseFloat(data.net_flow), 'DOP'),
+        value: formatCurrency(parseFloat(data.net_flow)),
         count: data.total_transfer_count + data.total_adjustment_count,
         color: parseFloat(data.net_flow) >= 0
           ? 'text-emerald-600 dark:text-emerald-400'

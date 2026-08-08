@@ -6,6 +6,7 @@ import { STATUS_CONFIG } from '../constants'
 import { formatAmount } from '@/lib/currency'
 import type { BudgetResponse, BudgetStatus } from '@/types/budgets'
 import { useDeleteBudget, useRefreshBudget } from '../hooks/useBudgets'
+import useConfirm from '@/hooks/useConfirm'
 
 interface BudgetCardProps {
   budget: BudgetResponse
@@ -31,13 +32,20 @@ export default function BudgetCard({ budget }: BudgetCardProps) {
   const deleteMutation = useDeleteBudget()
   const refreshMutation = useRefreshBudget()
   const [menuOpen, setMenuOpen] = useState(false)
+  const { confirm, confirmDialog } = useConfirm()
 
   const config = STATUS_CONFIG[budget.status as BudgetStatus] || STATUS_CONFIG.ok
 
   const handleDelete = useCallback(async () => {
-    if (!window.confirm(`Eliminar "${budget.name}"?`)) return
+    const ok = await confirm({
+      title: 'Eliminar presupuesto',
+      message: `¿Eliminar "${budget.name}"?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
     await deleteMutation.mutateAsync(budget.id)
-  }, [budget.id, budget.name, deleteMutation])
+  }, [budget.id, budget.name, confirm, deleteMutation])
 
   const handleRefresh = useCallback(async () => {
     await refreshMutation.mutateAsync(budget.id)
@@ -168,6 +176,7 @@ export default function BudgetCard({ budget }: BudgetCardProps) {
           )}
         </div>
       </div>
+      {confirmDialog}
     </div>
   )
 }

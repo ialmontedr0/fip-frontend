@@ -15,11 +15,13 @@ import EmptyExpenseState from '../components/EmptyExpenseState'
 import { Button, Skeleton, Modal } from '@/components/ui'
 import { Wrench, AlertCircle, Plus, CalendarClock } from 'lucide-react'
 import type { CreateServiceRequest, ServiceResponse, MarkServicePaidRequest } from '@/types/expenses'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function ServiceListPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [editingService, setEditingService] = useState<ServiceResponse | null>(null)
   const [payingService, setPayingService] = useState<ServiceResponse | null>(null)
+  const { confirm, confirmDialog } = useConfirm()
 
   const { data: services, isLoading, isError, refetch } = useServices()
   const { data: upcoming } = useUpcomingServices() as { data: { services: ServiceResponse[] } | undefined }
@@ -37,8 +39,14 @@ export default function ServiceListPage() {
     updateMutation.mutate({ id: editingService.id, data }, { onSuccess: () => setEditingService(null) })
   }
 
-  const handleDelete = (id: string) => {
-    if (window.confirm('Eliminar este servicio?')) deleteMutation.mutate(id)
+  const handleDelete = async (id: string) => {
+    const ok = await confirm({
+      title: 'Eliminar servicio',
+      message: 'Eliminar este servicio?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (ok) deleteMutation.mutate(id)
   }
 
   const handlePay = async (id: string, data: MarkServicePaidRequest) => {
@@ -141,6 +149,7 @@ export default function ServiceListPage() {
         onSubmit={handlePay}
         isSubmitting={payMutation.isPending}
       />
+      {confirmDialog}
     </div>
   )
 }

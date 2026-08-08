@@ -37,7 +37,7 @@ export default function DataTable<T>({
   return (
     <div>
       <div className="overflow-x-auto">
-        <table className="w-fulll text-sm">
+        <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200 dark:border-gray-700 text-left text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               {columns.map((c) => (

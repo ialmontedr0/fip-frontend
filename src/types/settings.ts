@@ -130,5 +130,5 @@ export interface DisableMFARequest {
 }
 
 export interface LogoutSessionRequest {
-  refresh_token: string
+  session_id: string
 }

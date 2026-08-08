@@ -8,10 +8,12 @@ import EmptyExpenseState from '../components/EmptyExpenseState'
 import { Button, Skeleton, Modal } from '@/components/ui'
 import { FileText, AlertCircle, Plus } from 'lucide-react'
 import type { CreateTemplateRequest } from '@/types/expenses'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function TemplateListPage() {
   const navigate = useNavigate()
   const [formOpen, setFormOpen] = useState(false)
+  const { confirm, confirmDialog } = useConfirm()
   const { data: templates, isLoading, isError, refetch } = useTemplates()
   const createMutation = useCreateTemplate()
   const deleteMutation = useDeleteTemplate()
@@ -21,8 +23,14 @@ export default function TemplateListPage() {
     createMutation.mutate(data, { onSuccess: () => setFormOpen(false) })
   }
 
-  const handleDelete = (id: string) => {
-    if (window.confirm('Eliminar esta plantilla?')) deleteMutation.mutate(id)
+  const handleDelete = async (id: string) => {
+    const ok = await confirm({
+      title: 'Eliminar plantilla',
+      message: 'Eliminar esta plantilla?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (ok) deleteMutation.mutate(id)
   }
 
   const handleUse = (id: string) => {
@@ -90,6 +98,7 @@ export default function TemplateListPage() {
       <Modal isOpen={formOpen} onClose={() => setFormOpen(false)} title="Nueva Plantilla">
         <TemplateForm onSubmit={handleCreate as (data: CreateTemplateRequest) => Promise<void>} isSubmitting={createMutation.isPending} />
       </Modal>
+      {confirmDialog}
     </div>
   )
 }

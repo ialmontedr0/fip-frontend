@@ -20,6 +20,7 @@ import {
 import type { BudgetStatus } from '@/types/budgets'
 import { formatAmount } from '@/lib/currency'
 import { parseISODate } from '@/lib/utils'
+import useConfirm from '@/hooks/useConfirm'
 
 function formatCurrency(value: string | number) {
   const num = typeof value === 'string' ? Number(value) : value
@@ -99,13 +100,20 @@ export default function BudgetDetailPage() {
   const markReadMutation = useMarkAlertRead()
   const dismissMutation = useDismissAlert()
   const [autoAdjustOpen, setAutoAdjustOpen] = useState(false)
+  const { confirm, confirmDialog } = useConfirm()
 
   const alerts = useMemo(() => alertsData?.alerts ?? [], [alertsData])
 
   const config = budget ? STATUS_CONFIG[budget.status as BudgetStatus] || STATUS_CONFIG.ok : STATUS_CONFIG.ok
 
   const handleDelete = async () => {
-    if (!window.confirm(`Eliminar "${budget?.name}" permanentemente?`)) return
+    const ok = await confirm({
+      title: 'Eliminar presupuesto',
+      message: `Eliminar "${budget?.name}" permanentemente?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
     await deleteMutation.mutateAsync(id!)
     navigate('/budgets')
   }
@@ -348,6 +356,8 @@ export default function BudgetDetailPage() {
         isOpen={autoAdjustOpen}
         onClose={() => setAutoAdjustOpen(false)}
       />
+
+      {confirmDialog}
     </div>
   )
 }

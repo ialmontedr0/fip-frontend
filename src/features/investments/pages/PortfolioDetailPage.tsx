@@ -5,12 +5,14 @@ import { usePortfolio, useDeletePortfolio } from '../hooks/useInvestments'
 import AssetTypeBadge from '../components/AssetTypeBadge'
 import TxTypeBadge from '../components/TxTypeBadge'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function PortfolioDetailPage() {
   const { id = '' } = useParams()
   const navigate = useNavigate()
   const { data: portfolio, isLoading } = usePortfolio(id)
   const deletePortfolio = useDeletePortfolio()
+  const { confirm, confirmDialog } = useConfirm()
 
   if (isLoading) {
     return (
@@ -33,7 +35,7 @@ export default function PortfolioDetailPage() {
   }
 
   const handleDelete = async () => {
-    if (!window.confirm(`Eliminar el portafolio "${portfolio.name}"?`)) return
+    if (!(await confirm({ title: 'Eliminar portafolio', message: `Eliminar el portafolio "${portfolio.name}"?`, confirmLabel: 'Eliminar', destructive: true }))) return
     try {
       await deletePortfolio.mutateAsync(portfolio.id)
       toast.success('Portafolio eliminado')
@@ -187,6 +189,7 @@ export default function PortfolioDetailPage() {
           )}
         </div>
       </div>
+      {confirmDialog}
     </div>
   )
 }

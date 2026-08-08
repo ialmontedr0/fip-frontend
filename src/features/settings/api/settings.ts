@@ -36,6 +36,10 @@ export function enableMFA() {
   return api.post<MFASetupResponse>('/auth/mfa/enable')
 }
 
+export function confirmMFA(code: string) {
+  return api.post<{ message: string }>('/auth/mfa/confirm', { code })
+}
+
 export function disableMFA(data: DisableMFARequest) {
   return api.post<{ success: boolean; message: string }>('/auth/mfa/disable', data)
 }
@@ -48,7 +52,9 @@ export function getSessions() {
 }
 
 export function logoutSession(data: LogoutSessionRequest) {
-  return api.post<{ success: boolean; message: string }>('/auth/logout', data)
+  return api.post<{ session_id: string; message: string }>('/auth/sessions/revoke', {
+    session_id: data.session_id,
+  })
 }
 
 export function logoutAllSessions() {

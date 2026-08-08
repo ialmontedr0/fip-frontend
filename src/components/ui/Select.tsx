@@ -28,6 +28,24 @@ export default function Select({
   const id = useId()
   const selected = options.find((o) => o.value === value)
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setOpen(false)
+    } else if (e.key === 'ArrowDown' && !open) {
+      setOpen(true)
+    } else if (e.key === 'ArrowDown' && open) {
+      e.preventDefault()
+      const idx = options.findIndex((o) => o.value === value)
+      const next = options[idx + 1] ?? options[0]
+      if (next) onChange(next.value)
+    } else if (e.key === 'ArrowUp' && open) {
+      e.preventDefault()
+      const idx = options.findIndex((o) => o.value === value)
+      const prev = options[idx - 1] ?? options[options.length - 1]
+      if (prev) onChange(prev.value)
+    }
+  }
+
   return (
     <div className="relative">
       <button
@@ -38,6 +56,7 @@ export default function Select({
         aria-expanded={open}
         disabled={disabled}
         onClick={() => setOpen((o) => !o)}
+        onKeyDown={handleKeyDown}
         className="w-full flex items-center justify-between px-4 py-2.5 text-sm bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 outline-none focus:ring-2 focus:ring-violet-500 disabled:opacity-50"
       >
         <span className={selected ? '' : 'text-gray-400 dark:text-gray-500'}>

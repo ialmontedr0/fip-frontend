@@ -7,18 +7,25 @@ import EmptyIncomeState from '../components/EmptyIncomeState'
 import IncomeNav from '../components/IncomeNav'
 import { ArrowLeft, Plus, Building2 } from 'lucide-react'
 import type { SourceResponse } from '@/types/incomes'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function SourceListPage() {
   const navigate = useNavigate()
   const { data, isLoading, isError, refetch } = useSources()
   const deleteMutation = useDeleteSource()
   const createFromSource = useCreateIncomeFromSource()
+  const { confirm, confirmDialog } = useConfirm()
   const [createModalSource, setCreateModalSource] = useState<SourceResponse | null>(null)
 
-  const handleDelete = (source: SourceResponse) => {
-    if (window.confirm(`Eliminar fuente: ${source.name}?`)) {
-      deleteMutation.mutate(source.id)
-    }
+  const handleDelete = async (source: SourceResponse) => {
+    const ok = await confirm({
+      title: 'Eliminar fuente',
+      message: `Eliminar fuente: ${source.name}?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
+    deleteMutation.mutate(source.id)
   }
 
   const handleCreateIncome = (source: SourceResponse) => {
@@ -110,6 +117,7 @@ export default function SourceListPage() {
           </div>
         </div>
       </Modal>
+      {confirmDialog}
     </div>
   )
 }

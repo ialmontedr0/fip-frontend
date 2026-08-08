@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tansta
 import toast from 'react-hot-toast'
 import * as transactionsApi from '../api/transactions'
 import { useOptimisticMutation } from '@/hooks/useOptimisticMutation'
+import { invalidateTransactionQueries } from '@/lib/cacheInvalidator'
 import type {
   CreateTransactionRequest, UpdateTransactionRequest, AddTagsRequest,
   TransactionFilters, ListTransactionsResponse, TransactionListItem,
@@ -68,9 +69,7 @@ export function useCreateTransaction() {
   return useMutation({
     mutationFn: (data: CreateTransactionRequest) => transactionsApi.createTransaction(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: transactionKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: transactionKeys.summary() })
-      queryClient.invalidateQueries({ queryKey: ['accounts'] })
+      invalidateTransactionQueries(queryClient)
       toast.success('Transaccion creada exitosamente')
     },
     onError: (error: unknown) => {
@@ -88,9 +87,8 @@ export function useUpdateTransaction() {
     mutationFn: ({ id, data }: { id: string; data: UpdateTransactionRequest }) =>
       transactionsApi.updateTransaction(id, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: transactionKeys.lists() })
+      invalidateTransactionQueries(queryClient)
       queryClient.invalidateQueries({ queryKey: transactionKeys.detail(variables.id) })
-      queryClient.invalidateQueries({ queryKey: ['accounts'] })
       toast.success('Transaccion actualizada exitosamente')
     },
     onError: () => toast.error('Error al actualizar la transaccion'),
@@ -114,8 +112,7 @@ export function useDeleteTransaction() {
       queryClient.setQueriesData<unknown>({ queryKey: transactionKeys.infinite() }, removeFromList)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: transactionKeys.summary() })
-      queryClient.invalidateQueries({ queryKey: ['accounts'] })
+      invalidateTransactionQueries(queryClient)
       toast.success('Transaccion eliminada exitosamente')
     },
     onError: () => toast.error('Error al eliminar la transaccion'),

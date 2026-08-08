@@ -8,6 +8,7 @@ import EmptyIncomeState from '../components/EmptyIncomeState'
 import IncomeNav from '../components/IncomeNav'
 import { ArrowLeft, Plus, CalendarDays } from 'lucide-react'
 import type { ScheduleResponse, ReceiveScheduleRequest } from '@/types/incomes'
+import useConfirm from '@/hooks/useConfirm'
 
 export default function ScheduleListPage() {
   const navigate = useNavigate()
@@ -15,6 +16,7 @@ export default function ScheduleListPage() {
   const projectedQuery = useProjectedIncome()
   const deleteMutation = useDeleteSchedule()
   const receiveMutation = useReceiveScheduled()
+  const { confirm, confirmDialog } = useConfirm()
   const [receiveModalOpen, setReceiveModalOpen] = useState(false)
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleResponse | null>(null)
 
@@ -36,10 +38,15 @@ export default function ScheduleListPage() {
     )
   }
 
-  const handleDelete = (schedule: ScheduleResponse) => {
-    if (window.confirm(`Eliminar programacion: ${schedule.description}?`)) {
-      deleteMutation.mutate(schedule.id)
-    }
+  const handleDelete = async (schedule: ScheduleResponse) => {
+    const ok = await confirm({
+      title: 'Eliminar programacion',
+      message: `Eliminar programacion: ${schedule.description}?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    })
+    if (!ok) return
+    deleteMutation.mutate(schedule.id)
   }
 
   const schedules = data?.schedules || []
@@ -128,6 +135,7 @@ export default function ScheduleListPage() {
         onConfirm={handleConfirmReceive}
         isSubmitting={receiveMutation.isPending}
       />
+      {confirmDialog}
     </div>
   )
 }

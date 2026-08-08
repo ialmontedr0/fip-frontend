@@ -4,11 +4,18 @@ import * as Sentry from '@sentry/react'
 import { registerSW } from 'virtual:pwa-register'
 import App from './App'
 import './index.css'
+import imperativeConfirm from './lib/imperativeConfirm'
 
 const updateSW = registerSW({
   onNeedRefresh() {
-    const reload = window.confirm('Nueva versión disponible. ¿Recargar?')
-    if (reload) updateSW(true)
+    imperativeConfirm({
+      title: 'Actualización disponible',
+      message: 'Nueva versión disponible. ¿Recargar?',
+      confirmLabel: 'Recargar',
+      destructive: false,
+    }).then((reload) => {
+      if (reload) updateSW(true)
+    })
   },
   onOfflineReady() {
     console.log('App lista para uso offline')

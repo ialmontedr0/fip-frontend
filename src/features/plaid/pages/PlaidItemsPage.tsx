@@ -4,17 +4,25 @@ import PlaidLinkButton from '../components/PlaidLinkButton'
 import { usePlaidItems, useDeletePlaidItem, usePlaidItemTransactions } from '../hooks/usePlaid'
 import type { PlaidItem } from '../api/plaid'
 import Modal from '@/components/ui/Modal'
+import useConfirm from '@/hooks/useConfirm'
+import { formatCurrency } from '@/lib/utils'
 
 export default function PlaidItemsPage() {
   const { data, isLoading, refetch } = usePlaidItems()
   const deleteMutation = useDeletePlaidItem()
+  const { confirm, confirmDialog } = useConfirm()
   const [selected, setSelected] = useState<PlaidItem | null>(null)
   const items = data?.items ?? []
 
-  const handleDelete = (item: PlaidItem) => {
-    if (window.confirm(`Desvincular ${item.institution_name ?? 'cuenta'}?`)) {
-      deleteMutation.mutate(item.id)
-    }
+  const handleDelete = async (item: PlaidItem) => {
+    const ok = await confirm({
+      title: 'Desvincular cuenta',
+      message: `Desvincular ${item.institution_name ?? 'cuenta'}?`,
+      confirmLabel: 'Desvincular',
+      destructive: false,
+    })
+    if (!ok) return
+    deleteMutation.mutate(item.id)
   }
 
   return (
@@ -87,6 +95,7 @@ export default function PlaidItemsPage() {
       </div>
 
       {selected && <PlaidTransactionsModal item={selected} onClose={() => setSelected(null)} />}
+      {confirmDialog}
     </div>
   )
 }
@@ -123,7 +132,7 @@ function PlaidTransactionsModal({ item, onClose }: { item: PlaidItem; onClose: (
               </div>
               <span className="font-semibold text-gray-900 dark:text-gray-100">
                 {t.amount !== null && t.amount !== undefined
-                  ? `$${Number(t.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`
+                  ? formatCurrency(t.amount)
                   : ''}
               </span>
             </div>

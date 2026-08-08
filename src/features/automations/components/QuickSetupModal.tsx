@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { X, PiggyBank, CreditCard, ArrowLeftRight, Wallet, DollarSign, Percent, Calendar } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import { useAccounts } from '@/features/accounts/hooks/useAccounts'
 
 type Tab = 'savings' | 'card' | 'balance'
@@ -38,7 +38,7 @@ function AccountSelect({ value, onChange, label, icon: Icon }: { value: string; 
           ) : (
             accounts?.map((acc) => (
               <option key={acc.id} value={acc.id}>
-                {acc.name} ({acc.balance ? `$${parseFloat(acc.balance).toFixed(2)}` : ''})
+                {acc.name} ({acc.balance ? formatCurrency(acc.balance) : ''})
               </option>
             ))
           )}
