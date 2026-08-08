@@ -27,6 +27,7 @@ export interface LentLoan {
   annual_interest_rate: number
   term_months: number
   payment_frequency: string
+  single_payment_date?: string | null
   currency_code: string
   monthly_payment: number
   current_balance: number
@@ -70,7 +71,9 @@ export interface LentLoanSummary {
 export interface SimulateLentLoanRequest {
   principal_amount: number
   annual_interest_rate: number
-  term_months: number
+  term_months?: number | null
+  payment_frequency?: string
+  single_payment_date?: string | null
   start_date?: string | null
 }
 
@@ -78,6 +81,8 @@ export interface SimulateLentLoanResponse {
   principal_amount: number
   annual_interest_rate: number
   term_months: number
+  payment_frequency?: string
+  single_payment_date?: string | null
   monthly_payment: number
   total_to_receive: number
   total_interest: number
@@ -91,8 +96,9 @@ export interface CreateLentLoanRequest {
   borrower_name: string
   principal_amount: number
   annual_interest_rate: number
-  term_months: number
+  term_months?: number | null
   payment_frequency?: string
+  single_payment_date?: string | null
   currency_code?: string
   account_id?: string | null
   start_date?: string | null

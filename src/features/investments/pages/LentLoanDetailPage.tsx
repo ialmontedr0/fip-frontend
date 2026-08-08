@@ -29,6 +29,13 @@ const PAYMENT_METHODS: Record<string, string> = {
   mobile: 'Pago movil',
 }
 
+const FREQUENCY_LABELS: Record<string, string> = {
+  monthly: 'Mensual',
+  bi_weekly: 'Quincenal',
+  weekly: 'Semanal',
+  single_payment: 'Pago unico',
+}
+
 function StatCard({ icon: Icon, label, value, color, sub }: { icon: React.ElementType; label: string; value: React.ReactNode; color?: string; sub?: string }) {
   return (
     <div className="bg-white dark:bg-gray-800/80 rounded-xl border border-gray-100 dark:border-gray-700/50 p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
@@ -253,7 +260,7 @@ export default function LentLoanDetailPage() {
             <StatCard icon={DollarSign} label="Capital Prestado" value={formatCurrency(loan.principal_amount)} color="text-gray-900 dark:text-gray-100" />
             <StatCard icon={PiggyBank} label="Saldo Pendiente" value={formatCurrency(loan.current_balance)} color="text-blue-600 dark:text-blue-400" />
             <StatCard icon={Percent} label="Tasa Anual" value={`${loan.annual_interest_rate}%`} color="text-amber-600 dark:text-amber-400" />
-            <StatCard icon={Calendar} label="Cuota Fija" value={formatCurrency(loan.monthly_payment)} color="text-indigo-600 dark:text-indigo-400" />
+            <StatCard icon={Calendar} label={loan.payment_frequency === 'single_payment' ? 'Pago Unico' : 'Cuota Fija'} value={formatCurrency(loan.monthly_payment)} color="text-indigo-600 dark:text-indigo-400" />
             <StatCard icon={Banknote} label="Total Recibido" value={formatCurrency(loan.total_received)} color="text-emerald-600 dark:text-emerald-400" />
             <StatCard icon={TrendingUp} label="Interes Recibido" value={formatCurrency(loan.total_interest_received)} color="text-emerald-600 dark:text-emerald-400" />
             <StatCard icon={TrendingUp} label="Interes Esperado" value={formatCurrency(loan.total_interest_expected)} color="text-amber-600 dark:text-amber-400" />
@@ -285,6 +292,12 @@ export default function LentLoanDetailPage() {
                   <span className="text-gray-500 dark:text-gray-400">Inicio</span>
                   <span className="text-gray-900 dark:text-gray-100 font-medium">{loan.start_date ? formatISODate(loan.start_date) : '—'}</span>
                 </div>
+                {loan.payment_frequency === 'single_payment' && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-500 dark:text-gray-400">Fecha del pago unico</span>
+                    <span className="text-blue-600 dark:text-blue-400 font-semibold">{loan.single_payment_date ? formatISODate(loan.single_payment_date) : '—'}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-gray-500 dark:text-gray-400">Primera cuota</span>
                   <span className="text-gray-900 dark:text-gray-100 font-medium">{loan.first_payment_date ? formatISODate(loan.first_payment_date) : '—'}</span>
@@ -312,11 +325,15 @@ export default function LentLoanDetailPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500 dark:text-gray-400">Frecuencia</span>
-                  <span className="text-gray-900 dark:text-gray-100 font-medium capitalize">{loan.payment_frequency.replace('_', ' ')}</span>
+                  <span className="text-gray-900 dark:text-gray-100 font-medium">{FREQUENCY_LABELS[loan.payment_frequency] || loan.payment_frequency}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500 dark:text-gray-400">Cuotas pagadas</span>
-                  <span className="text-gray-900 dark:text-gray-100 font-medium">{payments.length} / {loan.term_months}</span>
+                  <span className="text-gray-900 dark:text-gray-100 font-medium">
+                    {loan.payment_frequency === 'single_payment'
+                      ? payments.length > 0 ? 'Pago recibido' : 'Sin pagos'
+                      : `${payments.length} / ${loan.term_months}`}
+                  </span>
                 </div>
                 {loan.notes && (
                   <p className="text-sm text-gray-600 dark:text-gray-300 pt-2 border-t border-gray-50 dark:border-gray-700/50 leading-relaxed">
@@ -480,7 +497,7 @@ export default function LentLoanDetailPage() {
             </div>
             {loan && (
               <p className="text-[11px] text-gray-400 mt-1">
-                Cuota fija: {formatCurrency(loan.monthly_payment)} · Saldo pendiente: {formatCurrency(loan.current_balance)}
+                {loan.payment_frequency === 'single_payment' ? 'Pago unico' : 'Cuota fija'}: {formatCurrency(loan.monthly_payment)} · Saldo pendiente: {formatCurrency(loan.current_balance)}
               </p>
             )}
           </div>

@@ -8,12 +8,14 @@ import toast from 'react-hot-toast'
 import { cn, formatCurrency, formatISODate } from '@/lib/utils'
 import { useCreateLentLoan, useSimulateLentLoan } from '../hooks/useLentLoans'
 import { useAccounts } from '@/features/accounts/hooks/useAccounts'
-import type { LentLoan } from '@/types/lentLoan'
+import MonthYearPicker from '../components/MonthYearPicker'
+import type { LentLoan, SimulateLentLoanResponse } from '@/types/lentLoan'
 
 const FREQUENCIES = {
   monthly: 'Mensual',
   bi_weekly: 'Quincenal',
   weekly: 'Semanal',
+  single_payment: 'Pago unico',
 }
 
 const CURRENCIES = ['DOP', 'USD', 'EUR']
@@ -26,13 +28,14 @@ export default function LentLoanCreatePage() {
   const [principalAmount, setPrincipalAmount] = useState(searchParams.get('principal') || '')
   const [annualInterestRate, setAnnualInterestRate] = useState(searchParams.get('rate') || '')
   const [termMonths, setTermMonths] = useState(searchParams.get('term') || '')
-  const [paymentFrequency, setPaymentFrequency] = useState('monthly')
+  const [paymentFrequency, setPaymentFrequency] = useState(searchParams.get('frequency') || 'monthly')
+  const [singlePaymentDate, setSinglePaymentDate] = useState(searchParams.get('single') || '')
   const [currencyCode, setCurrencyCode] = useState('DOP')
   const [accountId, setAccountId] = useState('')
   const [startDate, setStartDate] = useState(searchParams.get('start') || '')
   const [isCollateralized, setIsCollateralized] = useState(false)
   const [notes, setNotes] = useState('')
-  const [preview, setPreview] = useState<{ monthly_payment: number; total_to_receive: number; total_interest: number; total_profit: number; interest_to_principal_ratio: number } | null>(null)
+  const [preview, setPreview] = useState<SimulateLentLoanResponse | null>(null)
 
   const createMutation = useCreateLentLoan()
   const simulateMutation = useSimulateLentLoan()
@@ -44,14 +47,17 @@ export default function LentLoanCreatePage() {
     if (preview && !preview.monthly_payment) return
     const principal = parseFloat(principalAmount)
     const rate = parseFloat(annualInterestRate)
-    const term = parseInt(termMonths)
-    if (principal > 0 && rate >= 0 && term > 0) {
+    const isSingle = paymentFrequency === 'single_payment'
+    const hasTerm = isSingle ? singlePaymentDate.trim().length > 0 : parseInt(termMonths) > 0
+    if (principal > 0 && rate >= 0 && hasTerm) {
       const timer = setTimeout(() => {
         simulateMutation.mutate(
           {
             principal_amount: principal,
             annual_interest_rate: rate,
-            term_months: term,
+            payment_frequency: paymentFrequency,
+            term_months: isSingle ? null : parseInt(termMonths),
+            single_payment_date: isSingle ? singlePaymentDate.trim() : null,
             start_date: startDate || null,
           },
           {
@@ -64,12 +70,13 @@ export default function LentLoanCreatePage() {
     }
     setPreview(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [principalAmount, annualInterestRate, termMonths, startDate])
+  }, [principalAmount, annualInterestRate, termMonths, startDate, paymentFrequency, singlePaymentDate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const principal = parseFloat(principalAmount)
     const rate = parseFloat(annualInterestRate)
+    const isSingle = paymentFrequency === 'single_payment'
     const term = parseInt(termMonths)
 
     if (!borrowerName.trim()) {
@@ -84,7 +91,12 @@ export default function LentLoanCreatePage() {
       toast.error('Ingrese una tasa de interes valida')
       return
     }
-    if (!term || term <= 0) {
+    if (isSingle) {
+      if (!singlePaymentDate.trim()) {
+        toast.error('Seleccione el mes y ano del pago unico')
+        return
+      }
+    } else if (!term || term <= 0) {
       toast.error('Ingrese un plazo valido')
       return
     }
@@ -94,8 +106,9 @@ export default function LentLoanCreatePage() {
         borrower_name: borrowerName.trim(),
         principal_amount: principal,
         annual_interest_rate: rate,
-        term_months: term,
         payment_frequency: paymentFrequency,
+        term_months: isSingle ? null : term,
+        single_payment_date: isSingle ? singlePaymentDate.trim() : null,
         currency_code: currencyCode,
         account_id: accountId || null,
         start_date: startDate || null,
@@ -211,18 +224,25 @@ export default function LentLoanCreatePage() {
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Plazo (meses) *</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="600"
-                  value={termMonths}
-                  onChange={(e) => setTermMonths(e.target.value)}
-                  placeholder="12"
-                  className={inputClass}
-                />
-              </div>
+              {paymentFrequency === 'single_payment' ? (
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Mes y Anio del Pago Unico *</label>
+                  <MonthYearPicker value={singlePaymentDate} onChange={setSinglePaymentDate} />
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Plazo (meses) *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="600"
+                    value={termMonths}
+                    onChange={(e) => setTermMonths(e.target.value)}
+                    placeholder="12"
+                    className={inputClass}
+                  />
+                </div>
+              )}
               <div>
                 <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Frecuencia de Pago</label>
                 <select
@@ -299,11 +319,18 @@ export default function LentLoanCreatePage() {
                 <div className="rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-4 text-white shadow-lg shadow-blue-500/25">
                   <div className="flex items-center gap-2 mb-1">
                     <Wallet className="h-4 w-4" />
-                    <p className="text-xs opacity-90">Cuota Fija por recibir</p>
+                    <p className="text-xs opacity-90">
+                      {paymentFrequency === 'single_payment' ? 'Pago Unico por recibir' : 'Cuota Fija por recibir'}
+                    </p>
                   </div>
                   <p className="text-2xl font-bold">{formatCurrency(preview.monthly_payment)}</p>
                   <p className="text-[11px] opacity-75 mt-0.5">
-                    {FREQUENCIES[paymentFrequency as keyof typeof FREQUENCIES]} · {termMonths} meses
+                    {FREQUENCIES[paymentFrequency as keyof typeof FREQUENCIES]}
+                    {paymentFrequency === 'single_payment'
+                      ? preview.single_payment_date
+                        ? ` · ${formatISODate(preview.single_payment_date)}`
+                        : ''
+                      : ` · ${preview.term_months} meses`}
                   </p>
                 </div>
 
@@ -337,7 +364,7 @@ export default function LentLoanCreatePage() {
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <Calculator className="h-12 w-12 text-gray-200 dark:text-gray-600 mb-3" />
                 <p className="text-xs text-gray-400 dark:text-gray-500 max-w-[200px]">
-                  Completa monto, tasa y plazo para ver la cuota calculada
+                  Completa monto, tasa y plazo (o fecha de pago unico) para ver el pago calculado
                 </p>
               </div>
             )}
@@ -370,7 +397,9 @@ export default function LentLoanCreatePage() {
           {!preview && (parseFloat(principalAmount) > 0) && (
             <div className="flex items-start gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-xl p-3">
               <TrendingUp className="h-4 w-4 shrink-0 mt-0.5" />
-              Completa la tasa y el plazo para previsualizar la cuota mensual antes de crear.
+              {paymentFrequency === 'single_payment'
+                ? 'Completa la tasa y el mes del pago unico para previsualizar el monto a recibir.'
+                : 'Completa la tasa y el plazo para previsualizar la cuota mensual antes de crear.'}
             </div>
           )}
         </div>

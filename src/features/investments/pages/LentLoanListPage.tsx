@@ -49,7 +49,9 @@ function LentLoanCard({ loan }: { loan: LentLoan }) {
             <div className="min-w-0">
               <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{loan.borrower_name}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {formatCurrency(loan.monthly_payment)} / mes
+                {loan.payment_frequency === 'single_payment'
+                  ? `Pago unico: ${formatCurrency(loan.monthly_payment)}`
+                  : `${formatCurrency(loan.monthly_payment)} / mes`}
               </p>
             </div>
           </div>
@@ -87,11 +89,17 @@ function LentLoanCard({ loan }: { loan: LentLoan }) {
         </div>
 
         <p className="mt-3 text-[11px] text-gray-400 dark:text-gray-500">
-          {loan.next_payment_date
-            ? `Proxima cuota: ${formatISODate(loan.next_payment_date)}`
-            : loan.paid_off_date
-              ? `Pagado: ${formatISODate(loan.paid_off_date)}`
-              : `${loan.term_months} meses`}
+          {loan.payment_frequency === 'single_payment'
+            ? loan.next_payment_date
+              ? `Vence: ${formatISODate(loan.next_payment_date)}`
+              : loan.paid_off_date
+                ? `Pagado: ${formatISODate(loan.paid_off_date)}`
+                : 'Pago unico'
+            : loan.next_payment_date
+              ? `Proxima cuota: ${formatISODate(loan.next_payment_date)}`
+              : loan.paid_off_date
+                ? `Pagado: ${formatISODate(loan.paid_off_date)}`
+                : `${loan.term_months} meses`}
         </p>
       </div>
     </div>

@@ -7,8 +7,16 @@ import {
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 import { useSimulateLentLoan } from '../hooks/useLentLoans'
+import MonthYearPicker from '../components/MonthYearPicker'
 import { formatCurrency, formatISODate } from '@/lib/utils'
 import type { SimulateLentLoanResponse } from '@/types/lentLoan'
+
+const FREQUENCIES = {
+  monthly: 'Mensual',
+  bi_weekly: 'Quincenal',
+  weekly: 'Semanal',
+  single_payment: 'Pago unico',
+}
 
 function ResultCard({ icon: Icon, label, value, color }: { icon: React.ElementType; label: string; value: React.ReactNode; color?: string }) {
   return (
@@ -30,10 +38,14 @@ export default function LentLoanSimulatorPage() {
   const [principalAmount, setPrincipalAmount] = useState('')
   const [annualInterestRate, setAnnualInterestRate] = useState('')
   const [termMonths, setTermMonths] = useState('')
+  const [paymentFrequency, setPaymentFrequency] = useState('monthly')
+  const [singlePaymentDate, setSinglePaymentDate] = useState('')
   const [startDate, setStartDate] = useState('')
   const [result, setResult] = useState<SimulateLentLoanResponse | null>(null)
 
   const simulateMutation = useSimulateLentLoan()
+
+  const isSingle = paymentFrequency === 'single_payment'
 
   const handleSimulate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,7 +61,12 @@ export default function LentLoanSimulatorPage() {
       toast.error('Ingrese una tasa de interes valida')
       return
     }
-    if (!term || term <= 0) {
+    if (isSingle) {
+      if (!singlePaymentDate.trim()) {
+        toast.error('Seleccione el mes y ano del pago unico')
+        return
+      }
+    } else if (!term || term <= 0) {
       toast.error('Ingrese un plazo valido')
       return
     }
@@ -58,7 +75,9 @@ export default function LentLoanSimulatorPage() {
       const res = await simulateMutation.mutateAsync({
         principal_amount: principal,
         annual_interest_rate: rate,
-        term_months: term,
+        payment_frequency: paymentFrequency,
+        term_months: isSingle ? null : term,
+        single_payment_date: isSingle ? singlePaymentDate.trim() : null,
         start_date: startDate || null,
       })
       setResult(res)
@@ -125,6 +144,19 @@ export default function LentLoanSimulatorPage() {
                 </div>
               </div>
 
+              <div>
+                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Frecuencia de Pago</label>
+                <select
+                  value={paymentFrequency}
+                  onChange={(e) => setPaymentFrequency(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+                >
+                  {Object.entries(FREQUENCIES).map(([key, label]) => (
+                    <option key={key} value={key}>{label}</option>
+                  ))}
+                </select>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Tasa de Interes Anual *</label>
@@ -142,19 +174,26 @@ export default function LentLoanSimulatorPage() {
                     />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Plazo (meses) *</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="600"
-                    value={termMonths}
-                    onChange={(e) => setTermMonths(e.target.value)}
-                    required
-                    placeholder="12"
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
-                  />
-                </div>
+                {isSingle ? (
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Mes y Anio del Pago Unico *</label>
+                    <MonthYearPicker value={singlePaymentDate} onChange={setSinglePaymentDate} />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Plazo (meses) *</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="600"
+                      value={termMonths}
+                      onChange={(e) => setTermMonths(e.target.value)}
+                      required
+                      placeholder="12"
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                )}
               </div>
 
               <div>
@@ -198,7 +237,9 @@ export default function LentLoanSimulatorPage() {
                     <DollarSign className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Cuota Fija (a recibir)</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {isSingle ? 'Pago Unico (a recibir)' : 'Cuota Fija (a recibir)'}
+                    </p>
                     <p className="text-3xl font-bold text-gray-900 dark:text-white">{formatCurrency(result.monthly_payment)}</p>
                   </div>
                 </div>
@@ -208,7 +249,11 @@ export default function LentLoanSimulatorPage() {
                   <ResultCard icon={TrendingUp} label="Ganancia (Interes)" value={formatCurrency(result.total_profit)} color="text-blue-600 dark:text-blue-400" />
                   <ResultCard icon={Percent} label="Rentabilidad" value={`${result.interest_to_principal_ratio.toFixed(1)}%`} color="text-purple-600 dark:text-purple-400" />
                   <ResultCard icon={PiggyBank} label="Interes Total" value={formatCurrency(result.total_interest)} color="text-amber-600 dark:text-amber-400" />
-                  <ResultCard icon={Calendar} label="Plazo" value={`${result.term_months} meses`} />
+                  {isSingle ? (
+                    <ResultCard icon={Calendar} label="Fecha del Pago" value={result.single_payment_date ? formatISODate(result.single_payment_date) : '—'} />
+                  ) : (
+                    <ResultCard icon={Calendar} label="Plazo" value={`${result.term_months} meses`} />
+                  )}
                   <ResultCard icon={Target} label="Capital" value={formatCurrency(result.principal_amount)} />
                 </div>
               </div>
@@ -220,7 +265,11 @@ export default function LentLoanSimulatorPage() {
                       <BarChart3 className="h-3.5 w-3.5 text-white" />
                     </div>
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Vista Previa de Cuotas</h3>
-                    <span className="text-xs text-gray-400 ml-auto">Primeros {result.schedule_preview.length} meses</span>
+                    {isSingle ? (
+                      <span className="text-xs text-gray-400 ml-auto">Pago unico</span>
+                    ) : (
+                      <span className="text-xs text-gray-400 ml-auto">Primeros {result.schedule_preview.length} meses</span>
+                    )}
                   </div>
 
                   <div className="overflow-x-auto">
@@ -260,7 +309,12 @@ export default function LentLoanSimulatorPage() {
                   const params = new URLSearchParams()
                   params.set('principal', principalAmount)
                   params.set('rate', annualInterestRate)
-                  params.set('term', termMonths)
+                  params.set('frequency', paymentFrequency)
+                  if (isSingle) {
+                    params.set('single', singlePaymentDate.trim())
+                  } else {
+                    params.set('term', termMonths)
+                  }
                   if (startDate) params.set('start', startDate)
                   navigate(`/investments/lent-loans/new?${params.toString()}`)
                 }}
@@ -278,7 +332,7 @@ export default function LentLoanSimulatorPage() {
                 <p className="text-base font-semibold text-gray-500 dark:text-gray-400">Completa los parametros</p>
               </div>
               <p className="text-sm text-gray-400 dark:text-gray-500 mt-1 max-w-sm leading-relaxed">
-                Ingresa el monto que prestas, la tasa de interes y el plazo para simular la cuota fija que recibiras. Los resultados apareceran aqui.
+                Ingresa el monto que prestas, la tasa de interes y el plazo (o el mes del pago unico) para simular el pago que recibiras. Los resultados apareceran aqui.
               </p>
             </div>
           )}
